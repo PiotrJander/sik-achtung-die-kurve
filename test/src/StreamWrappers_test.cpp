@@ -16,7 +16,8 @@ class StreamWrappersTest : public ::testing::Test {
 };
 
 
-TEST_F(StreamWrappersTest, One) {
+TEST_F(StreamWrappersTest, One)
+{
     std::stringstream s;
     InputStreamWrapper isw(s);
     OutputStreamWrapper osw(s);
@@ -38,4 +39,5 @@ TEST_F(StreamWrappersTest, One) {
     EXPECT_EQ(m, m_);
     EXPECT_TRUE(strcmp(str, str_) == 0);
 }
+
 #pragma clang diagnostic pop

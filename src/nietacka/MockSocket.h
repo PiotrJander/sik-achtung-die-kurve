@@ -6,19 +6,26 @@
 #define NIETACKA_MOCKSOCKET_H
 
 #include <sstream>
+//#include <memory>
 
 using std::stringstream;
+using std::shared_ptr;
 
 class MockSocket {
 public:
-    void serverRead(char* s, std::streamsize n);
-    void serverWrite(const char* s, std::streamsize n);
-    void clientRead(char* s, std::streamsize n);
-    void clientWrite(const char* s, std::streamsize n);
+    MockSocket();
+
+    shared_ptr<stringstream> serverRead();
+
+    shared_ptr<stringstream> serverWrite();
+
+    shared_ptr<stringstream> clientRead();
+
+    shared_ptr<stringstream> clientWrite();
 
 private:
-    stringstream serverToClient;
-    stringstream clientToServer;
+    shared_ptr<stringstream> serverToClient;
+    shared_ptr<stringstream> clientToServer;
 };
 
 
