@@ -8,11 +8,11 @@
 
 #include "GameEvent.h"
 
-class Event_Pixel: public GameEvent {
+class Pixel: public GameEvent {
 public:
-    Event_Pixel(uint32_t number, uint8_t player_number, uint32_t x, uint32_t y);
+    Pixel(uint32_t number, uint8_t player_number, uint32_t x, uint32_t y);
 
-    explicit Event_Pixel(char *buffer);
+    explicit Pixel(char *buffer);
 
     uint8_t getPlayer_number() const;
 

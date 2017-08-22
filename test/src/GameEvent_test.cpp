@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include <nietacka/Event_Pixel.h>
+#include <nietacka/Pixel.h>
 
 #include "gtest/gtest.h"
 
@@ -12,7 +12,7 @@ TEST(GameEvent__Test, One)
 {
     std::stringstream s;
 
-    Event_Pixel e1(123, 4, 567, 890);
+    Pixel e1(123, 4, 567, 890);
     e1.writeTo(s);
 
     std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(s);

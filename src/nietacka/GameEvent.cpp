@@ -5,7 +5,7 @@
 #include "GameEvent.h"
 #include "StreamUtils.h"
 #include "crc32c.h"
-#include "Event_Pixel.h"
+#include "Pixel.h"
 
 void GameEvent::writeTo(std::ostream &s)
 {
@@ -57,7 +57,7 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
     std::memcpy(&baseEvent, buffer, sizeof(baseEvent));
     switch (baseEvent.getType()) {
         case EventType::PIXEL:
-            return std::move(std::make_unique<Event_Pixel>((char *) buffer));
+            return std::move(std::make_unique<Pixel>((char *) buffer));
         default:
             return nullptr;
     }

@@ -20,7 +20,7 @@ class GameEvent {
 public:
     GameEvent();
 
-    GameEvent(uint32_t number, const EventType type);
+    GameEvent(uint32_t number, EventType type);
 
     static std::unique_ptr<GameEvent>
     readFrom(std::istream &);
