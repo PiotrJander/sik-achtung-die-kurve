@@ -10,6 +10,8 @@
 
 class Event_GameOver: GameEvent {
 private:
+    Event_GameOver() {}
+
     const EventType type = EventType::GAME_OVER;
 };
 

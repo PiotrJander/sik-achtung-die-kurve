@@ -10,6 +10,8 @@
 
 class Event_PlayerEliminated: GameEvent {
 private:
+    Event_PlayerEliminated() {}
+
     const EventType type = EventType::PLAYER_ELIMINATED;
     uint8_t player_number;
 };

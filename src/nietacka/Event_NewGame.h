@@ -9,6 +9,8 @@
 
 class Event_NewGame: GameEvent {
 private:
+    Event_NewGame() {}
+
     const EventType type = EventType::NEW_GAME;
     uint32_t maxx, maxy;
     // TODO player names
