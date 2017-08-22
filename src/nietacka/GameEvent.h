@@ -22,11 +22,11 @@ public:
 
     GameEvent(uint32_t number, EventType type);
 
-    static std::unique_ptr<GameEvent>
-    readFrom(std::istream &);
-
-    void
-    writeTo(std::ostream &);
+//    static std::unique_ptr<GameEvent>
+//    readFrom(std::istream &);
+//
+//    void
+//    writeTo(std::ostream &);
 
     uint32_t
     getEventNumber() const;
@@ -34,15 +34,15 @@ public:
     const EventType
     getType() const;
 
-protected:
-    virtual uint32_t
-    getLength();
-
-    virtual char *
-    getData();
-
-    virtual uint32_t
-    getChecksum();
+//protected:
+//    virtual uint32_t
+//    getLength();
+//
+//    virtual char *
+//    getData();
+//
+//    virtual uint32_t
+//    getChecksum();
 
 private:
     uint32_t eventNumber;

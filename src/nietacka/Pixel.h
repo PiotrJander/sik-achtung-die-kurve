@@ -12,7 +12,7 @@ class Pixel: public GameEvent {
 public:
     Pixel(uint32_t number, uint8_t player_number, uint32_t x, uint32_t y);
 
-    explicit Pixel(char *buffer);
+//    explicit Pixel(char *buffer);
 
     uint8_t getPlayer_number() const;
 

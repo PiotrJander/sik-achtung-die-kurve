@@ -4,10 +4,10 @@
 
 #include "Pixel.h"
 
-Pixel::Pixel(char *buffer)
-{
-    std::memcpy(this, buffer, sizeof(*this));
-}
+//Pixel::Pixel(char *buffer)
+//{
+//    std::memcpy(this, buffer, sizeof(*this));
+//}
 
 uint8_t Pixel::getPlayer_number() const
 {
@@ -16,17 +16,17 @@ uint8_t Pixel::getPlayer_number() const
 
 uint32_t Pixel::getX() const
 {
-    return htonl(x);
+    return x;
 }
 
 uint32_t Pixel::getY() const
 {
-    return htonl(y);
+    return y;
 }
 
 Pixel::Pixel(uint32_t number, uint8_t player_number, uint32_t x, uint32_t y)
         : GameEvent(number, EventType::PIXEL),
           player_number(player_number),
-          x(htonl(x)),
-          y(htonl(y))
+          x(x),
+          y(y)
 {}
