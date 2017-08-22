@@ -8,9 +8,10 @@
 #include <istream>
 
 using std::istream;
+using std::ostream;
 using std::streamsize;
 
-class InputStreamUtils {
+class StreamUtils {
 public:
     template<typename T>
     static T read_int(istream &s)
@@ -18,6 +19,12 @@ public:
         T ret;
         s.read((char *) &ret, sizeof(ret));
         return ret;
+    }
+
+    template<typename T>
+    static ostream &write_int(ostream &s, T n)
+    {
+        return s.write((char *) &n, sizeof(n));
     }
 };
 
