@@ -11,6 +11,7 @@
 
 using std::string;
 
+#pragma pack(push, 1)
 class ClientMessage {
 public:
     ClientMessage() = default;
@@ -31,6 +32,7 @@ private:
     uint32_t next_expected_event_no;
     char player_name[64];
 };
+#pragma pack(pop)
 
 
 #endif //NIETACKA_CLIENTMESSAGE_H

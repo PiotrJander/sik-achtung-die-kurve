@@ -10,26 +10,13 @@
 using std::ostream;
 using std::streamsize;
 
-class OutputStreamWrapper {
+class OutputStreamUtils {
 public:
-    explicit OutputStreamWrapper(ostream &s);
-
-    ostream &write(const char *s, streamsize n);
-
     template<typename T>
-    ostream &write_int(T n)
+    static ostream &write_int(ostream &s, T n)
     {
         return s.write((char *) &n, sizeof(n));
     }
-
-//    void write_int8(int8_t);
-//
-//    void write_uint32(uint32_t);
-//
-//    void write_uint64(uint64_t);
-
-private:
-    ostream &s;
 };
 
 
