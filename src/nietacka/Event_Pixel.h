@@ -8,9 +8,19 @@
 
 #include "GameEvent.h"
 
-class Event_Pixel: GameEvent {
+class Event_Pixel: public GameEvent {
+public:
+    Event_Pixel(uint32_t number, uint8_t player_number, uint32_t x, uint32_t y);
+
+    explicit Event_Pixel(char *buffer);
+
+    uint8_t getPlayer_number() const;
+
+    uint32_t getX() const;
+
+    uint32_t getY() const;
+
 private:
-    const EventType type = EventType::PIXEL;
     uint8_t player_number;
     uint32_t x, y;
 };

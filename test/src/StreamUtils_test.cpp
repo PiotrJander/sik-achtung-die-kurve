@@ -5,18 +5,17 @@
 #include <sstream>
 
 #include "gtest/gtest.h"
-#include "nietacka/InputStreamUtils.h"
-#include "nietacka/OutputStreamUtils.h"
+#include "nietacka/StreamUtils.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "ClangTidyInspection"
 
-class StreamWrappersTest : public ::testing::Test {
+class StreamUtilsTest : public ::testing::Test {
 
 };
 
 
-TEST_F(StreamWrappersTest, One)
+TEST_F(StreamUtilsTest, One)
 {
     std::stringstream s;
 
@@ -24,12 +23,12 @@ TEST_F(StreamWrappersTest, One)
     uint32_t m = 93845;
     char str[4] = "foo";
 
-    OutputStreamUtils::write_int<int8_t>(s, k);
-    OutputStreamUtils::write_int<uint32_t>(s, m);
+    StreamUtils::write_int<int8_t>(s, k);
+    StreamUtils::write_int<uint32_t>(s, m);
     s.write(str, sizeof(str));
 
-    auto k_ = InputStreamUtils::read_int<int8_t>(s);
-    auto m_ = InputStreamUtils::read_int<uint32_t>(s);
+    auto k_ = StreamUtils::read_int<int8_t>(s);
+    auto m_ = StreamUtils::read_int<uint32_t>(s);
     char str_[4];
     s.read(str_, sizeof(str_));
 
