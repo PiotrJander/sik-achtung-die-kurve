@@ -44,7 +44,7 @@ public:
 
     virtual ~GameEvent() = default;
 
-    explicit GameEvent(Header header) : header(std::move(header))
+    explicit GameEvent(Header header) : header(header)
     {}
 
     GameEvent(uint32_t eventNo, Type type) : header(eventNo, type)
@@ -62,6 +62,8 @@ private:
     virtual uint32_t getLength() = 0;
 
     virtual std::unique_ptr<char[]> getBuffer() = 0;
+
+    static std::vector<std::string> &&parsePlayerNames(char *buffer, int len);
 };
 
 

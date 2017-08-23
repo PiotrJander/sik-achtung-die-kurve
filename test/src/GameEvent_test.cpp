@@ -3,12 +3,39 @@
 //
 
 #include <sstream>
-#include <nietacka/PixelEvent.h>
+#include <nietacka/event/PixelEvent.h>
+#include <nietacka/event/PlayerEliminatedEvent.h>
+#include <nietacka/event/GameOverEvent.h>
+#include <nietacka/event/NewGameEvent.h>
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "ClangTidyInspection"
 #include "gtest/gtest.h"
 
+TEST(GameEvent__Test, NewGameEvent)
+{
+    std::stringstream s;
 
-TEST(GameEvent__Test, One)
+    NewGameEvent e1 {123, 800, 600};
+    e1.playerNames->emplace_back("Piotr");
+    e1.playerNames->emplace_back("John");
+    e1.playerNames->emplace_back("Jane");
+
+    e1.writeTo(s);
+
+    auto _e2 = GameEvent::readFrom(s);
+    auto *e2 = (NewGameEvent *) _e2.get();
+
+    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
+    ASSERT_EQ(e1.header.getType(), e2->header.getType());
+    ASSERT_EQ(e1.data.getMaxx(), e2->data.getMaxx());
+    ASSERT_EQ(e1.data.getMaxy(), e2->data.getMaxy());
+    ASSERT_EQ(e1.playerNames.get()[0], e2->playerNames.get()[0]);
+    ASSERT_EQ(e1.playerNames.get()[1], e2->playerNames.get()[1]);
+    ASSERT_EQ(e1.playerNames.get()[2], e2->playerNames.get()[2]);
+}
+
+TEST(GameEvent__Test, PixelEvent)
 {
     std::stringstream s;
 
@@ -18,11 +45,40 @@ TEST(GameEvent__Test, One)
     auto _e2 = GameEvent::readFrom(s);
     auto *e2 = (PixelEvent *) _e2.get();
 
-//    std::cout << sizeof(e1.header.getType());
-
     ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
     ASSERT_EQ(e1.header.getType(), e2->header.getType());
     ASSERT_EQ(e1.data.getPlayerNumber(), e2->data.getPlayerNumber());
     ASSERT_EQ(e1.data.getX(), e2->data.getX());
     ASSERT_EQ(e1.data.getY(), e2->data.getY());
 }
+
+TEST(GameEvent__Test, PlayerEliminatedEvent)
+{
+    std::stringstream s;
+
+    PlayerEliminatedEvent e1 {123, 2};
+    e1.writeTo(s);
+
+    auto _e2 = GameEvent::readFrom(s);
+    auto *e2 = (PlayerEliminatedEvent *) _e2.get();
+
+    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
+    ASSERT_EQ(e1.header.getType(), e2->header.getType());
+    ASSERT_EQ(e1.playerNumber, e2->playerNumber);
+}
+
+TEST(GameEvent__Test, GameOverEvent)
+{
+    std::stringstream s;
+
+    GameOverEvent e1 {123};
+    e1.writeTo(s);
+
+    auto _e2 = GameEvent::readFrom(s);
+    auto *e2 = (GameOverEvent *) _e2.get();
+
+    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
+    ASSERT_EQ(e1.header.getType(), e2->header.getType());
+}
+
+#pragma clang diagnostic pop

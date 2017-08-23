@@ -3,6 +3,6 @@ project(nietacka)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-set(SOURCE_FILES ClientMessage.cpp ClientMessage.h MockSocket.cpp MockSocket.h StreamUtils.h Client.cpp Client.h Server.cpp Server.h GameEvent.h GameEvent.cpp crc32c.cpp crc32c.h PixelEvent.h PixelEvent.cpp)
+set(SOURCE_FILES ClientMessage.cpp ClientMessage.h MockSocket.cpp MockSocket.h StreamUtils.h Client.cpp Client.h Server.cpp Server.h event/GameEvent.h event/GameEvent.cpp crc32c.cpp crc32c.h event/PixelEvent.h event/PixelEvent.cpp event/PlayerEliminatedEvent.cpp event/PlayerEliminatedEvent.h event/GameOverEvent.h event/GameOverEvent.cpp event/NewGameEvent.cpp event/NewGameEvent.h)
 
 add_library(nietacka SHARED STATIC ${SOURCE_FILES})
