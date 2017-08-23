@@ -2,66 +2,42 @@
 // Created by Piotr Jander on 22/08/2017.
 //
 
+#include <sstream>
 #include "GameEvent.h"
 #include "StreamUtils.h"
 #include "crc32c.h"
-#include "Pixel.h"
+#include "PixelEventData.h"
+#include "PixelEvent.h"
 
-//void GameEvent::writeTo(std::ostream &s)
-//{
-//    StreamUtils::write_int<uint32_t>(s, htonl(this->getLength()));
-//    s.write(this->getData(), this->getLength());
-//    StreamUtils::write_int<uint32_t>(s, htonl(this->getChecksum()));
-//}
-//
-//uint32_t GameEvent::getLength()
-//{
-//    return sizeof(*this);
-//}
-//
-//char *GameEvent::getData()
-//{
-//    return (char *) this;
-//}
-//
-//uint32_t GameEvent::getChecksum()
-//{
-//    return crc32c(0, (unsigned char *) this->getData(), this->getLength());
-//}
-
-GameEvent::GameEvent() : eventNumber(0), type(EventType::NEW_GAME)
-{}
-
-uint32_t GameEvent::getEventNumber() const
+std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 {
-    return eventNumber;
+    auto length = StreamUtils::read_int<uint32_t>(s);
+    char buffer[length];
+    s.read(buffer, length);
+    auto expectedChecksum = StreamUtils::read_int<uint32_t>(s);
+    uint32_t actualChecksum = crc32c(0, (unsigned char *) buffer, length);
+    if (expectedChecksum != actualChecksum) {
+        // TODO
+    }
+    GameEventHeader header;
+    std::memcpy(&header, buffer, sizeof(header));
+//    std::unique_ptr<GameEvent> event;
+    switch (header.getType()) {
+        case EventType::PIXEL:
+            PixelEventData data;
+            std::memcpy(&data, buffer + sizeof(header), sizeof(data));
+            return std::make_unique<PixelEvent>(header, data);
+        default:
+            return nullptr;
+    }
 }
 
-const EventType GameEvent::getType() const
+void GameEvent::writeTo(std::ostream &s)
 {
-    return type;
+    uint32_t length = getLength();
+    std::unique_ptr<char[]> buffer = getBuffer();
+    uint32_t checksum = crc32c(0, (unsigned char *) buffer.get(), length);
+    StreamUtils::write_int<uint32_t>(s, length);
+    s.write(buffer.get(), length);
+    StreamUtils::write_int<uint32_t>(s, checksum);
 }
-
-//std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
-//{
-//    auto length = StreamUtils::read_int<uint32_t>(s);
-//    length = ntohl(length);
-//    char buffer[length];
-//    s.read(buffer, length);
-//    auto expectedChecksum = StreamUtils::read_int<uint32_t>(s);
-//    uint32_t actualChecksum = crc32c(0, (unsigned char *) buffer, length);
-//    if (expectedChecksum != actualChecksum) {
-//        // TODO raise error here
-//    }
-//    GameEvent baseEvent;
-//    std::memcpy(&baseEvent, buffer, sizeof(baseEvent));
-//    switch (baseEvent.getType()) {
-//        case EventType::PIXEL:
-//            return std::move(std::make_unique<Pixel>((char *) buffer));
-//        default:
-//            return nullptr;
-//    }
-//}
-
-GameEvent::GameEvent(uint32_t number, const EventType type) : eventNumber(number), type(type)
-{}

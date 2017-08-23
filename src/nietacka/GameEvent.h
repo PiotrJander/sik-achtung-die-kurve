@@ -6,47 +6,30 @@
 #define PROJECT_GAMEEVENT_H
 
 #include <iostream>
-
-
-enum class EventType : uint8_t {
-    NEW_GAME = 0,
-    PIXEL = 1,
-    PLAYER_ELIMINATED = 2,
-    GAME_OVER = 3
-};
+#include "GameEventHeader.h"
+#include "GameEventData.h"
 
 
 class GameEvent {
 public:
-    GameEvent();
+    virtual ~GameEvent() = default;
 
-    GameEvent(uint32_t number, EventType type);
+    explicit GameEvent(GameEventHeader header) : header(std::move(header))
+    {}
 
-//    static std::unique_ptr<GameEvent>
-//    readFrom(std::istream &);
-//
-//    void
-//    writeTo(std::ostream &);
+    std::unique_ptr<GameEvent>
+    readFrom(std::istream &);
 
-    uint32_t
-    getEventNumber() const;
+    void
+    writeTo(std::ostream &);
 
-    const EventType
-    getType() const;
-
-//protected:
-//    virtual uint32_t
-//    getLength();
-//
-//    virtual char *
-//    getData();
-//
-//    virtual uint32_t
-//    getChecksum();
+protected:
+    GameEventHeader header;
 
 private:
-    uint32_t eventNumber;
-    const EventType type;
+    virtual uint32_t getLength() = 0;
+
+    virtual std::unique_ptr<char[]> getBuffer() = 0;
 };
 
 
