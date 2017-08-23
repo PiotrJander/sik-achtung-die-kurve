@@ -167,14 +167,14 @@ opisany poniżej.
     – PIXEL
       event_type: 1
       event_data:
-         player_number (1 bajt)
+         playerNumber (1 bajt)
          x (4 bajty, odcięta, liczba bez znaku)
          y (4 bajty, rzędna, liczba bez znaku)
 
     – PLAYER_ELIMINATED
       event_type: 2
       event_data:
-         player_number (1 bajt)
+         playerNumber (1 bajt)
 
     – GAME_OVER
       event_type: 3

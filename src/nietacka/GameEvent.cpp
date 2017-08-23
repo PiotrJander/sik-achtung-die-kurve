@@ -19,10 +19,10 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
     if (expectedChecksum != actualChecksum) {
         // TODO
     }
-    GameEventHeader *header = (GameEventHeader *) buffer;
+    Header *header = (Header *) buffer;
     switch (header->getType()) {
-        case EventType::PIXEL: {
-            PixelEventData *data = (PixelEventData *) buffer + sizeof(header);
+        case Type::PIXEL: {
+            PixelEvent::Data *data = (PixelEvent::Data *) buffer + sizeof(header);
             return std::make_unique<PixelEvent>(*header, *data);
         }
         default: {

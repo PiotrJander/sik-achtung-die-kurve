@@ -13,19 +13,52 @@
 
 class PixelEvent: public GameEvent {
 public:
-    PixelEvent(GameEventHeader header, PixelEventData data) : GameEvent(header), data(std::move(data))
+
+    #pragma pack(push, 1)
+    class Data {
+    public:
+        Data() = default;
+
+        Data(uint8_t player_number, uint32_t x, uint32_t y)
+                : playerNumber(player_number),
+                  x(htonl(x)),
+                  y(htonl(y))
+        {}
+
+        uint8_t getPlayerNumber() const
+        {
+            return playerNumber;
+        }
+
+        uint32_t getX() const
+        {
+            return ntohl(x);
+        }
+
+        uint32_t getY() const
+        {
+            return ntohl(y);
+        }
+
+    private:
+        uint8_t playerNumber;
+        uint32_t x, y;
+    };
+    #pragma pack(pop)
+
+    PixelEvent(GameEvent::Header header, Data data) : GameEvent(header), data(std::move(data))
     {}
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
-            : GameEvent(eventNo, EventType::PIXEL), data(player_number, x, y)
+            : GameEvent(eventNo, GameEvent::Type::PIXEL), data(player_number, x, y)
     {}
+
+    Data data;
 
 private:
     std::unique_ptr<char[]> getBuffer() override;
 
     uint32_t getLength() override;
-
-    PixelEventData data;
 };
 
 

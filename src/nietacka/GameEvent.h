@@ -6,17 +6,48 @@
 #define PROJECT_GAMEEVENT_H
 
 #include <iostream>
-#include "GameEventHeader.h"
 
 
 class GameEvent {
 public:
+
+    enum class Type : uint8_t {
+        NEW_GAME = 0,
+        PIXEL = 1,
+        PLAYER_ELIMINATED = 2,
+        GAME_OVER = 3
+    };
+
+    #pragma pack(push, 1)
+    class Header {
+    public:
+        Header() = default;
+
+        Header(uint32_t eventNo, GameEvent::Type type) : eventNo(htonl(eventNo)), type(type)
+        {}
+
+        uint32_t getEventNo() const
+        {
+            return ntohl(eventNo);
+        }
+
+        GameEvent::Type getType() const
+        {
+            return type;
+        }
+
+    private:
+        uint32_t eventNo;
+        GameEvent::Type type;
+    };
+    #pragma pack(pop)
+
     virtual ~GameEvent() = default;
 
-    explicit GameEvent(GameEventHeader header) : header(std::move(header))
+    explicit GameEvent(Header header) : header(std::move(header))
     {}
 
-    GameEvent(uint32_t eventNo, EventType type) : header(eventNo, type)
+    GameEvent(uint32_t eventNo, Type type) : header(eventNo, type)
     {}
 
     static std::unique_ptr<GameEvent>
@@ -25,7 +56,7 @@ public:
     void
     writeTo(std::ostream &);
 
-    GameEventHeader header;
+    Header header;
 
 private:
     virtual uint32_t getLength() = 0;
