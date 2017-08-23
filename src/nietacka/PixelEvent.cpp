@@ -14,7 +14,4 @@ std::unique_ptr<char[]> PixelEvent::getBuffer()
     return std::move(buffer);
 }
 
-uint32_t PixelEvent::getLength()
-{
-    return sizeof(header) + sizeof(data);
-}
+

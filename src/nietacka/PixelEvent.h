@@ -9,7 +9,6 @@
 #include <utility>
 
 #include "GameEvent.h"
-#include "PixelEventData.h"
 
 class PixelEvent: public GameEvent {
 public:
@@ -58,7 +57,10 @@ public:
 private:
     std::unique_ptr<char[]> getBuffer() override;
 
-    uint32_t getLength() override;
+    uint32_t getLength() override
+    {
+        return sizeof(header) + sizeof(data);
+    }
 };
 
 

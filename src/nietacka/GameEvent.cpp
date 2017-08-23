@@ -6,8 +6,10 @@
 #include "GameEvent.h"
 #include "StreamUtils.h"
 #include "crc32c.h"
-#include "PixelEventData.h"
 #include "PixelEvent.h"
+
+// for debugging unique pointers to char[]
+template class std::unique_ptr<char[]>;
 
 std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 {
@@ -22,7 +24,7 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
     Header *header = (Header *) buffer;
     switch (header->getType()) {
         case Type::PIXEL: {
-            PixelEvent::Data *data = (PixelEvent::Data *) buffer + sizeof(header);
+            PixelEvent::Data *data = (PixelEvent::Data *) (buffer + sizeof(*header));
             return std::make_unique<PixelEvent>(*header, *data);
         }
         default: {
