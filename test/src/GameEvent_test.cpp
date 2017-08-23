@@ -3,8 +3,7 @@
 //
 
 #include <sstream>
-#include <nietacka/PixelEventData.h>
-#include <nietacka/StreamUtils.h>
+#include <nietacka/PixelEvent.h>
 
 #include "gtest/gtest.h"
 
@@ -13,15 +12,13 @@ TEST(GameEvent__Test, One)
 {
     std::stringstream s;
 
-    StreamUtils::write_int<uint32_t>(s, 123);
-    char str[] = "foo";
-    s.write(str, sizeof(str));
-    ASSERT_EQ(8, s.str().size());
+    PixelEvent e1 {123, 4, 567, 890};
+    e1.writeTo(s);
+    
+    auto e2 = GameEvent::readFrom(s);
 
-//    PixelEventData e1(123, 4, 567, 890);
-//    e1.writeTo(s);
-//
-//    std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(s);
-//    ASSERT_EQ(e1.getEventNumber(), e2->getEventNumber());
-//    ASSERT_EQ(e1.getType(), e2->getType());
+    std::cout << sizeof(e1.header.getType());
+
+    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
+    ASSERT_EQ(e1.header.getType(), e2->header.getType());
 }

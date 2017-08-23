@@ -23,7 +23,7 @@ class GameEventHeader {
 public:
     GameEventHeader() = default;
 
-    GameEventHeader(uint32_t eventNo, EventType type) : eventNo(eventNo), type(type)
+    GameEventHeader(uint32_t eventNo, EventType type) : eventNo(htonl(eventNo)), type(type)
     {}
 
     uint32_t getEventNo() const

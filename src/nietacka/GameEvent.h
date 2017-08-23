@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include "GameEventHeader.h"
-#include "GameEventData.h"
 
 
 class GameEvent {
@@ -17,13 +16,15 @@ public:
     explicit GameEvent(GameEventHeader header) : header(std::move(header))
     {}
 
-    std::unique_ptr<GameEvent>
+    GameEvent(uint32_t eventNo, EventType type) : header(eventNo, type)
+    {}
+
+    static std::unique_ptr<GameEvent>
     readFrom(std::istream &);
 
     void
     writeTo(std::ostream &);
 
-protected:
     GameEventHeader header;
 
 private:

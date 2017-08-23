@@ -16,6 +16,10 @@ public:
     PixelEvent(GameEventHeader header, PixelEventData data) : GameEvent(header), data(std::move(data))
     {}
 
+    PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
+            : GameEvent(eventNo, EventType::PIXEL), data(player_number, x, y)
+    {}
+
 private:
     std::unique_ptr<char[]> getBuffer() override;
 

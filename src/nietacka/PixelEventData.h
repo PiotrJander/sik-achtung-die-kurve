@@ -7,10 +7,9 @@
 
 
 #include "GameEvent.h"
-#include "GameEventData.h"
 
 #pragma pack(push, 1)
-class PixelEventData: public GameEventData {
+class PixelEventData {
 public:
     PixelEventData() = default;
 
