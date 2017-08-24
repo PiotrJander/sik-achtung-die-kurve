@@ -21,11 +21,16 @@ public:
 
     class Player {
     public:
-        Player(uint8_t number, const std::string &name);
+        Player(uint8_t number, uint64_t sessionId, std::map<uint64_t, PlayerConnection> &connections);
 
         uint8_t number;
-        std::string name;
+        uint64_t sessionId;
+        std::map<uint64_t, PlayerConnection> &connections;
         double x, y, heading;
+
+        std::string const & getName() const;
+
+        uint8_t getTurnDirection() const;
 
         void setCoordinates(CoordinateDouble c)
         {
@@ -41,7 +46,7 @@ public:
 
     Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy);
 
-    void addPlayers(std::vector<PlayerConnection> &playerConnections);
+    void addPlayers(std::map<uint64_t, PlayerConnection> &connections);
 
     void start();
 

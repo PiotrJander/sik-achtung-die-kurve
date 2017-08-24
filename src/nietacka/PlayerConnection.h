@@ -19,13 +19,24 @@ public:
         return name;
     }
 
+    int getSessionId() const
+    {
+        return sessionId;
+    }
+
+    uint8_t getTurnDirection() const
+    {
+        return turnDirection;
+    }
+
     bool operator < (const PlayerConnection& pc) const
     {
         return name < pc.name;
     }
 
 private:
-    int socket, session_id;
+    int socket, sessionId;
+    uint8_t turnDirection;
     std::string name;
 };
 
