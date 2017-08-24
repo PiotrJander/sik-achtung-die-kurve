@@ -62,8 +62,6 @@ private:
     virtual uint32_t getLength() = 0;
 
     virtual std::unique_ptr<char[]> getBuffer() = 0;
-
-    static std::vector<std::string> &&parsePlayerNames(char *buffer, int len);
 };
 
 

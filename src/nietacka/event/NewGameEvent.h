@@ -40,7 +40,9 @@ public:
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy);
 
     NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
-                 std::vector<std::string> &&playerNames);
+                 std::vector<std::string> playerNames);
+
+    static std::vector<std::string> parsePlayerNames(char *buffer, const char *endOfBuffer);
 
 private:
     uint32_t getSizeofPlayerNames();

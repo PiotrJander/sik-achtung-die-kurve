@@ -5,7 +5,7 @@
 #include "NewGameEvent.h"
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy)
-        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy)
+        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames(std::make_unique<std::vector<std::string>>())
 {}
 
 uint32_t NewGameEvent::getLength()
@@ -26,7 +26,7 @@ std::unique_ptr<char[]> NewGameEvent::getBuffer()
         writeLocation += name.size() + 1;
     }
     
-    return std::move(buffer);
+    return buffer;
 }
 
 uint32_t NewGameEvent::getSizeofPlayerNames()
@@ -39,6 +39,18 @@ uint32_t NewGameEvent::getSizeofPlayerNames()
 }
 
 NewGameEvent::NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
-                           std::vector<std::string> &&playerNames)
+                           std::vector<std::string> playerNames)
         : GameEvent(header), data(data), playerNames(std::make_unique<std::vector<std::string>>(playerNames))
 {}
+
+std::vector<std::string> NewGameEvent::parsePlayerNames(char *readingLocation, const char *endOfBuffer)
+{
+    std::vector<std::string> playerNames;
+    std::string string;
+    while (readingLocation < endOfBuffer) {
+        string = readingLocation;
+        readingLocation += string.size() + 1;
+        playerNames.emplace_back(std::move(string));
+    }
+    return playerNames;
+}

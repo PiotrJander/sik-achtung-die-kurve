@@ -8,11 +8,9 @@
 #include <nietacka/event/GameOverEvent.h>
 #include <nietacka/event/NewGameEvent.h>
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "ClangTidyInspection"
 #include "gtest/gtest.h"
 
-TEST(GameEvent__Test, NewGameEvent)
+TEST(GameEventTest, NewGameEvent)
 {
     std::stringstream s;
 
@@ -35,7 +33,7 @@ TEST(GameEvent__Test, NewGameEvent)
     ASSERT_EQ(e1.playerNames.get()[2], e2->playerNames.get()[2]);
 }
 
-TEST(GameEvent__Test, PixelEvent)
+TEST(GameEventTest, PixelEvent)
 {
     std::stringstream s;
 
@@ -52,7 +50,7 @@ TEST(GameEvent__Test, PixelEvent)
     ASSERT_EQ(e1.data.getY(), e2->data.getY());
 }
 
-TEST(GameEvent__Test, PlayerEliminatedEvent)
+TEST(GameEventTest, PlayerEliminatedEvent)
 {
     std::stringstream s;
 
@@ -67,7 +65,7 @@ TEST(GameEvent__Test, PlayerEliminatedEvent)
     ASSERT_EQ(e1.playerNumber, e2->playerNumber);
 }
 
-TEST(GameEvent__Test, GameOverEvent)
+TEST(GameEventTest, GameOverEvent)
 {
     std::stringstream s;
 
@@ -80,5 +78,3 @@ TEST(GameEvent__Test, GameOverEvent)
     ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
     ASSERT_EQ(e1.header.getType(), e2->header.getType());
 }
-
-#pragma clang diagnostic pop

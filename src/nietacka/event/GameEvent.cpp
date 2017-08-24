@@ -13,6 +13,7 @@
 
 // for debugging unique pointers to char[]
 template class std::unique_ptr<char[]>;
+template class std::unique_ptr<std::vector<std::string>>;
 
 std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 {
@@ -28,9 +29,8 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
     switch (header->getType()) {
         case Type::NEW_GAME: {
             auto *data = (NewGameEvent::Data *) (buffer + sizeof(*header));
-            int offset = sizeof(*header) + sizeof(*data);
-            auto playerNames = parsePlayerNames(buffer + offset, length - offset);
-            return std::make_unique<NewGameEvent>(*header, *data, std::move(playerNames));
+            auto playerNames = NewGameEvent::parsePlayerNames(buffer + sizeof(*header) + sizeof(*data), buffer + length);
+            return std::make_unique<NewGameEvent>(*header, *data, playerNames);
         }
         case Type::PIXEL: {
             auto *data = (PixelEvent::Data *) (buffer + sizeof(*header));
@@ -54,19 +54,4 @@ void GameEvent::writeTo(std::ostream &s)
     StreamUtils::write_int<uint32_t>(s, length);
     s.write(buffer.get(), length);
     StreamUtils::write_int<uint32_t>(s, checksum);
-}
-
-std::vector<std::string> &&GameEvent::parsePlayerNames(char *buffer, int len)
-{
-    char *writingLocation = buffer;
-    std::vector<std::string> playerNames;
-    int lengthRead = 0;
-    std::string string;
-    while (lengthRead < len) {
-        string = buffer;
-        lengthRead += string.size() + 1;
-        writingLocation += string.size() + 1;
-        playerNames.emplace_back(std::move(string));
-    }
-    return std::move(playerNames);
 }

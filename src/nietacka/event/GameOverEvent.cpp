@@ -10,5 +10,5 @@ std::unique_ptr<char[]> GameOverEvent::getBuffer()
     uint32_t length = getLength();
     auto buffer = std::make_unique<char[]>(length);
     std::memcpy(buffer.get(), &header, sizeof(header));
-    return std::move(buffer);
+    return buffer;
 }

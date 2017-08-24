@@ -11,7 +11,7 @@ std::unique_ptr<char[]> PixelEvent::getBuffer()
     auto buffer = std::make_unique<char[]>(length);
     std::memcpy(buffer.get(), &header, sizeof(header));
     std::memcpy(buffer.get() + sizeof(header), &data, sizeof(data));
-    return std::move(buffer);
+    return buffer;
 }
 
 

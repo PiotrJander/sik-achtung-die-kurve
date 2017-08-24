@@ -45,7 +45,7 @@ public:
     };
     #pragma pack(pop)
 
-    PixelEvent(GameEvent::Header header, Data data) : GameEvent(header), data(std::move(data))
+    PixelEvent(GameEvent::Header header, Data data) : GameEvent(header), data(data)
     {}
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
