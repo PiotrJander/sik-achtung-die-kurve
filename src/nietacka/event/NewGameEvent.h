@@ -35,7 +35,7 @@ public:
 
     Data data;
 
-    std::unique_ptr<std::vector<std::string>> playerNames;
+    std::vector<std::string> playerNames;
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy);
 

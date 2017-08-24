@@ -15,9 +15,9 @@ TEST(GameEventTest, NewGameEvent)
     std::stringstream s;
 
     NewGameEvent e1 {123, 800, 600};
-    e1.playerNames->emplace_back("Piotr");
-    e1.playerNames->emplace_back("John");
-    e1.playerNames->emplace_back("Jane");
+    e1.playerNames.emplace_back("Piotr");
+    e1.playerNames.emplace_back("John");
+    e1.playerNames.emplace_back("Jane");
 
     e1.writeTo(s);
 
@@ -28,9 +28,9 @@ TEST(GameEventTest, NewGameEvent)
     ASSERT_EQ(e1.header.getType(), e2->header.getType());
     ASSERT_EQ(e1.data.getMaxx(), e2->data.getMaxx());
     ASSERT_EQ(e1.data.getMaxy(), e2->data.getMaxy());
-    ASSERT_EQ(e1.playerNames->at(0), e2->playerNames->at(0));
-    ASSERT_EQ(e1.playerNames->at(1), e2->playerNames->at(1));
-    ASSERT_EQ(e1.playerNames->at(2), e2->playerNames->at(2));
+    ASSERT_EQ(e1.playerNames.at(0), e2->playerNames.at(0));
+    ASSERT_EQ(e1.playerNames.at(1), e2->playerNames.at(1));
+    ASSERT_EQ(e1.playerNames.at(2), e2->playerNames.at(2));
 }
 
 TEST(GameEventTest, PixelEvent)
