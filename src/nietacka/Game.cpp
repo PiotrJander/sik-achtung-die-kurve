@@ -5,10 +5,12 @@
 #include <map>
 #include <tclDecls.h>
 #include <tkDecls.h>
+#include <cmath>
 #include "Game.h"
 #include "event/NewGameEvent.h"
 #include "event/PlayerEliminatedEvent.h"
 #include "event/PixelEvent.h"
+#include "event/GameOverEvent.h"
 
 
 Game::Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy)
@@ -36,7 +38,7 @@ void Game::addPlayers(std::map<uint64_t, PlayerConnection> &connections)
     }
 }
 
-void Game::start()
+bool Game::start()
 {
     // make vector of player names
     std::vector<std::string> playerNames;
@@ -54,13 +56,60 @@ void Game::start()
         player.heading = random.rand() % 360;
 
         if (shouldPlayerGetEliminated(player)) {
+            player.eliminated = true;
             events.emplace_back(PlayerEliminatedEvent(nextEventNo(), player.number));
-            // TODO set player to be eliminated
+            if (numberOfPlayers() == 1) {
+                events.emplace_back(GameOverEvent(nextEventNo()));
+                return false;
+            }
         } else {
             setPixel(player.getCoordinates());
             events.emplace_back(PixelEvent(nextEventNo(), player.number, coors.first, coors.second));
         }
     }
+    return true;
+}
+
+bool Game::tick()
+{
+    for (auto &&player : players) {
+        // update heading
+        player.heading += player.getTurnDirection() * turningSpeed;
+
+        // save old position and update position
+        CoordinateInt previousPosition = player.getCoordinates();
+        player.x += cos(player.heading);
+        player.y += sin(player.heading);
+        CoordinateInt newPosition = player.getCoordinates();
+
+        if (previousPosition == newPosition) {
+            // do nothing
+        } else if (shouldPlayerGetEliminated(player)) {
+            player.eliminated = true;
+            events.emplace_back(PlayerEliminatedEvent(nextEventNo(), player.number));
+            if (numberOfPlayers() == 1) {
+                events.emplace_back(GameOverEvent(nextEventNo()));
+                return false;
+            }
+        } else {
+            setPixel(newPosition);
+            events.emplace_back(PixelEvent(nextEventNo(), player.number, newPosition.first, newPosition.second));
+        }
+    }
+
+    // still multiple players; so game goes on
+    return true;
+}
+
+int Game::numberOfPlayers() const
+{
+    int n = 0;
+    for (auto &&player : players) {
+        if (!player.eliminated) {
+            n++;
+        }
+    }
+    return n;
 }
 
 Game::Player::Player(uint8_t number, uint64_t sessionId, std::map<uint64_t, PlayerConnection> &connections)

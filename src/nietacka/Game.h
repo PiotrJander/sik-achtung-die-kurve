@@ -27,6 +27,7 @@ public:
         uint64_t sessionId;
         std::map<uint64_t, PlayerConnection> &connections;
         double x, y, heading;
+        bool eliminated;
 
         std::string const & getName() const;
 
@@ -48,9 +49,9 @@ public:
 
     void addPlayers(std::map<uint64_t, PlayerConnection> &connections);
 
-    void start();
+    bool start();
 
-    void tick();
+    bool tick();
 
 private:
     Random random;
@@ -77,16 +78,18 @@ private:
     {
         return matrix.at(c.first).at(c.second);
     }
-    
+
     bool shouldPlayerGetEliminated(const Player &p) const
     {
-        const CoordinateInt &c = p.getCoordinates();
+        const CoordinateInt c = p.getCoordinates();
         return isSetPixel(c) || c.first < 0 || c.first >= maxx || c.second < 0 || c.second >= maxy;
     };
 
     uint32_t nextEventNo() {
         return eventNoCounter++;
     }
+
+    int numberOfPlayers() const;
 };
 
 

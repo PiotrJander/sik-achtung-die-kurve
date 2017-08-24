@@ -10,10 +10,6 @@
 
 class PlayerConnection {
 public:
-    PlayerConnection() = default;
-    PlayerConnection(const PlayerConnection &) = default;
-    PlayerConnection(PlayerConnection &&) = default;
-
     const std::string &getName() const
     {
         return name;
@@ -27,11 +23,6 @@ public:
     uint8_t getTurnDirection() const
     {
         return turnDirection;
-    }
-
-    bool operator < (const PlayerConnection& pc) const
-    {
-        return name < pc.name;
     }
 
 private:
