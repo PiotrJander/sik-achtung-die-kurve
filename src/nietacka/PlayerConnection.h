@@ -10,6 +10,10 @@
 
 class PlayerConnection {
 public:
+    PlayerConnection() = default;
+    PlayerConnection(const PlayerConnection &) = default;
+    PlayerConnection(PlayerConnection &&) = default;
+
     const std::string &getName() const
     {
         return name;

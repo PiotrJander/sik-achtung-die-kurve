@@ -8,6 +8,15 @@ NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy)
         : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames()
 {}
 
+NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames)
+        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames(), playerNames(playerNames)
+{}
+
+NewGameEvent::NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
+                           std::vector<std::string> playerNames)
+        : GameEvent(header), data(data), playerNames(playerNames)
+{}
+
 uint32_t NewGameEvent::getLength()
 {
     return sizeof(header) + sizeof(data) + getSizeofPlayerNames();
@@ -37,11 +46,6 @@ uint32_t NewGameEvent::getSizeofPlayerNames()
     }
     return size;
 }
-
-NewGameEvent::NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
-                           std::vector<std::string> playerNames)
-        : GameEvent(header), data(data), playerNames(playerNames)
-{}
 
 std::vector<std::string> NewGameEvent::parsePlayerNames(char *readingLocation, const char *endOfBuffer)
 {

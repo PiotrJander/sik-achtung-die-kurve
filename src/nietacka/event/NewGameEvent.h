@@ -39,6 +39,8 @@ public:
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy);
 
+    NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames);
+
     NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
                  std::vector<std::string> playerNames);
 

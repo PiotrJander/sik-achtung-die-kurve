@@ -13,33 +13,48 @@
 #include "event/GameEvent.h"
 #include "Random.h"
 
+typedef std::pair<uint32_t , uint32_t> CoordinateInt;
+typedef std::pair<double , double> CoordinateDouble;
+
 class Game {
 public:
 
     class Player {
     public:
-        Player(uint8_t number, const std::string &name, double x, double y, double heading);
+        Player(uint8_t number, const std::string &name);
 
         uint8_t number;
         std::string name;
         double x, y, heading;
+
+        void setCoordinates(CoordinateDouble c)
+        {
+            x = c.first;
+            y = c.second;
+        }
+
+        CoordinateInt getCoordinates() const
+        {
+            return CoordinateInt(x, y);
+        }
     };
 
     Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy);
 
     void addPlayers(std::vector<PlayerConnection> &playerConnections);
 
+    void start();
+
     void tick();
 
 private:
-
     Random random;
 
     std::vector<Player> players;
 
-    int turningSpeed, nextEventNo = 0;
+    int turningSpeed;
 
-    uint32_t id, maxx, maxy;
+    uint32_t id, maxx, maxy, eventNoCounter = 0;
 
     /**
      * Vector of columns
@@ -47,6 +62,26 @@ private:
     std::vector<std::vector<bool>> matrix;
 
     std::vector<GameEvent> events;
+
+    void setPixel(CoordinateInt c)
+    {
+        matrix.at(c.first).at(c.second) = true;
+    }
+
+    bool isSetPixel(CoordinateInt c) const
+    {
+        return matrix.at(c.first).at(c.second);
+    }
+    
+    bool shouldPlayerGetEliminated(const Player &p) const
+    {
+        const CoordinateInt &c = p.getCoordinates();
+        return isSetPixel(c) || c.first < 0 || c.first >= maxx || c.second < 0 || c.second >= maxy;
+    };
+
+    uint32_t nextEventNo() {
+        return eventNoCounter++;
+    }
 };
 
 
