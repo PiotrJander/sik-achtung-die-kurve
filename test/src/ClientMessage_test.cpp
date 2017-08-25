@@ -3,28 +3,25 @@
 //
 
 #include <sstream>
-//#include <string>
 #include "gtest/gtest.h"
 #include <nietacka/ClientMessage.h>
 
-//using namespace std::string_literals;
 
 TEST(ClientMessage__Test, First)
 {
-    uint64_t session_id = 123;
-    int8_t turn_direction = 1;
-    uint32_t next_expected_event_no = 456;
-    char player_name[64] = "PiotrJander";
-
-    ClientMessage writeCM(session_id, turn_direction, next_expected_event_no, player_name);
-    ClientMessage readCM;
-
     std::stringstream stream;
-    stream.write((char *) &writeCM, sizeof(writeCM));
-    stream.read((char *) &readCM, sizeof(readCM));
 
-    ASSERT_EQ(session_id, readCM.getSession_id());
-    ASSERT_EQ(turn_direction, readCM.getTurn_direction());
-    ASSERT_EQ(next_expected_event_no, readCM.getNext_expected_event_no());
-    ASSERT_EQ(0, strcmp(player_name, readCM.getPlayer_name()));
+    ClientMessage cm1(123, 1, 456, "PiotrJander");
+    ClientMessage::SelfPacked packedCm1(cm1);
+    ClientMessage::SelfPacked packedCm2;
+
+    stream.write(reinterpret_cast<const char *>(&packedCm1), sizeof(ClientMessage::SelfPacked));
+    stream.read(reinterpret_cast<char *>(&packedCm2), sizeof(ClientMessage::SelfPacked));
+
+    ClientMessage cm2(packedCm2);
+
+    ASSERT_EQ(cm1.getSessionId(), cm2.getSessionId());
+    ASSERT_EQ(cm1.getTurnDirection(), cm2.getTurnDirection());
+    ASSERT_EQ(cm1.getNextExpectedEventNo(), cm2.getNextExpectedEventNo());
+    ASSERT_EQ(cm1.getPlayerName(), cm2.getPlayerName());
 }

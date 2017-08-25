@@ -11,28 +11,57 @@
 
 using std::string;
 
-#pragma pack(push, 1)
 class ClientMessage {
 public:
-    ClientMessage() = default;
 
-    ClientMessage(uint64_t session_id, int8_t turn_direction, uint32_t next_expected_event_no, char *player_name);
+    /*
+     * packed structs ~~~~~~~~~~~~~~~~~~~~~
+     */
+#pragma pack(push, 1)
+    struct SelfPacked {
+        SelfPacked(const ClientMessage &clientMessage)
+                : sessionId(htonll(clientMessage.getSessionId())),
+                  turnDirection(clientMessage.getTurnDirection()),
+                  nextExpectedEventNo(htonl(clientMessage.getNextExpectedEventNo()))
+        {
+            strncpy(playerName, clientMessage.getPlayerName().c_str(), 64);
+        }
 
-    uint64_t getSession_id() const;
+        SelfPacked() = default;
 
-    int8_t getTurn_direction() const;
+        uint64_t sessionId;
+        int8_t turnDirection;
+        uint32_t nextExpectedEventNo;
+        char playerName[64];
+    };
+#pragma pack(pop)
+    /*
+     * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
+     */
 
-    uint32_t getNext_expected_event_no() const;
+    ClientMessage(uint64_t session_id, int8_t turn_direction, uint32_t next_expected_event_no,
+                  const string &player_name);
 
-    const char *getPlayer_name() const;
+    ClientMessage(const SelfPacked &packed)
+            : sessionId(ntohll(packed.sessionId)),
+              turnDirection(packed.turnDirection),
+              nextExpectedEventNo(ntohl(packed.nextExpectedEventNo)),
+              playerName(packed.playerName)
+    {}
+
+    uint64_t getSessionId() const;
+
+    int8_t getTurnDirection() const;
+
+    uint32_t getNextExpectedEventNo() const;
+
+    const std::string &getPlayerName() const;
 
 private:
-    uint64_t session_id;
-    int8_t turn_direction;
-    uint32_t next_expected_event_no;
-    char player_name[64];
+    uint64_t sessionId;
+    int8_t turnDirection;
+    uint32_t nextExpectedEventNo;
+    std::string playerName;
 };
-#pragma pack(pop)
-
 
 #endif //NIETACKA_CLIENTMESSAGE_H

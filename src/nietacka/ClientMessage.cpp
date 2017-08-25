@@ -5,28 +5,29 @@
 #include "ClientMessage.h"
 
 ClientMessage::ClientMessage(uint64_t session_id, int8_t turn_direction, uint32_t next_expected_event_no,
-                             char *player_name) : session_id(htonll(session_id)), turn_direction(turn_direction),
-                                                  next_expected_event_no(htonl(next_expected_event_no))
+                             const string &player_name)
+        : sessionId(session_id),
+          turnDirection(turn_direction),
+          nextExpectedEventNo(next_expected_event_no),
+          playerName(player_name)
+{}
+
+uint64_t ClientMessage::getSessionId() const
 {
-    strcpy(this->player_name, player_name);
+    return sessionId;
 }
 
-uint64_t ClientMessage::getSession_id() const
+int8_t ClientMessage::getTurnDirection() const
 {
-    return ntohll(session_id);
+    return turnDirection;
 }
 
-int8_t ClientMessage::getTurn_direction() const
+uint32_t ClientMessage::getNextExpectedEventNo() const
 {
-    return turn_direction;
+    return nextExpectedEventNo;
 }
 
-uint32_t ClientMessage::getNext_expected_event_no() const
+const std::string &ClientMessage::getPlayerName() const
 {
-    return ntohl(next_expected_event_no);
-}
-
-const char *ClientMessage::getPlayer_name() const
-{
-    return player_name;
+    return playerName;
 }
