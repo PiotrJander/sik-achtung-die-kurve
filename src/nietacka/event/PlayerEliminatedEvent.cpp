@@ -6,11 +6,8 @@
 
 void PlayerEliminatedEvent::writeToBuffer(void *buffer)
 {
-    uint32_t length = getLength();
-    auto buffer = std::make_unique<char[]>(length);
-    std::memcpy(buffer.get(), &header, sizeof(header));
-    std::memcpy(buffer.get() + sizeof(header), &playerNumber, sizeof(playerNumber));
-    return buffer;
+    auto buf = reinterpret_cast<SelfPacked *>(buffer);
+    *buf = SelfPacked(*this);
 }
 
 bool PlayerEliminatedEvent::operator==(const GameEvent &other) const

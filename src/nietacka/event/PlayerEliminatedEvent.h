@@ -10,26 +10,45 @@
 
 class PlayerEliminatedEvent: public GameEvent {
 public:
-    PlayerEliminatedEvent(const GameEvent::Header &header, uint8_t playerNumber)
-            : GameEvent(header),
-              playerNumber(playerNumber)
+    struct SelfPacked;
+
+    PlayerEliminatedEvent(const SelfPacked &packed)
+            : GameEvent(packed.header),
+              playerNumber(packed.playerNumber)
     {};
 
-    PlayerEliminatedEvent(uint32_t eventNo, uint8_t playerNumber) : GameEvent(eventNo, Type::PLAYER_ELIMINATED),
-                                                                               playerNumber(playerNumber)
+    PlayerEliminatedEvent(uint32_t eventNo, uint8_t playerNumber)
+            : GameEvent(eventNo, Type::PLAYER_ELIMINATED), playerNumber(playerNumber)
     {}
-
-    uint8_t playerNumber;
 
     bool operator==(const GameEvent &other) const override;
 
+    uint8_t getPlayerNumber() const
+    {
+        return playerNumber;
+    }
+
 private:
+    uint8_t playerNumber;
+
     uint32_t getLength() override {
-        return sizeof(header) + sizeof(playerNumber);
+        return sizeof(SelfPacked);
     }
 
     void writeToBuffer(void *buffer) override;
 };
+
+
+#pragma pack(push, 1)
+struct PlayerEliminatedEvent::SelfPacked {
+    SelfPacked(const PlayerEliminatedEvent &eliminatedEvent)
+            : header(eliminatedEvent), playerNumber(eliminatedEvent.getPlayerNumber())
+    {}
+
+    GameEvent::HeaderPacked header;
+    uint8_t playerNumber;
+};
+#pragma pack(pop)
 
 
 #endif //PROJECT_PLAYERELIMINATEDEVENT_H

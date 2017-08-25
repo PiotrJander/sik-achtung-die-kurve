@@ -35,12 +35,11 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
             return std::make_unique<NewGameEvent>(*packedNoPlayerNames, playerNames);
         }
         case Type::PIXEL: {
-            auto packedPixelEvent = reinterpret_cast<PixelEvent::SelfPacked *>(buffer);
-            return std::make_unique<PixelEvent>(*packedPixelEvent);
+            return std::make_unique<PixelEvent>(*reinterpret_cast<PixelEvent::SelfPacked *>(buffer));
         }
         case Type::PLAYER_ELIMINATED: {
-            auto *playerNumber = (uint8_t *) (buffer + sizeof(*header));
-            return std::make_unique<PlayerEliminatedEvent>(*header, *playerNumber);
+            auto eliminatedPacked = reinterpret_cast<PlayerEliminatedEvent::SelfPacked *>(buffer);
+            return std::make_unique<PlayerEliminatedEvent>(*eliminatedPacked);
         }
         case Type::GAME_OVER: {
             return std::make_unique<GameOverEvent>(*header);
