@@ -12,14 +12,6 @@ NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::
         : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames(playerNames)
 {}
 
-NewGameEvent::NewGameEvent(const GameEvent::HeaderPacked &header, const NewGameEvent::DataPacked &data,
-                           std::vector<std::string> playerNames)
-        : GameEvent(header),
-          maxx(ntohl(data.maxx)),
-          maxy(ntohl(data.maxy)),
-          playerNames(playerNames)
-{}
-
 uint32_t NewGameEvent::getLength()
 {
     return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();

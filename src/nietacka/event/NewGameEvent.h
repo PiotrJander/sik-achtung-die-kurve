@@ -20,8 +20,12 @@ public:
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames);
 
-    NewGameEvent(const GameEvent::HeaderPacked &header, const NewGameEvent::DataPacked &data,
-                               std::vector<std::string> playerNames);
+    NewGameEvent(const SelfPackedNoPlayerNames &selfPacked, std::vector<std::string> playerNames)
+            : GameEvent(selfPacked.header),
+              maxx(ntohl(selfPacked.data.maxx)),
+              maxy(ntohl(selfPacked.data.maxy)),
+              playerNames(playerNames)
+    {}
 
     static std::vector<std::string> parsePlayerNames(char *buffer, const char *endOfBuffer);
 

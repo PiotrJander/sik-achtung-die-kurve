@@ -10,60 +10,70 @@
 
 #include "GameEvent.h"
 
-class PixelEvent: public GameEvent {
+class PixelEvent : public GameEvent {
 public:
+    struct DataPacked;
+    struct SelfPacked;
 
-    #pragma pack(push, 1)
-    class Data {
-    public:
-        Data() = default;
-
-        Data(uint8_t player_number, uint32_t x, uint32_t y)
-                : playerNumber(player_number),
-                  x(htonl(x)),
-                  y(htonl(y))
-        {}
-
-        uint8_t getPlayerNumber() const
-        {
-            return playerNumber;
-        }
-
-        uint32_t getX() const
-        {
-            return ntohl(x);
-        }
-
-        uint32_t getY() const
-        {
-            return ntohl(y);
-        }
-
-    private:
-        uint8_t playerNumber;
-        uint32_t x, y;
-    };
-    #pragma pack(pop)
-
-    PixelEvent(GameEvent::Header header, Data data) : GameEvent(header), data(data)
+    PixelEvent(GameEvent::HeaderPacked header, DataPacked data)
+            : GameEvent(header), playerNumber(data.playerNumber), x(ntohl(data.x)), y(ntohl(data.y))
     {}
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
-            : GameEvent(eventNo, GameEvent::Type::PIXEL), data(player_number, x, y)
+            : GameEvent(eventNo, GameEvent::Type::PIXEL), playerNumber(player_number), x(x), y(y)
     {}
-
-    Data data;
 
     bool operator==(const GameEvent &other) const override;
 
+    uint8_t getPlayerNumber() const
+    {
+        return playerNumber;
+    }
+
+    uint32_t getX() const
+    {
+        return x;
+    }
+
+    uint32_t getY() const
+    {
+        return y;
+    }
+
 private:
+    uint8_t playerNumber;
+    uint32_t x, y;
+
     void writeToBuffer(void *buffer) override;
 
     uint32_t getLength() override
     {
-        return sizeof(header) + sizeof(data);
+        return sizeof(SelfPacked);
     }
 };
 
+#pragma pack(push, 1)
+
+struct PixelEvent::DataPacked {
+    DataPacked(const PixelEvent &pixelEvent)
+            : playerNumber(pixelEvent.getPlayerNumber()),
+              x(htonl(pixelEvent.getX())),
+              y(htonl(pixelEvent.getY()))
+    {}
+
+    uint8_t playerNumber;
+    uint32_t x, y;
+};
+
+struct PixelEvent::SelfPacked {
+    SelfPacked(const PixelEvent &pixelEvent) : header(pixelEvent), data(pixelEvent)
+    {}
+
+    GameEvent::HeaderPacked header;
+    DataPacked data;
+};
+
+
+#pragma pack(pop)
 
 #endif //PROJECT_PIXELEVENT_H

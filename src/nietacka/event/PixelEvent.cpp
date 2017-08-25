@@ -7,20 +7,17 @@
 
 void PixelEvent::writeToBuffer(void *buffer)
 {
-    uint32_t length = getLength();
-    auto buffer = std::make_unique<char[]>(length);
-    std::memcpy(buffer.get(), &header, sizeof(header));
-    std::memcpy(buffer.get() + sizeof(header), &data, sizeof(data));
-    return buffer;
+    SelfPacked *buf = reinterpret_cast<SelfPacked *>(buffer);
+    *buf = SelfPacked(*this);
 }
 
 bool PixelEvent::operator==(const GameEvent &other) const
 {
     if (auto *o = dynamic_cast<const PixelEvent *>(&other)) {
         return GameEvent::operator==(other)
-               && o->data.getPlayerNumber() == data.getPlayerNumber()
-               && o->data.getX() == data.getX()
-               && o->data.getY() == data.getY();
+               && o->getPlayerNumber() == getPlayerNumber()
+               && o->getX() == getX()
+               && o->getY() == getY();
     } else {
         return false;
     }
