@@ -84,8 +84,8 @@ TEST(GameTest, StartPixelEvents)
     try {
         auto &newGameEvent = dynamic_cast<NewGameEvent &>(*game.getEvents().at(0));
         ASSERT_EQ(newGameEvent, NewGameEvent(0, 800, 600));
-        ASSERT_EQ(newGameEvent.playerNames.at(0), "Piotr");
-        ASSERT_EQ(newGameEvent.playerNames.at(1), "Stan");
+        ASSERT_EQ(newGameEvent.getPlayerNames().at(0), "Piotr");
+        ASSERT_EQ(newGameEvent.getPlayerNames().at(1), "Stan");
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
     }

@@ -51,7 +51,7 @@ private:
         return sizeof(SelfPacked);
     }
 
-    void writeToBuffer(void *buffer) override;
+    void writeToBuffer(char *buffer) override;
 };
 
 #endif //PROJECT_PLAYERELIMINATEDEVENT_H

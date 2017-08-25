@@ -72,7 +72,7 @@ private:
     uint8_t playerNumber;
     uint32_t x, y;
 
-    void writeToBuffer(void *buffer) override;
+    void writeToBuffer(char *buffer) override;
 
     uint32_t getLength() override
     {

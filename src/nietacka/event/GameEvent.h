@@ -67,7 +67,7 @@ private:
 
     virtual uint32_t getLength() = 0;
 
-    virtual void writeToBuffer(void *buffer) = 0;
+    virtual void writeToBuffer(char *buffer) = 0;
 };
 
 #endif //PROJECT_GAMEEVENT_H

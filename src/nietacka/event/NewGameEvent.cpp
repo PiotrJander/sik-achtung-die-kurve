@@ -17,12 +17,12 @@ uint32_t NewGameEvent::getLength()
     return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();
 }
 
-void NewGameEvent::writeToBuffer(void *buffer)
+void NewGameEvent::writeToBuffer(char *buffer)
 {
     auto buf = reinterpret_cast<SelfPackedNoPlayerNames *>(buffer);
     *buf = SelfPackedNoPlayerNames(*this);
-    
-    char *writeLocation = reinterpret_cast<char *>(buf + sizeof(SelfPackedNoPlayerNames));
+
+    char *writeLocation = buffer + sizeof(SelfPackedNoPlayerNames);
     for (auto &name : playerNames) {
         strcpy(writeLocation, name.c_str());
         writeLocation += name.size() + 1;

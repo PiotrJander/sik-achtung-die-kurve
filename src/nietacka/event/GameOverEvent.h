@@ -22,7 +22,7 @@ private:
         return sizeof(HeaderPacked);
     }
 
-    void writeToBuffer(void *buffer) override;
+    void writeToBuffer(char *buffer) override;
 };
 
 

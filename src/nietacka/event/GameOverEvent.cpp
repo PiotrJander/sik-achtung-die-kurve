@@ -4,7 +4,7 @@
 
 #include "GameOverEvent.h"
 
-void GameOverEvent::writeToBuffer(void *buffer)
+void GameOverEvent::writeToBuffer(char *buffer)
 {
     auto buf = reinterpret_cast<GameOverEvent::HeaderPacked *>(buffer);
     *buf = HeaderPacked(*this);

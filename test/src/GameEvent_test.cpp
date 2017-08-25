@@ -14,23 +14,21 @@ TEST(GameEventTest, NewGameEvent)
 {
     std::stringstream s;
 
-    NewGameEvent e1 {123, 800, 600};
-    e1.playerNames.emplace_back("Piotr");
-    e1.playerNames.emplace_back("John");
-    e1.playerNames.emplace_back("Jane");
+    std::vector<std::string> names {"Piotr", "John", "Jane"};
+    NewGameEvent e1 {123, 800, 600, names};
 
     e1.writeTo(s);
 
     auto _e2 = GameEvent::readFrom(s);
     auto *e2 = (NewGameEvent *) _e2.get();
 
-    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
-    ASSERT_EQ(e1.header.getType(), e2->header.getType());
-    ASSERT_EQ(e1.data.getMaxx(), e2->data.getMaxx());
-    ASSERT_EQ(e1.data.getMaxy(), e2->data.getMaxy());
-    ASSERT_EQ(e1.playerNames.at(0), e2->playerNames.at(0));
-    ASSERT_EQ(e1.playerNames.at(1), e2->playerNames.at(1));
-    ASSERT_EQ(e1.playerNames.at(2), e2->playerNames.at(2));
+    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
+    ASSERT_EQ(e1.getType(), e2->getType());
+    ASSERT_EQ(e1.getMaxx(), e2->getMaxx());
+    ASSERT_EQ(e1.getMaxy(), e2->getMaxy());
+    ASSERT_EQ(e1.getPlayerNames().at(0), e2->getPlayerNames().at(0));
+    ASSERT_EQ(e1.getPlayerNames().at(1), e2->getPlayerNames().at(1));
+    ASSERT_EQ(e1.getPlayerNames().at(2), e2->getPlayerNames().at(2));
 }
 
 TEST(GameEventTest, PixelEvent)
@@ -43,11 +41,11 @@ TEST(GameEventTest, PixelEvent)
     auto _e2 = GameEvent::readFrom(s);
     auto *e2 = (PixelEvent *) _e2.get();
 
-    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
-    ASSERT_EQ(e1.header.getType(), e2->header.getType());
-    ASSERT_EQ(e1.data.getPlayerNumber(), e2->data.getPlayerNumber());
-    ASSERT_EQ(e1.data.getX(), e2->data.getX());
-    ASSERT_EQ(e1.data.getY(), e2->data.getY());
+    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
+    ASSERT_EQ(e1.getType(), e2->getType());
+    ASSERT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
+    ASSERT_EQ(e1.getX(), e2->getX());
+    ASSERT_EQ(e1.getY(), e2->getY());
 }
 
 TEST(GameEventTest, PlayerEliminatedEvent)
@@ -60,9 +58,9 @@ TEST(GameEventTest, PlayerEliminatedEvent)
     auto _e2 = GameEvent::readFrom(s);
     auto *e2 = (PlayerEliminatedEvent *) _e2.get();
 
-    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
-    ASSERT_EQ(e1.header.getType(), e2->header.getType());
-    ASSERT_EQ(e1.playerNumber, e2->playerNumber);
+    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
+    ASSERT_EQ(e1.getType(), e2->getType());
+    ASSERT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
 }
 
 TEST(GameEventTest, GameOverEvent)
@@ -75,6 +73,6 @@ TEST(GameEventTest, GameOverEvent)
     auto _e2 = GameEvent::readFrom(s);
     auto *e2 = (GameOverEvent *) _e2.get();
 
-    ASSERT_EQ(e1.header.getEventNo(), e2->header.getEventNo());
-    ASSERT_EQ(e1.header.getType(), e2->header.getType());
+    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
+    ASSERT_EQ(e1.getType(), e2->getType());
 }

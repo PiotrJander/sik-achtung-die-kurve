@@ -5,7 +5,7 @@
 #include "PixelEvent.h"
 
 
-void PixelEvent::writeToBuffer(void *buffer)
+void PixelEvent::writeToBuffer(char *buffer)
 {
     SelfPacked *buf = reinterpret_cast<SelfPacked *>(buffer);
     *buf = SelfPacked(*this);

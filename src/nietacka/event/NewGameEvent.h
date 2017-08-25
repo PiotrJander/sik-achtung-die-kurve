@@ -38,8 +38,6 @@ public:
      * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
      */
 
-    std::vector<std::string> playerNames;
-
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy);
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames);
@@ -65,14 +63,21 @@ public:
         return maxy;
     }
 
+    const std::vector<std::string> &getPlayerNames() const
+    {
+        return playerNames;
+    }
+
 private:
     uint32_t maxx, maxy;
+
+    std::vector<std::string> playerNames;
 
     uint32_t getSizeofPlayerNames();
 
     uint32_t getLength() override;
 
-    void writeToBuffer(void *buffer) override;
+    void writeToBuffer(char *buffer) override;
 };
 
 #endif //PROJECT_NEWGAMEEVENT_H

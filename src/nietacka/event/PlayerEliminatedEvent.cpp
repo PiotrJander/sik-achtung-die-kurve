@@ -4,7 +4,7 @@
 
 #include "PlayerEliminatedEvent.h"
 
-void PlayerEliminatedEvent::writeToBuffer(void *buffer)
+void PlayerEliminatedEvent::writeToBuffer(char *buffer)
 {
     auto buf = reinterpret_cast<SelfPacked *>(buffer);
     *buf = SelfPacked(*this);

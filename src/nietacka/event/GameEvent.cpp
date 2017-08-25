@@ -18,7 +18,8 @@ template class std::unique_ptr<std::vector<std::string>>;
 std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 {
     auto length = StreamUtils::read_int<uint32_t>(s);
-    char buffer[length];
+    auto bufferBox = std::make_unique<char[]>(length);
+    char *buffer = bufferBox.get();
     s.read(buffer, length);
     auto expectedChecksum = StreamUtils::read_int<uint32_t>(s);
     uint32_t actualChecksum = crc32c(0, (unsigned char *) buffer, length);
@@ -50,11 +51,12 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 void GameEvent::writeTo(std::ostream &s)
 {
     uint32_t length = getLength();
-    unsigned char buffer[length];
+    auto bufferBox = std::make_unique<char[]>(length);
+    char *buffer = bufferBox.get();
     writeToBuffer(buffer);
     uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
     StreamUtils::write_int<uint32_t>(s, length);
-    s.write(reinterpret_cast<const char *>(buffer), length);
+    s.write(buffer, length);
     StreamUtils::write_int<uint32_t>(s, checksum);
 }
 
