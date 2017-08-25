@@ -9,7 +9,7 @@ NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy)
 {}
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames)
-        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames(), playerNames(playerNames)
+        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames(playerNames)
 {}
 
 NewGameEvent::NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,

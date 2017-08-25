@@ -15,19 +15,24 @@ public:
         return name;
     }
 
-    int getSessionId() const
+    uint64_t getSessionId() const
     {
         return sessionId;
     }
 
-    uint8_t getTurnDirection() const
+    int8_t getTurnDirection() const
     {
         return turnDirection;
     }
 
+    PlayerConnection(uint64_t sessionId, int socket, int8_t turnDirection, const std::string &name)
+            : socket(socket), sessionId(sessionId), turnDirection(turnDirection), name(name)
+    {}
+
 private:
-    int socket, sessionId;
-    uint8_t turnDirection;
+    uint64_t sessionId;
+    int socket;
+    int8_t turnDirection;
     std::string name;
 };
 

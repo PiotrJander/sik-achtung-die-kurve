@@ -3,8 +3,6 @@
 //
 
 #include <map>
-#include <tclDecls.h>
-#include <tkDecls.h>
 #include <cmath>
 #include "Game.h"
 #include "event/NewGameEvent.h"
@@ -29,7 +27,7 @@ void Game::addPlayers(std::map<uint64_t, PlayerConnection> &connections)
     }
 
     // sort by name
-    std::sort(sessionIds.begin(), sessionIds.end(), [](uint64_t s1, uint64_t s2) {
+    std::sort(sessionIds.begin(), sessionIds.end(), [connections](uint64_t s1, uint64_t s2) {
         return connections.at(s1).getName() < connections.at(s2).getName();
     });
 
@@ -47,24 +45,24 @@ bool Game::start()
     }
 
     // make new game event
-    events.emplace_back(NewGameEvent(nextEventNo(), maxx, maxy, std::move(playerNames)));
+    events.emplace_back(std::make_unique<NewGameEvent>(nextEventNo(), maxx, maxy, std::move(playerNames)));
 
     for (auto &&player : players) {
         // generate coordinates and heading
-        CoordinateInt coors((random.rand() % maxx) + 0.5, (random.rand() % maxy) + 0.5);
+        CoordinateLong coors((random.rand() % maxx) + 0.5, (random.rand() % maxy) + 0.5);
         player.setCoordinates(coors);
         player.heading = random.rand() % 360;
 
         if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
-            events.emplace_back(PlayerEliminatedEvent(nextEventNo(), player.number));
+            events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
-                events.emplace_back(GameOverEvent(nextEventNo()));
+                events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
                 return false;
             }
         } else {
             setPixel(player.getCoordinates());
-            events.emplace_back(PixelEvent(nextEventNo(), player.number, coors.first, coors.second));
+            events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, coors.first, coors.second));
         }
     }
     return true;
@@ -77,23 +75,23 @@ bool Game::tick()
         player.heading += player.getTurnDirection() * turningSpeed;
 
         // save old position and update position
-        CoordinateInt previousPosition = player.getCoordinates();
+        CoordinateLong previousPosition = player.getCoordinates();
         player.x += cos(player.heading);
         player.y += sin(player.heading);
-        CoordinateInt newPosition = player.getCoordinates();
+        CoordinateLong newPosition = player.getCoordinates();
 
         if (previousPosition == newPosition) {
             // do nothing
         } else if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
-            events.emplace_back(PlayerEliminatedEvent(nextEventNo(), player.number));
+            events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
-                events.emplace_back(GameOverEvent(nextEventNo()));
+                events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
                 return false;
             }
         } else {
             setPixel(newPosition);
-            events.emplace_back(PixelEvent(nextEventNo(), player.number, newPosition.first, newPosition.second));
+            events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, newPosition.first, newPosition.second));
         }
     }
 
@@ -118,15 +116,16 @@ Game::Player::Player(uint8_t number, uint64_t sessionId, std::map<uint64_t, Play
 
 std::string const &Game::Player::getName() const
 {
+    static const std::string emptyString = "";
     const auto &conn = connections.find(sessionId);
     if (conn == connections.end()) {
-        return "";
+        return emptyString;
     } else {
         return conn->second.getName();
     }
 }
 
-uint8_t Game::Player::getTurnDirection() const
+int8_t Game::Player::getTurnDirection() const
 {
     const auto &conn = connections.find(sessionId);
     if (conn == connections.end()) {

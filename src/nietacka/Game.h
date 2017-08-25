@@ -9,15 +9,19 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
+#include <gtest/gtest_prod.h>
 #include "PlayerConnection.h"
 #include "event/GameEvent.h"
 #include "Random.h"
 
-typedef std::pair<uint32_t , uint32_t> CoordinateInt;
+typedef std::pair<long , long> CoordinateLong;
+typedef std::pair<unsigned long , unsigned long> CoordinateUnsignedLong;
 typedef std::pair<double , double> CoordinateDouble;
 
 class Game {
 public:
+    FRIEND_TEST(GameTest, AddPlayers);
 
     class Player {
     public:
@@ -31,7 +35,7 @@ public:
 
         std::string const & getName() const;
 
-        uint8_t getTurnDirection() const;
+        int8_t getTurnDirection() const;
 
         void setCoordinates(CoordinateDouble c)
         {
@@ -39,9 +43,9 @@ public:
             y = c.second;
         }
 
-        CoordinateInt getCoordinates() const
+        CoordinateLong getCoordinates() const
         {
-            return CoordinateInt(x, y);
+            return CoordinateLong(x, y);
         }
     };
 
@@ -52,6 +56,11 @@ public:
     bool start();
 
     bool tick();
+
+    const std::vector<std::unique_ptr<GameEvent>> &getEvents() const
+    {
+        return events;
+    }
 
 private:
     Random random;
@@ -67,21 +76,21 @@ private:
      */
     std::vector<std::vector<bool>> matrix;
 
-    std::vector<GameEvent> events;
+    std::vector<std::unique_ptr<GameEvent>> events;
 
-    void setPixel(CoordinateInt c)
+    void setPixel(CoordinateUnsignedLong c)
     {
         matrix.at(c.first).at(c.second) = true;
     }
 
-    bool isSetPixel(CoordinateInt c) const
+    bool isSetPixel(CoordinateUnsignedLong c) const
     {
         return matrix.at(c.first).at(c.second);
     }
 
     bool shouldPlayerGetEliminated(const Player &p) const
     {
-        const CoordinateInt c = p.getCoordinates();
+        const CoordinateLong c = p.getCoordinates();
         return isSetPixel(c) || c.first < 0 || c.first >= maxx || c.second < 0 || c.second >= maxy;
     };
 
