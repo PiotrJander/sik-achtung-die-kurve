@@ -18,12 +18,18 @@ public:
         GAME_OVER = 3
     };
 
-    #pragma pack(push, 1)
+    /**
+     * Header ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
     class Header {
     public:
         Header() = default;
 
         Header(uint32_t eventNo, GameEvent::Type type) : eventNo(htonl(eventNo)), type(type)
+        {}
+
+        Header(const HeaderPacked &headerPacked)
+                : eventNo(ntohl(headerPacked.eventNo)), type(headerPacked.type)
         {}
 
         uint32_t getEventNo() const
@@ -40,7 +46,31 @@ public:
         uint32_t eventNo;
         GameEvent::Type type;
     };
+    /*
+     * END Header ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+
+    /**
+     * HeaderPacked ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+    #pragma pack(push, 1)
+    class HeaderPacked {
+    public:
+        HeaderPacked(const GameEvent::Header &header)
+                : eventNo(htonl(header.getEventNo())), type(header.getType())
+        {}
+
+        uint32_t eventNo;
+        GameEvent::Type type;
+    };
     #pragma pack(pop)
+    /*
+     * END HeaderPacked ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+
+    /**
+     * own methods
+     */
 
     virtual ~GameEvent() = default;
 
