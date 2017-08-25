@@ -28,7 +28,7 @@ private:
         return sizeof(header) + sizeof(playerNumber);
     }
 
-    std::unique_ptr<char[]> getBuffer() override;
+    void writeToBuffer(void *buffer) override;
 };
 
 

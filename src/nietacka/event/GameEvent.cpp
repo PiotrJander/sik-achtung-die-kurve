@@ -25,12 +25,14 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
     if (expectedChecksum != actualChecksum) {
         // TODO
     }
-    auto *header = (Header *) buffer;
-    switch (header->getType()) {
+    HeaderPacked *header = reinterpret_cast<HeaderPacked *>(buffer);
+    switch (header->type) {
         case Type::NEW_GAME: {
-            auto *data = (NewGameEvent::Data *) (buffer + sizeof(*header));
-            auto playerNames = NewGameEvent::parsePlayerNames(buffer + sizeof(*header) + sizeof(*data), buffer + length);
-            return std::make_unique<NewGameEvent>(*header, *data, playerNames);
+            auto newGameEvent = reinterpret_cast<NewGameEvent::SelfPackedNoPlayerNames *>(buffer);
+            auto playerNames = NewGameEvent::parsePlayerNames(
+                    buffer + sizeof(NewGameEvent::SelfPackedNoPlayerNames),
+                    buffer + length);
+            return std::make_unique<NewGameEvent>(*newGameEvent, playerNames);
         }
         case Type::PIXEL: {
             auto *data = (PixelEvent::Data *) (buffer + sizeof(*header));
@@ -49,15 +51,16 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 void GameEvent::writeTo(std::ostream &s)
 {
     uint32_t length = getLength();
-    std::unique_ptr<char[]> buffer = getBuffer();
-    uint32_t checksum = crc32c(0, (unsigned char *) buffer.get(), length);
+    void buffer[length];
+    writeToBuffer(buffer);
+    uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
     StreamUtils::write_int<uint32_t>(s, length);
-    s.write(buffer.get(), length);
+    s.write(reinterpret_cast<const char *>(buffer), length);
     StreamUtils::write_int<uint32_t>(s, checksum);
 }
 
 bool GameEvent::operator==(const GameEvent &other) const
 {
-    return other.header.getEventNo() == header.getEventNo()
-           && other.header.getType() == header.getType();
+    return other.getEventNo() == getEventNo()
+           && other.getType() == getType();
 }

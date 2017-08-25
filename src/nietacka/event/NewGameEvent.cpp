@@ -5,37 +5,36 @@
 #include "NewGameEvent.h"
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy)
-        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames()
+        : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames()
 {}
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames)
-        : GameEvent(eventNo, Type::NEW_GAME), data(maxx, maxy), playerNames(playerNames)
+        : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames(playerNames)
 {}
 
-NewGameEvent::NewGameEvent(const GameEvent::Header &header, const NewGameEvent::Data &data,
+NewGameEvent::NewGameEvent(const GameEvent::HeaderPacked &header, const NewGameEvent::DataPacked &data,
                            std::vector<std::string> playerNames)
-        : GameEvent(header), data(data), playerNames(playerNames)
+        : GameEvent(header),
+          maxx(ntohl(data.maxx)),
+          maxy(ntohl(data.maxy)),
+          playerNames(playerNames)
 {}
 
 uint32_t NewGameEvent::getLength()
 {
-    return sizeof(header) + sizeof(data) + getSizeofPlayerNames();
+    return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();
 }
 
-std::unique_ptr<char[]> NewGameEvent::getBuffer()
+void NewGameEvent::writeToBuffer(void *buffer)
 {
-    uint32_t length = getLength();
-    auto buffer = std::make_unique<char[]>(length);
-    std::memcpy(buffer.get(), &header, sizeof(header));
-    std::memcpy(buffer.get() + sizeof(header), &data, sizeof(data));
+    auto buf = reinterpret_cast<SelfPackedNoPlayerNames *>(buffer);
+    *buf = SelfPackedNoPlayerNames(*this);
     
-    char *writeLocation = buffer.get() + sizeof(header) + sizeof(data);
+    char *writeLocation = reinterpret_cast<char *>(buffer + sizeof(SelfPackedNoPlayerNames));
     for (auto &name : playerNames) {
         strcpy(writeLocation, name.c_str());
         writeLocation += name.size() + 1;
     }
-    
-    return buffer;
 }
 
 uint32_t NewGameEvent::getSizeofPlayerNames()
@@ -63,8 +62,8 @@ bool NewGameEvent::operator==(const GameEvent &other) const
 {
     if (auto *o = dynamic_cast<const NewGameEvent *>(&other)) {
         return GameEvent::operator==(other)
-               && o->data.getMaxx() == data.getMaxx()
-               && o->data.getMaxy() == data.getMaxy();
+               && o->getMaxx() == getMaxx()
+               && o->getMaxy() == getMaxy();
     } else {
         return false;
     }

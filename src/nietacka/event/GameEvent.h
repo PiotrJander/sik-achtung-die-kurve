@@ -18,7 +18,7 @@ public:
         GAME_OVER = 3
     };
 
-    class HeaderPacked;
+    struct HeaderPacked;
 
     virtual ~GameEvent() = default;
 
@@ -52,12 +52,11 @@ private:
 
     virtual uint32_t getLength() = 0;
 
-    virtual std::unique_ptr<char[]> getBuffer() = 0;
+    virtual void writeToBuffer(void *buffer) = 0;
 };
 
 #pragma pack(push, 1)
-class GameEvent::HeaderPacked {
-public:
+struct GameEvent::HeaderPacked {
     HeaderPacked(const GameEvent &gameEvent)
             : eventNo(htonl(gameEvent.getEventNo())), type(gameEvent.getType())
     {}

@@ -57,7 +57,7 @@ public:
     bool operator==(const GameEvent &other) const override;
 
 private:
-    std::unique_ptr<char[]> getBuffer() override;
+    void writeToBuffer(void *buffer) override;
 
     uint32_t getLength() override
     {

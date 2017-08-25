@@ -5,7 +5,7 @@
 #include "PixelEvent.h"
 
 
-std::unique_ptr<char[]> PixelEvent::getBuffer()
+void PixelEvent::writeToBuffer(void *buffer)
 {
     uint32_t length = getLength();
     auto buffer = std::make_unique<char[]>(length);

@@ -4,7 +4,7 @@
 
 #include "PlayerEliminatedEvent.h"
 
-std::unique_ptr<char[]> PlayerEliminatedEvent::getBuffer()
+void PlayerEliminatedEvent::writeToBuffer(void *buffer)
 {
     uint32_t length = getLength();
     auto buffer = std::make_unique<char[]>(length);

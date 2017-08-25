@@ -22,7 +22,7 @@ private:
         return sizeof(header);
     }
 
-    std::unique_ptr<char[]> getBuffer() override;
+    void writeToBuffer(void *buffer) override;
 };
 
 
