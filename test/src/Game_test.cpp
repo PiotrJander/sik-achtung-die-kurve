@@ -180,6 +180,46 @@ TEST(GameTest, TickGeneratesPixel)
     }
 }
 
+TEST(GameTest, TickEliminatePlayerGameOver)
+{
+    TEST_DESCRIPTION(
+        "Should eliminate the player who steps on a taken pixel. "
+        "Should generate GameOverEvent when there is one player left. "
+    );
+    std::map<uint64_t, PlayerConnection> conns = {
+            {456, PlayerConnection(456, 123, 0, "Piotr")},
+            {654, PlayerConnection(654, 321, 0, "Stan")},
+    };
+    Random random(123);
+    Game game(random, 6, 10, 10);
+    game.addPlayers(conns);
+
+    game.players.at(0)
+            .setCoordinates(CoordinateUnsignedLong(1, 1))
+            .heading = 0;
+    game.players.at(1)
+            .setCoordinates(CoordinateDouble(5.5, 5))
+            .heading = 0;
+
+    game.setPixel(CoordinateUnsignedLong(6, 5));
+
+    ASSERT_FALSE(game.tick());
+
+    try {
+        auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEvents().at(1));
+        ASSERT_EQ(playerEliminatedEvent, PlayerEliminatedEvent(1, 1));
+    } catch (std::bad_cast &e) {
+        FAIL() << "Bad event type";
+    }
+
+    try {
+        auto &gameOverEvent = dynamic_cast<GameOverEvent &>(*game.getEvents().at(2));
+        ASSERT_EQ(gameOverEvent, GameOverEvent(2));
+    } catch (std::bad_cast &e) {
+        FAIL() << "Bad event type";
+    }
+}
+
 #pragma clang diagnostic pop
 
 

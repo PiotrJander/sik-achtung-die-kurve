@@ -23,6 +23,7 @@ class Game {
 public:
     FRIEND_TEST(GameTest, AddPlayers);
     FRIEND_TEST(GameTest, TickGeneratesPixel);
+    FRIEND_TEST(GameTest, TickEliminatePlayerGameOver);
 
     class Player {
     public:
