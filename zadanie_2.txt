@@ -223,7 +223,7 @@ opisany poniżej.
    Kierunek ruchu jest wyrażony w stopniach, zgodnie z ruchem wskazówek
    zegara, a 0 oznacza kierunek w prawo.
 
-9. Podłączanie i odłączanie greaczy
+9. Podłączanie i odłączanie graczy
 
    Podłączenie nowego gracza może odbyć się w dowolnym momencie. Wystarczy,
    że serwer odbierze prawidłowy komunikat od nowego klienta. Jeśli nowy
