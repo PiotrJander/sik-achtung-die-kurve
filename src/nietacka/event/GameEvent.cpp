@@ -50,7 +50,7 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
 void GameEvent::writeTo(std::ostream &s)
 {
     uint32_t length = getLength();
-    void buffer[length];
+    unsigned char buffer[length];
     writeToBuffer(buffer);
     uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
     StreamUtils::write_int<uint32_t>(s, length);

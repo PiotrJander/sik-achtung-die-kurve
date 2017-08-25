@@ -22,7 +22,7 @@ void NewGameEvent::writeToBuffer(void *buffer)
     auto buf = reinterpret_cast<SelfPackedNoPlayerNames *>(buffer);
     *buf = SelfPackedNoPlayerNames(*this);
     
-    char *writeLocation = reinterpret_cast<char *>(buffer + sizeof(SelfPackedNoPlayerNames));
+    char *writeLocation = reinterpret_cast<char *>(buf + sizeof(SelfPackedNoPlayerNames));
     for (auto &name : playerNames) {
         strcpy(writeLocation, name.c_str());
         writeLocation += name.size() + 1;

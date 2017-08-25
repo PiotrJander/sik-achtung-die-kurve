@@ -12,11 +12,39 @@
 
 class PixelEvent : public GameEvent {
 public:
-    struct DataPacked;
-    struct SelfPacked;
 
-    PixelEvent(HeaderPacked header, DataPacked data)
-            : GameEvent(header), playerNumber(data.playerNumber), x(ntohl(data.x)), y(ntohl(data.y))
+    /*
+     * packed structs ~~~~~~~~~~~~~~~~~~~~~
+     */
+#pragma pack(push, 1)
+    struct DataPacked {
+        DataPacked(const PixelEvent &pixelEvent)
+                : playerNumber(pixelEvent.getPlayerNumber()),
+                  x(htonl(pixelEvent.getX())),
+                  y(htonl(pixelEvent.getY()))
+        {}
+
+        uint8_t playerNumber;
+        uint32_t x, y;
+    };
+
+    struct SelfPacked {
+        SelfPacked(const PixelEvent &pixelEvent) : header(pixelEvent), data(pixelEvent)
+        {}
+
+        HeaderPacked header;
+        DataPacked data;
+    };
+#pragma pack(pop)
+    /*
+     * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
+     */
+
+    PixelEvent(const SelfPacked &packed)
+            : GameEvent(packed.header),
+              playerNumber(packed.data.playerNumber),
+              x(ntohl(packed.data.x)),
+              y(ntohl(packed.data.y))
     {}
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
@@ -51,29 +79,5 @@ private:
         return sizeof(SelfPacked);
     }
 };
-
-#pragma pack(push, 1)
-
-struct PixelEvent::DataPacked {
-    DataPacked(const PixelEvent &pixelEvent)
-            : playerNumber(pixelEvent.getPlayerNumber()),
-              x(htonl(pixelEvent.getX())),
-              y(htonl(pixelEvent.getY()))
-    {}
-
-    uint8_t playerNumber;
-    uint32_t x, y;
-};
-
-struct PixelEvent::SelfPacked {
-    SelfPacked(const PixelEvent &pixelEvent) : header(pixelEvent), data(pixelEvent)
-    {}
-
-    HeaderPacked header;
-    DataPacked data;
-};
-
-
-#pragma pack(pop)
 
 #endif //PROJECT_PIXELEVENT_H

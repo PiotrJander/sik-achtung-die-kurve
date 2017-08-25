@@ -18,7 +18,22 @@ public:
         GAME_OVER = 3
     };
 
-    struct HeaderPacked;
+    /*
+     * packed structs ~~~~~~~~~~~~~~~~~~~~~
+     */
+#pragma pack(push, 1)
+    struct HeaderPacked {
+        HeaderPacked(const GameEvent &gameEvent)
+                : eventNo(htonl(gameEvent.getEventNo())), type(gameEvent.getType())
+        {}
+
+        uint32_t eventNo;
+        GameEvent::Type type;
+    };
+#pragma pack(pop)
+    /*
+     * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
+     */
 
     virtual ~GameEvent() = default;
 
@@ -54,17 +69,5 @@ private:
 
     virtual void writeToBuffer(void *buffer) = 0;
 };
-
-#pragma pack(push, 1)
-struct GameEvent::HeaderPacked {
-    HeaderPacked(const GameEvent &gameEvent)
-            : eventNo(htonl(gameEvent.getEventNo())), type(gameEvent.getType())
-    {}
-
-    uint32_t eventNo;
-    GameEvent::Type type;
-};
-#pragma pack(pop)
-
 
 #endif //PROJECT_GAMEEVENT_H

@@ -11,8 +11,32 @@
 
 class NewGameEvent: public GameEvent {
 public:
-    struct DataPacked;
-    struct SelfPackedNoPlayerNames;
+
+    /*
+     * packed structs ~~~~~~~~~~~~~~~~~~~~~
+     */
+#pragma pack(push, 1)
+    struct DataPacked {
+        DataPacked(const NewGameEvent &newGameEvent)
+                : maxx(htonl(newGameEvent.getMaxx())),
+                  maxy(htonl(newGameEvent.getMaxy()))
+        {}
+
+        uint32_t maxx, maxy;
+    };
+
+    struct SelfPackedNoPlayerNames
+    {
+        SelfPackedNoPlayerNames(const NewGameEvent &newGameEvent) : header(newGameEvent), data(newGameEvent)
+        {}
+
+        HeaderPacked header;
+        DataPacked data;
+    };
+#pragma pack(pop)
+    /*
+     * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
+     */
 
     std::vector<std::string> playerNames;
 
@@ -50,28 +74,5 @@ private:
 
     void writeToBuffer(void *buffer) override;
 };
-
-
-#pragma pack(push, 1)
-
-struct NewGameEvent::DataPacked {
-    DataPacked(const NewGameEvent &newGameEvent)
-            : maxx(htonl(newGameEvent.getMaxx())),
-              maxy(htonl(newGameEvent.getMaxy()))
-    {}
-
-    uint32_t maxx, maxy;
-};
-
-struct NewGameEvent::SelfPackedNoPlayerNames
-{
-    SelfPackedNoPlayerNames(const NewGameEvent &newGameEvent) : header(newGameEvent), data(newGameEvent)
-    {}
-
-    HeaderPacked header;
-    DataPacked data;
-};
-
-#pragma pack(pop)
 
 #endif //PROJECT_NEWGAMEEVENT_H

@@ -10,7 +10,23 @@
 
 class PlayerEliminatedEvent: public GameEvent {
 public:
-    struct SelfPacked;
+
+    /*
+     * packed structs ~~~~~~~~~~~~~~~~~~~~~
+     */
+#pragma pack(push, 1)
+    struct SelfPacked {
+        SelfPacked(const PlayerEliminatedEvent &eliminatedEvent)
+                : header(eliminatedEvent), playerNumber(eliminatedEvent.getPlayerNumber())
+        {}
+
+        HeaderPacked header;
+        uint8_t playerNumber;
+    };
+#pragma pack(pop)
+    /*
+     * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
+     */
 
     PlayerEliminatedEvent(const SelfPacked &packed)
             : GameEvent(packed.header),
@@ -37,18 +53,5 @@ private:
 
     void writeToBuffer(void *buffer) override;
 };
-
-
-#pragma pack(push, 1)
-struct PlayerEliminatedEvent::SelfPacked {
-    SelfPacked(const PlayerEliminatedEvent &eliminatedEvent)
-            : header(eliminatedEvent), playerNumber(eliminatedEvent.getPlayerNumber())
-    {}
-
-    HeaderPacked header;
-    uint8_t playerNumber;
-};
-#pragma pack(pop)
-
 
 #endif //PROJECT_PLAYERELIMINATEDEVENT_H
