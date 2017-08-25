@@ -18,66 +18,14 @@ public:
         GAME_OVER = 3
     };
 
-    /**
-     * Header ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
-    class Header {
-    public:
-        Header() = default;
-
-        Header(uint32_t eventNo, GameEvent::Type type) : eventNo(htonl(eventNo)), type(type)
-        {}
-
-        Header(const HeaderPacked &headerPacked)
-                : eventNo(ntohl(headerPacked.eventNo)), type(headerPacked.type)
-        {}
-
-        uint32_t getEventNo() const
-        {
-            return ntohl(eventNo);
-        }
-
-        GameEvent::Type getType() const
-        {
-            return type;
-        }
-
-    private:
-        uint32_t eventNo;
-        GameEvent::Type type;
-    };
-    /*
-     * END Header ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
-
-    /**
-     * HeaderPacked ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
-    #pragma pack(push, 1)
-    class HeaderPacked {
-    public:
-        HeaderPacked(const GameEvent::Header &header)
-                : eventNo(htonl(header.getEventNo())), type(header.getType())
-        {}
-
-        uint32_t eventNo;
-        GameEvent::Type type;
-    };
-    #pragma pack(pop)
-    /*
-     * END HeaderPacked ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
-
-    /**
-     * own methods
-     */
+    class HeaderPacked;
 
     virtual ~GameEvent() = default;
 
-    explicit GameEvent(Header header) : header(header)
+    explicit GameEvent(HeaderPacked header) : eventNo(ntohl(header.eventNo)), type(header.type)
     {}
 
-    GameEvent(uint32_t eventNo, Type type) : header(eventNo, type)
+    GameEvent(uint32_t eventNo, Type type) : eventNo(eventNo), type(type)
     {}
 
     static std::unique_ptr<GameEvent>
@@ -88,13 +36,36 @@ public:
 
     virtual bool operator==(const GameEvent &other) const;
 
-    Header header;
+    uint32_t getEventNo() const
+    {
+        return eventNo;
+    }
+
+    Type getType() const
+    {
+        return type;
+    }
 
 private:
+    uint32_t eventNo;
+    GameEvent::Type type;
+
     virtual uint32_t getLength() = 0;
 
     virtual std::unique_ptr<char[]> getBuffer() = 0;
 };
+
+#pragma pack(push, 1)
+class GameEvent::HeaderPacked {
+public:
+    HeaderPacked(const GameEvent &gameEvent)
+            : eventNo(htonl(gameEvent.getEventNo())), type(gameEvent.getType())
+    {}
+
+    uint32_t eventNo;
+    GameEvent::Type type;
+};
+#pragma pack(pop)
 
 
 #endif //PROJECT_GAMEEVENT_H
