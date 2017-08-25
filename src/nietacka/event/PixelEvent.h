@@ -15,12 +15,12 @@ public:
     struct DataPacked;
     struct SelfPacked;
 
-    PixelEvent(GameEvent::HeaderPacked header, DataPacked data)
+    PixelEvent(HeaderPacked header, DataPacked data)
             : GameEvent(header), playerNumber(data.playerNumber), x(ntohl(data.x)), y(ntohl(data.y))
     {}
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
-            : GameEvent(eventNo, GameEvent::Type::PIXEL), playerNumber(player_number), x(x), y(y)
+            : GameEvent(eventNo, Type::PIXEL), playerNumber(player_number), x(x), y(y)
     {}
 
     bool operator==(const GameEvent &other) const override;
@@ -69,7 +69,7 @@ struct PixelEvent::SelfPacked {
     SelfPacked(const PixelEvent &pixelEvent) : header(pixelEvent), data(pixelEvent)
     {}
 
-    GameEvent::HeaderPacked header;
+    HeaderPacked header;
     DataPacked data;
 };
 

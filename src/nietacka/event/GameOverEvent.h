@@ -10,7 +10,7 @@
 
 class GameOverEvent: public GameEvent {
 public:
-    explicit GameOverEvent(const Header &header) : GameEvent(header)
+    explicit GameOverEvent(const HeaderPacked &header) : GameEvent(header)
     {}
 
     explicit GameOverEvent(uint32_t eventNo) : GameEvent(eventNo, Type::GAME_OVER)
@@ -19,7 +19,7 @@ public:
 private:
     uint32_t getLength() override
     {
-        return sizeof(header);
+        return sizeof(HeaderPacked);
     }
 
     void writeToBuffer(void *buffer) override;

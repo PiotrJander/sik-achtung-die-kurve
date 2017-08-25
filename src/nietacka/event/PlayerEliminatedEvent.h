@@ -45,7 +45,7 @@ struct PlayerEliminatedEvent::SelfPacked {
             : header(eliminatedEvent), playerNumber(eliminatedEvent.getPlayerNumber())
     {}
 
-    GameEvent::HeaderPacked header;
+    HeaderPacked header;
     uint8_t playerNumber;
 };
 #pragma pack(pop)

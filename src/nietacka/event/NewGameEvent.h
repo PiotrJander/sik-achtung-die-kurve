@@ -68,7 +68,7 @@ struct NewGameEvent::SelfPackedNoPlayerNames
     SelfPackedNoPlayerNames(const NewGameEvent &newGameEvent) : header(newGameEvent), data(newGameEvent)
     {}
 
-    GameEvent::HeaderPacked header;
+    HeaderPacked header;
     DataPacked data;
 };
 
