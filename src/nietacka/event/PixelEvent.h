@@ -54,6 +54,8 @@ public:
 
     Data data;
 
+    bool operator==(const GameEvent &other) const override;
+
 private:
     std::unique_ptr<char[]> getBuffer() override;
 

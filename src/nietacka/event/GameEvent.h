@@ -56,6 +56,8 @@ public:
     void
     writeTo(std::ostream &);
 
+    virtual bool operator==(const GameEvent &other) const;
+
     Header header;
 
 private:

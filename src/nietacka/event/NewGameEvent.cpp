@@ -58,3 +58,14 @@ std::vector<std::string> NewGameEvent::parsePlayerNames(char *readingLocation, c
     }
     return playerNames;
 }
+
+bool NewGameEvent::operator==(const GameEvent &other) const
+{
+    if (auto *o = dynamic_cast<const NewGameEvent *>(&other)) {
+        return GameEvent::operator==(other)
+               && o->data.getMaxx() == data.getMaxx()
+               && o->data.getMaxy() == data.getMaxy();
+    } else {
+        return false;
+    }
+}

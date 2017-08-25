@@ -2,6 +2,8 @@
 // Created by Piotr Jander on 24/08/2017.
 //
 
+#define _USE_MATH_DEFINES
+
 #include <map>
 #include <cmath>
 #include "Game.h"
@@ -76,8 +78,8 @@ bool Game::tick()
 
         // save old position and update position
         CoordinateLong previousPosition = player.getCoordinates();
-        player.x += cos(player.heading);
-        player.y += sin(player.heading);
+        player.x += cos(player.heading * M_PI / 180);
+        player.y += sin(player.heading * M_PI / 180);
         CoordinateLong newPosition = player.getCoordinates();
 
         if (previousPosition == newPosition) {

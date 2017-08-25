@@ -55,3 +55,9 @@ void GameEvent::writeTo(std::ostream &s)
     s.write(buffer.get(), length);
     StreamUtils::write_int<uint32_t>(s, checksum);
 }
+
+bool GameEvent::operator==(const GameEvent &other) const
+{
+    return other.header.getEventNo() == header.getEventNo()
+           && other.header.getType() == header.getType();
+}

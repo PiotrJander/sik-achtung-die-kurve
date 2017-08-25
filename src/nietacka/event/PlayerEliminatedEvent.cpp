@@ -12,3 +12,12 @@ std::unique_ptr<char[]> PlayerEliminatedEvent::getBuffer()
     std::memcpy(buffer.get() + sizeof(header), &playerNumber, sizeof(playerNumber));
     return buffer;
 }
+
+bool PlayerEliminatedEvent::operator==(const GameEvent &other) const
+{
+    if (auto *o = dynamic_cast<const PlayerEliminatedEvent *>(&other)) {
+        return GameEvent::operator==(other) && o->playerNumber == playerNumber;
+    } else {
+        return false;
+    }
+}

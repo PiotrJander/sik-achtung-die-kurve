@@ -22,6 +22,7 @@ typedef std::pair<double , double> CoordinateDouble;
 class Game {
 public:
     FRIEND_TEST(GameTest, AddPlayers);
+    FRIEND_TEST(GameTest, TickGeneratesPixel);
 
     class Player {
     public:
@@ -37,10 +38,11 @@ public:
 
         int8_t getTurnDirection() const;
 
-        void setCoordinates(CoordinateDouble c)
+        Player &setCoordinates(CoordinateDouble c)
         {
             x = c.first;
             y = c.second;
+            return *this;
         }
 
         CoordinateLong getCoordinates() const

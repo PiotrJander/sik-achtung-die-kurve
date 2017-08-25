@@ -46,6 +46,8 @@ public:
 
     static std::vector<std::string> parsePlayerNames(char *buffer, const char *endOfBuffer);
 
+    bool operator==(const GameEvent &other) const override;
+
 private:
     uint32_t getSizeofPlayerNames();
 

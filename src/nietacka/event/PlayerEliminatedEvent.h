@@ -21,6 +21,8 @@ public:
 
     uint8_t playerNumber;
 
+    bool operator==(const GameEvent &other) const override;
+
 private:
     uint32_t getLength() override {
         return sizeof(header) + sizeof(playerNumber);
