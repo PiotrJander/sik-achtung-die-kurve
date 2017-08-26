@@ -44,15 +44,15 @@ void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const
 void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message)
 {
     if (connectedPlayers.size() < 42 && !isPlayerNameTaken(message.getPlayerName())) {
-        connectedPlayers[hash] =
-                PlayerConnection(socket, message.getSessionId(), message.getTurnDirection(), message.getPlayerName());
+        PlayerConnection pc(socket, message.getSessionId(), message.getTurnDirection(), message.getPlayerName());
+        connectedPlayers.insert(std::make_pair(hash, pc));
     }
 }
 
 void GameManager::gameLoop()
 {
     do {
-        auto res = udpWorker.getDatagram();
+        auto res = udpWorker->getDatagram();
         processDatagram(res.first, res.second);
     } while (!canGameStart());
 
@@ -67,7 +67,7 @@ void GameManager::gameLoop()
         milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
         game.tick();
         enqueueNewDatagramBatches(game, 0);
-        udpWorker.workUntil(startOfFrame);
+        udpWorker->workUntil(startOfFrame);
     }
     resetPlayers();
 }
@@ -85,15 +85,15 @@ void GameManager::resetPlayers()
     }
 }
 
-void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber = game.getFirstNewEventNumber())
+void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber)
 {
-    const MAX_DATAGRAM_SIZE = 512;
-    const SIZEOF_HEADER = sizeof(uint32_t);
+    const int MAX_DATAGRAM_SIZE = 512;
+    const int SIZEOF_HEADER = sizeof(uint32_t);
     int length = SIZEOF_HEADER;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
-            udpWorker.enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber));
+            udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber));
             length = SIZEOF_HEADER;
             startEventNumber = eventNumber;
             eventNumber--;
@@ -101,7 +101,7 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
             length += eventSize;
         }
     }
-    udpWorker.enqueue(EventBatch(length, game.getEventHistory(), startEventNumber,
+    udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber,
                                  static_cast<uint32_t>(game.getEventHistory().size())));
 }
 

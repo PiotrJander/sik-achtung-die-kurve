@@ -7,6 +7,8 @@
 std::unique_ptr<char[]> EventBatch::getBuffer()
 {
     auto buffer = std::make_unique<char[]>(static_cast<size_t>(length));
-    // TODO iterate over events and write to buffer
+
+
+
     return buffer;
 }

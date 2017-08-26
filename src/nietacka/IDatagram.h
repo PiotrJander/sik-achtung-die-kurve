@@ -14,7 +14,7 @@ public:
 
     virtual int getLength() = 0;
 
-    virtual std::size_t getSocketHash = 0;
+    virtual std::size_t getSocketHash() = 0;
 };
 
 

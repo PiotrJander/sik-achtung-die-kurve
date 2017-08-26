@@ -12,6 +12,7 @@
 
 class IUdpWorker {
 public:
+
     virtual void enqueue(IDatagram) = 0;
 
     virtual std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() = 0;
@@ -19,7 +20,7 @@ public:
     virtual void workUntil(std::chrono::milliseconds time) = 0;
 
 private:
-    IDatagramObserver observer;
+    std::unique_ptr<IDatagramObserver> observer;
 };
 
 

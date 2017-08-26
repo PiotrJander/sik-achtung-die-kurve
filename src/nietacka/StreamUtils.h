@@ -14,17 +14,17 @@ using std::streamsize;
 class StreamUtils {
 public:
     template<typename T>
-    static T read_int(istream &s)
+    static std::pair<T, char *> read_int(char *buffer)
     {
-        T ret;
-        s.read((char *) &ret, sizeof(ret));
-        return ret;
+        T res = *reinterpret_cast<T *>(buffer);
+        return std::make_pair(res, buffer + sizeof(T));
     }
 
     template<typename T>
-    static ostream &write_int(ostream &s, T n)
+    static char * write_int(char *buffer, T n)
     {
-        return s.write((char *) &n, sizeof(n));
+        *reinterpret_cast<T *>(buffer) = n;
+        return buffer + sizeof(T);
     }
 };
 

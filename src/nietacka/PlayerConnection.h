@@ -37,18 +37,25 @@ public:
         switch (socketArg->sa_family) {
             case AF_INET: {
                 auto storage = reinterpret_cast<sockaddr_in *>(&socket);
-                *storage = sockaddr_in(*reinterpret_cast<sockaddr_in *>(socketArg));
+                *storage = sockaddr_in(*reinterpret_cast<const sockaddr_in *>(socketArg));
             }
             case AF_INET6: {
                 auto storage = reinterpret_cast<sockaddr_in6 *>(&socket);
-                *storage = sockaddr_in6(*reinterpret_cast<sockaddr_in6 *>(socketArg));
+                *storage = sockaddr_in6(*reinterpret_cast<const sockaddr_in6 *>(socketArg));
             }
         }
     }
 
+    PlayerConnection(const PlayerConnection &pc)
+            : sessionId(pc.sessionId), socket(pc.socket),
+              turnDirection(pc.turnDirection), name(pc.name),
+              readyForGame(pc.readyForGame),
+              nextExpectedEvent(pc.nextExpectedEvent)
+    {}
+
     size_t hash() const;
 
-    static std::size_t getHashFor(const sockaddr *socket) const;
+    static std::size_t getHashFor(const sockaddr *socket);
 
     void resetAfterGame();
 

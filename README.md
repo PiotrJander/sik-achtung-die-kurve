@@ -23,9 +23,14 @@ end 19:40
 total 1:07
 
 TODO now
-game manager ctor
-start 19:40
+game manager ctor, and getBuffer
+start 20:30
 end
+
+
+now, how do we use
+basically refactor write to and read from to take buffer rather than stream
+
 
 add ctor and defaults
 impl getBuffer

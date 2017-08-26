@@ -20,7 +20,7 @@ public:
 private:
     PlayerConnectionMap connectedPlayers;
 
-    IUdpWorker udpWorker;
+    std::unique_ptr<IUdpWorker> udpWorker;
 
     uint32_t maxx, maxy;
     uint16_t port;  // TODO remember about htons!

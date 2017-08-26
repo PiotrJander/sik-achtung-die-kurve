@@ -29,7 +29,7 @@ size_t PlayerConnection::hash() const
     return getHashFor(reinterpret_cast<const sockaddr *>(&socket));
 }
 
-std::size_t PlayerConnection::getHashFor(const sockaddr *socket) const
+std::size_t PlayerConnection::getHashFor(const sockaddr *socket)
 {
     std::size_t res = 0;
     switch (socket->sa_family) {
