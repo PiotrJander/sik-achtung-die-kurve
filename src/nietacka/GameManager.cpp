@@ -2,9 +2,9 @@
 // Created by Piotr Jander on 26/08/2017.
 //
 
-#include <chrono>
-#include <Game.h>  // TODO why <>
-#include <EventBatch.h>
+#include "chrono"
+#include "Game.h"
+#include "EventBatch.h"
 #include "GameManager.h"
 
 using namespace std::chrono;

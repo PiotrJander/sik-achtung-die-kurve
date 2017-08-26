@@ -49,7 +49,6 @@ std::size_t PlayerConnection::getHashFor(const sockaddr *socket) const
             return res;
         }
         default:
-            // TODO handle
             return 0;
     }
 }

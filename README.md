@@ -17,14 +17,19 @@ start 15:50
 end 17:50
 2h
 
-
-
-TODO now
 game manager phase 2
 start 18:33
+end 19:40
+total 1:07
+
+TODO now
+game manager ctor
+start 19:40
 end
 
 add ctor and defaults
+impl getBuffer
+test
 
 DEFAULTS
   -W n – szerokość planszy w pikselach (domyślnie 800)

@@ -6,9 +6,10 @@
 #define PROJECT_GAMEMANAGER_H
 
 
-#include <IDatagramObserver.h>
-#include <PlayerConnection.h>
-#include <IUdpWorker.h>
+#include "IDatagramObserver.h"
+#include "PlayerConnection.h"
+#include "IUdpWorker.h"
+#include "Game.h"
 
 class GameManager: public IDatagramObserver {
 public:
