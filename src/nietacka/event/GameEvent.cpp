@@ -15,50 +15,55 @@
 template class std::unique_ptr<char[]>;
 template class std::unique_ptr<std::vector<std::string>>;
 
-std::unique_ptr<GameEvent> GameEvent::readFrom(std::istream &s)
+std::pair<std::unique_ptr<GameEvent>, int> GameEvent::readFrom(const char *buffer)
 {
-//    auto length = StreamUtils::read_int<uint32_t>(s);
-//    auto bufferBox = std::make_unique<char[]>(length);
-//    char *buffer = bufferBox.get();
-//    s.read(buffer, length);
-//    auto expectedChecksum = StreamUtils::read_int<uint32_t>(s);
-//    uint32_t actualChecksum = crc32c(0, (unsigned char *) buffer, length);
-//    if (expectedChecksum != actualChecksum) {
-//        // TODO
-//    }
-//    HeaderPacked *header = reinterpret_cast<HeaderPacked *>(buffer);
-//    switch (header->type) {
-//        case Type::NEW_GAME: {
-//            auto packedNoPlayerNames = reinterpret_cast<NewGameEvent::SelfPackedNoPlayerNames *>(buffer);
-//            auto playerNames = NewGameEvent::parsePlayerNames(
-//                    buffer + sizeof(NewGameEvent::SelfPackedNoPlayerNames),
-//                    buffer + length);
-//            return std::make_unique<NewGameEvent>(*packedNoPlayerNames, playerNames);
-//        }
-//        case Type::PIXEL: {
-//            return std::make_unique<PixelEvent>(*reinterpret_cast<PixelEvent::SelfPacked *>(buffer));
-//        }
-//        case Type::PLAYER_ELIMINATED: {
-//            auto eliminatedPacked = reinterpret_cast<PlayerEliminatedEvent::SelfPacked *>(buffer);
-//            return std::make_unique<PlayerEliminatedEvent>(*eliminatedPacked);
-//        }
-//        case Type::GAME_OVER: {
-//            return std::make_unique<GameOverEvent>(*header);
-//        }
-//    }
-    return std::make_unique<PixelEvent>(1, 2, 3, 4);
+    auto res = StreamUtils::read_int<uint32_t>(buffer);
+    uint32_t length = res.first;
+    char *location = res.second;
+    auto bufferBox = std::make_unique<char[]>(length);
+    res = StreamUtils::read_int<uint32_t>(location + length);
+    uint32_t expectedChecksum = res.first;
+    uint32_t actualChecksum = crc32c(0, (unsigned char *) location, length);
+    if (expectedChecksum != actualChecksum) {
+        // TODO
+    }
+    
+    HeaderPacked *header = reinterpret_cast<HeaderPacked *>(location);
+    switch (header->type) {
+        case Type::NEW_GAME: {
+            auto packedNoPlayerNames = reinterpret_cast<NewGameEvent::SelfPackedNoPlayerNames *>(location);
+            auto playerNames = NewGameEvent::parsePlayerNames(
+                    location + sizeof(NewGameEvent::SelfPackedNoPlayerNames),
+                    location + length);
+            const auto newGameEvent = std::make_unique<NewGameEvent>(*packedNoPlayerNames, playerNames);
+            return std::make_pair(newGameEvent, length);
+        }
+        case Type::PIXEL: {
+            auto pixelEvent = std::make_unique<PixelEvent>(*reinterpret_cast<PixelEvent::SelfPacked *>(location));
+            return std::make_pair(pixelEvent, length);
+        }
+        case Type::PLAYER_ELIMINATED: {
+            auto eliminatedPacked = reinterpret_cast<PlayerEliminatedEvent::SelfPacked *>(location);
+            auto eliminatedEvent = std::make_unique<PlayerEliminatedEvent>(*eliminatedPacked);
+            return std::make_pair(eliminatedEvent, length);
+        }
+        case Type::GAME_OVER: {
+            auto gameOverEvent = std::make_unique<GameOverEvent>(*header);
+            return std::make_pair(gameOverEvent, length);
+        }
+    }
 }
 
 void GameEvent::writeTo(std::ostream &s)
 {
-//    uint32_t length = getLength();
-//    auto bufferBox = std::make_unique<char[]>(length);
-//    char *buffer = bufferBox.get();
-//    writeToBuffer(buffer);
-//    uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
-//    StreamUtils::write_int<uint32_t>(nullptr, length);
-//    s.write(buffer, length);
-//    StreamUtils::write_int<uint32_t>(nullptr, checksum);
+    uint32_t length = getLength();
+    auto bufferBox = std::make_unique<char[]>(length);
+    char *buffer = bufferBox.get();
+    writeToBuffer(buffer);
+    uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
+    StreamUtils::write_int<uint32_t>(nullptr, length);
+    s.write(buffer, length);
+    StreamUtils::write_int<uint32_t>(nullptr, checksum);
 }
 
 bool GameEvent::operator==(const GameEvent &other) const

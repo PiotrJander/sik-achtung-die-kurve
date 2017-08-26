@@ -22,19 +22,19 @@ start 18:33
 end 19:40
 total 1:07
 
-TODO now
-game manager ctor, and getBuffer
+stream utils and fix bugs
 start 20:30
-end
+end 21:10
+total 40 min
+
+TODO now
+ctor and getBuffer
+test all
+start 21:12
 
 
-now, how do we use
-basically refactor write to and read from to take buffer rather than stream
+now we could simplify by returing length
 
-
-add ctor and defaults
-impl getBuffer
-test
 
 DEFAULTS
   -W n – szerokość planszy w pikselach (domyślnie 800)

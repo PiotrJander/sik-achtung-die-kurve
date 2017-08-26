@@ -43,8 +43,8 @@ public:
     GameEvent(uint32_t eventNo, Type type) : eventNo(eventNo), type(type)
     {}
 
-    static std::unique_ptr<GameEvent>
-    readFrom(std::istream &);
+    static std::pair<std::unique_ptr<GameEvent>, int>
+    readFrom(const char *buffer);
 
     void
     writeTo(std::ostream &);
