@@ -1,8 +1,9 @@
 # Achtung Die Kurve clone: network sockets project 
 
 TODO now
-
-
+start 10:55
+end
+impl interfaces
 
 
 
@@ -25,15 +26,16 @@ TODO now
 
 
 BACKLOG
+refactor from session_id to (socket, session_id); get socket from struct sockaddr
+add logging
+ConnectedPlayer would store struct sockaddr and its length
+
+ICEBOX
 pusta nazwa gracza jako ""
 streamUtils may not be used with sockets!
-refactor from session_id to (socket, session_id); get socket from struct sockaddr
-ConnectedPlayer would store struct sockaddr and its length
 test conversion hton
 check field order in structs
-add logging
 use poll in UDPWorker
-refactor game, add isInProgress(), don't return bool
 validate messages
 
 INTERFACES
@@ -48,7 +50,8 @@ interface IDatagram<size>, impl by EventBatch
     unique ptr to buffer (pair?) makeBuffer()
     getLength()
     getStructSockaddr (through player connection)
-    and its length?
+    ?? get sockaddr length
+    --> need to ensure that size is okay!
 
 interface IUDPWorker
     enqueue(const Datagram &)
