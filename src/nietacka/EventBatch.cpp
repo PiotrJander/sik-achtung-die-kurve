@@ -6,9 +6,12 @@
 
 std::unique_ptr<char[]> EventBatch::getBuffer()
 {
-    auto buffer = std::make_unique<char[]>(static_cast<size_t>(length));
+    auto bufferBox = std::make_unique<char[]>(static_cast<size_t>(length));
+    char *bufferLocation = bufferBox.get();
 
+    for (uint32_t i = startEventNo; i < endEventNo; ++i) {
+        bufferLocation += eventHistory.at(i)->writeTo(bufferLocation);
+    }
 
-
-    return buffer;
+    return bufferBox;
 }

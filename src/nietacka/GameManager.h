@@ -13,6 +13,8 @@
 
 class GameManager: public IDatagramObserver {
 public:
+    GameManager(uint32_t maxx, uint32_t maxy, uint16_t port, int roundsPerSecond, int turningSpeed, int seed);
+
     void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket, const Game *game) override;
 
     void gameLoop();

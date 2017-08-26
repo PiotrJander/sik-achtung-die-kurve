@@ -27,33 +27,22 @@ start 20:30
 end 21:10
 total 40 min
 
-TODO now
-ctor and getBuffer
-test all
+refactor event read and write
 start 21:12
+end 22:16
+total 1h
 
-
-const char *bufferLocation = buffer;
-uint32_t length = *reinterpret_cast<const uint32_t *>(bufferLocation);
-bufferLocation += sizeof(uint32_t);
-uint32_t expectedChecksum = *reinterpret_cast<const uint32_t *>(bufferLocation + length);
-uint32_t actualChecksum = crc32c(0, (unsigned const char *) bufferLocation, length);
-if (expectedChecksum != actualChecksum) {
-    // TODO
-}
+TODO now
+ctor
+test all
+start 22:55
 
 
 
 
-DEFAULTS
-  -W n – szerokość planszy w pikselach (domyślnie 800)
-  -H n – wysokość planszy w pikselach (domyślnie 600)
-  -p n – numer portu (domyślnie 12345)
-  -s n – liczba całkowita wyznaczająca szybkość gry (parametr
-          ROUNDS_PER_SEC w opisie protokołu, domyślnie 50)
-  -t n – liczba całkowita wyznaczająca szybkość skrętu (parametr
-          TURNING_SPEED, domyślnie 6)
-  -r n – ziarno generatora liczb losowych (opisanego poniżej)
+
+
+
 
 
 
@@ -80,16 +69,15 @@ DEFAULTS
 
 BACKLOG
 add logging
-event length and crc32; maybe refactor writeTo and readFrom
 
 ICEBOX
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""
-streamUtils may not be used with sockets!
 test conversion hton
 check field order in structs
 use poll in UDPWorker
 validate messages
+handle all kinds of exceptions!
 
 Qs:
 64 bit random numbers but 32 bits game id
@@ -111,3 +99,13 @@ caveat: even if we use select, we might still need to make the socket non-blocki
 
 UDP
 partial reads of UPD datagrams: https://stackoverflow.com/questions/3069204/reading-partially-from-sockets
+
+CLIENT read events
+const char *bufferLocation = buffer;
+uint32_t length = *reinterpret_cast<const uint32_t *>(bufferLocation);
+bufferLocation += sizeof(uint32_t);
+uint32_t expectedChecksum = *reinterpret_cast<const uint32_t *>(bufferLocation + length);
+uint32_t actualChecksum = crc32c(0, (unsigned const char *) bufferLocation, length);
+if (expectedChecksum != actualChecksum) {
+    // TODO
+}
