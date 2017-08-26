@@ -39,6 +39,8 @@ private:
     void addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message);
 
     bool isPlayerNameTaken(const std::string &name) const;
+
+    void updateConnectedPlayers(const ClientMessage &message, const sockaddr *socket);
 };
 
 

@@ -37,6 +37,10 @@ public:
             : GameEvent(eventNo, Type::PLAYER_ELIMINATED), playerNumber(playerNumber)
     {}
 
+//    PlayerEliminatedEvent(const PlayerEliminatedEvent& event)
+//            : GameEvent(event), playerNumber(event.playerNumber)
+//    {}
+
     bool operator==(const GameEvent &other) const override;
 
     uint8_t getPlayerNumber() const

@@ -34,13 +34,13 @@ std::size_t PlayerConnection::getHashFor(const sockaddr *socket)
     std::size_t res = 0;
     switch (socket->sa_family) {
         case AF_INET: {
-            auto ipv4 = reinterpret_cast<const sockaddr_in *>(&socket);
+            auto ipv4 = reinterpret_cast<const sockaddr_in *>(socket);
             hash_combine(res, ipv4->sin_addr.s_addr);
             hash_combine(res, ipv4->sin_port);
             return res;
         }
         case AF_INET6: {
-            auto ipv6 = reinterpret_cast<const sockaddr_in6 *>(&socket);
+            auto ipv6 = reinterpret_cast<const sockaddr_in6 *>(socket);
             const uint8_t *addr = IPV6_ADDR;
             for (int i = 0; i < 16; ++i) {
                 hash_combine(res, addr[i]);
@@ -58,6 +58,20 @@ void PlayerConnection::resetAfterGame()
     turnDirection = 0;
     readyForGame = false;
     nextExpectedEvent = 0;
+}
+
+PlayerConnection::PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection,
+                                   const std::string &name)
+        : sessionId(sessionId), turnDirection(turnDirection), name(name)
+{
+    switch (socketArg->sa_family) {
+        case AF_INET: {
+            memcpy(&socket, socketArg, sizeof(sockaddr_in));
+        }
+        case AF_INET6: {
+            memcpy(&socket, socketArg, sizeof(sockaddr_in6));
+        }
+    }
 }
 
 #pragma clang diagnostic pop

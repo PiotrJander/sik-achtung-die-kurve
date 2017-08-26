@@ -51,6 +51,13 @@ public:
             : GameEvent(eventNo, Type::PIXEL), playerNumber(player_number), x(x), y(y)
     {}
 
+//    PixelEvent(const PixelEvent &pixelEvent)
+//            : GameEvent(pixelEvent),
+//              playerNumber(pixelEvent.playerNumber),
+//              x(pixelEvent.x),
+//              y(pixelEvent.y)
+//    {}
+
     bool operator==(const GameEvent &other) const override;
 
     uint8_t getPlayerNumber() const

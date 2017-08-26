@@ -16,8 +16,9 @@
 
 
 class GameTest : public ::testing::Test {
-protected:
-    virtual void SetUp() {
+public:
+    GameTest()
+    {
         ipv4_1.sin_family = AF_INET;
         ipv4_1.sin_port = 1234;
         ipv4_1.sin_addr.s_addr = 987654;
@@ -39,9 +40,14 @@ protected:
         };
     }
 
+    const std::size_t PL_HASH = 175173704325;
+
     sockaddr_in ipv4_1;
     sockaddr_in ipv4_2;
     sockaddr_in6 ipv6;
+
+//    PlayerConnection pc1;
+//    PlayerConnection pc2;
 
     PlayerConnectionMap conns;
 };
@@ -49,7 +55,7 @@ protected:
 TEST_F(GameTest, PlayerGetters)
 {
     TEST_DESCRIPTION("getName, getDirection");
-    Game::Player player(175173704325, 0, 123, conns);
+    Game::Player player(PL_HASH, 0, 123, conns);
     ASSERT_EQ(player.getTurnDirection(), -1);
     ASSERT_EQ(player.getName(), "Piotr");
 }
@@ -58,7 +64,7 @@ TEST_F(GameTest, PlayerCoordinates)
 {
     TEST_DESCRIPTION("setCoordinates, getCoordinates");
     CoordinateLong ints(12, 23);
-    Game::Player player(175173704325, 0, 456, conns);
+    Game::Player player(PL_HASH, 0, 456, conns);
     player.setCoordinates(ints);
     ASSERT_EQ(player.getCoordinates(), ints);
 }
@@ -67,8 +73,8 @@ TEST_F(GameTest, PlayerSessionIdChanges)
 {
     TEST_DESCRIPTION("When sessionId changes, should act as if the player disconnected");
     CoordinateLong ints(12, 23);
-    Game::Player player(175173704325, 0, 456, conns);
-    conns.at(175173704325).sessionId += 1;
+    Game::Player player(PL_HASH, 0, 456, conns);
+    conns.at(PL_HASH).sessionId += 1;
     ASSERT_EQ(player.getTurnDirection(), 0);
     ASSERT_EQ(player.getName(), "");
 }

@@ -40,6 +40,9 @@ public:
     explicit GameEvent(HeaderPacked header) : eventNo(ntohl(header.eventNo)), type(header.type)
     {}
 
+//    GameEvent(const GameEvent &gameEvent) : eventNo(gameEvent.eventNo), type(gameEvent.type)
+//    {}
+
     GameEvent(uint32_t eventNo, Type type) : eventNo(eventNo), type(type)
     {}
 

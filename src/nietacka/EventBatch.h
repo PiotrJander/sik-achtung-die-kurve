@@ -12,9 +12,9 @@
 class EventBatch: public IDatagram {
 public:
     EventBatch(int length, const EventHistory &eventHistory, uint32_t startEventNo, uint32_t endEventNo,
-                   size_t socketHash = EventBatch::BROADCAST)
-            : length(length), socketHash(socketHash), eventHistory(eventHistory),
-              startEventNo(startEventNo), endEventNo(endEventNo)
+               uint32_t gameId, size_t socketHash = EventBatch::BROADCAST)
+            : length(length), socketHash(socketHash), eventHistory(eventHistory), 
+              startEventNo(startEventNo), endEventNo(endEventNo), gameId(gameId)
     {}
 
     std::unique_ptr<char[]> getBuffer() override;
@@ -35,6 +35,7 @@ private:
     int length;
     std::size_t socketHash;  // 0 means broadcast
     const EventHistory &eventHistory;
+    uint32_t gameId;
     uint32_t startEventNo, endEventNo;  // start is inclusive, end is non-inclusive
 };
 

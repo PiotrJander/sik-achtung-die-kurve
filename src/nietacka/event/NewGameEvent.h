@@ -42,6 +42,20 @@ public:
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames);
 
+//    NewGameEvent(const NewGameEvent &newGameEvent)
+//            : GameEvent(newGameEvent),
+//              maxx(newGameEvent.maxx),
+//              maxy(newGameEvent.maxy),
+//              playerNames(newGameEvent.playerNames)
+//    {}
+//
+//    NewGameEvent(NewGameEvent &&newGameEvent)
+//            : GameEvent(newGameEvent),
+//              maxx(newGameEvent.maxx),
+//              maxy(newGameEvent.maxy),
+//              playerNames(newGameEvent.playerNames)
+//    {}
+
     NewGameEvent(const SelfPackedNoPlayerNames &selfPacked, std::vector<std::string> playerNames)
             : GameEvent(selfPacked.header),
               maxx(ntohl(selfPacked.data.maxx)),

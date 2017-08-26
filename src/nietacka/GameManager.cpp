@@ -13,8 +13,15 @@ void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const
                                   const Game *game = nullptr)
 {
     ClientMessage message(*buffer);
+    updateConnectedPlayers(message, socket);
 
-    // add or update connected player
+    if (game) {
+        enqueueNewDatagramBatches(*game, message.getNextExpectedEventNo());
+    }
+}
+
+void GameManager::updateConnectedPlayers(const ClientMessage &message, const sockaddr *socket)
+{
     size_t hash = PlayerConnection::getHashFor(socket);
     const auto &entry = connectedPlayers.find(hash);
     if (entry == connectedPlayers.end()) {
@@ -33,11 +40,6 @@ void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const
         } else {
             // ignore
         }
-    }
-
-    // send response if game in progress
-    if (game) {
-        enqueueNewDatagramBatches(*game, message.getNextExpectedEventNo());
     }
 }
 
@@ -93,7 +95,7 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
-            udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber));
+            udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));
             length = SIZEOF_HEADER;
             startEventNumber = eventNumber;
             eventNumber--;
@@ -101,8 +103,8 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
             length += eventSize;
         }
     }
-    udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber,
-                                 static_cast<uint32_t>(game.getEventHistory().size())));
+    uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
+    udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, endEventNo, game.getId()));
 }
 
 bool GameManager::isPlayerNameTaken(const std::string &name) const

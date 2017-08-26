@@ -38,11 +38,22 @@ test all
 start 22:55
 
 
+tests
+
+debug implicitly deleted pointer
 
 
 
 
+EventBatch
+    getBuffer
 
+
+GameManager
+
+
+PlayerConnection
+    ctor from socket
 
 
 
@@ -78,6 +89,7 @@ check field order in structs
 use poll in UDPWorker
 validate messages
 handle all kinds of exceptions!
+strange game test failures with hashing
 
 Qs:
 64 bit random numbers but 32 bits game id

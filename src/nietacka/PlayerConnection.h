@@ -31,20 +31,7 @@ public:
         return turnDirection;
     }
 
-    PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name)
-            : sessionId(sessionId), turnDirection(turnDirection), name(name)
-    {
-        switch (socketArg->sa_family) {
-            case AF_INET: {
-                auto storage = reinterpret_cast<sockaddr_in *>(&socket);
-                *storage = sockaddr_in(*reinterpret_cast<const sockaddr_in *>(socketArg));
-            }
-            case AF_INET6: {
-                auto storage = reinterpret_cast<sockaddr_in6 *>(&socket);
-                *storage = sockaddr_in6(*reinterpret_cast<const sockaddr_in6 *>(socketArg));
-            }
-        }
-    }
+    PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name);
 
     PlayerConnection(const PlayerConnection &pc)
             : sessionId(pc.sessionId), socket(pc.socket),

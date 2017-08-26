@@ -77,6 +77,11 @@ public:
 
     uint32_t getFirstNewEventNumber() const;
 
+    uint32_t getId() const
+    {
+        return id;
+    }
+
 private:
     Random random;
 

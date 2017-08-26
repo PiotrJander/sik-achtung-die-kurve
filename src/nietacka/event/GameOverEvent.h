@@ -16,6 +16,8 @@ public:
     explicit GameOverEvent(uint32_t eventNo) : GameEvent(eventNo, Type::GAME_OVER)
     {}
 
+//    GameOverEvent(const GameOverEvent &event) : GameEvent(event) {}
+
 private:
     uint32_t getLength() override
     {
