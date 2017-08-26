@@ -38,10 +38,17 @@ validate messages
 
 INTERFACES
 
-interface IDatagram<size>
-    toBuffer(pointer to buffer of size)
-    store struct sockaddr and its length
-    -> passed as ref or pointer to GameEvent, which is aware of playerConnections
+client messages fixed length, but can be any number of them: dynamically allocate
+
+interface IDatagram<size>, impl by EventBatch
+    stores ref to event history on game, start and end position
+    stores ref to player connections
+    stores length
+    stores player id (hash, session)
+    unique ptr to buffer (pair?) makeBuffer()
+    getLength()
+    getStructSockaddr (through player connection)
+    and its length?
 
 interface IUDPWorker
     enqueue(const Datagram &)
@@ -55,7 +62,7 @@ loop {
     // wait for game
     do
         every 20 ms
-            while (UDPWorker.dequeue) process client messages
+            while (UDPWorker.dequeueRecv) process client messages
     until ready for game
 
     // play game
@@ -65,7 +72,7 @@ loop {
         while (UDPWorker.dequeueRecv) process client messages
         game.tick()
         for datagram in client_events
-            UDPWorker.enqueueSend(datagram)
+            UDPWorker.enqueueSend(IDatagram)
         UDPWorker.workUntil(start_of_frame + frame)
 }
 maybe graceful exit on signal

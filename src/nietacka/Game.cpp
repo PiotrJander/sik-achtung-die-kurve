@@ -38,7 +38,7 @@ void Game::addPlayers(std::map<uint64_t, PlayerConnection> &connections)
     }
 }
 
-bool Game::start()
+void Game::start()
 {
     // make vector of player names
     std::vector<std::string> playerNames;
@@ -60,17 +60,16 @@ bool Game::start()
             events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
                 events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
-                return false;
+                inProgress = false;
             }
         } else {
             setPixel(player.getCoordinates());
             events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, coors.first, coors.second));
         }
     }
-    return true;
 }
 
-bool Game::tick()
+void Game::tick()
 {
     for (auto &&player : players) {
         // update heading
@@ -89,16 +88,13 @@ bool Game::tick()
             events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
                 events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
-                return false;
+                inProgress = false;
             }
         } else {
             setPixel(newPosition);
             events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, newPosition.first, newPosition.second));
         }
     }
-
-    // still multiple players; so game goes on
-    return true;
 }
 
 int Game::numberOfPlayers() const

@@ -56,13 +56,18 @@ public:
 
     void addPlayers(std::map<uint64_t, PlayerConnection> &connections);
 
-    bool start();
+    void start();
 
-    bool tick();
+    void tick();
 
     const std::vector<std::unique_ptr<GameEvent>> &getEvents() const
     {
         return events;
+    }
+
+    bool isInProgress() const
+    {
+        return inProgress;
     }
 
 private:
@@ -73,6 +78,8 @@ private:
     int turningSpeed;
 
     uint32_t id, maxx, maxy, eventNoCounter = 0;
+
+    bool inProgress = true;
 
     /**
      * Vector of columns
