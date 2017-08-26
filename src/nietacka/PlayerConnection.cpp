@@ -53,7 +53,6 @@ inline void hash_combine(std::size_t & s, const T & v)
 size_t PlayerConnection::hash() const
 {
     std::size_t res = 0;
-    hash_combine(res, sessionId);
     switch (socket.ss_family) {
         case AF_INET: {
             auto ipv4 = reinterpret_cast<const sockaddr_in *>(&socket);

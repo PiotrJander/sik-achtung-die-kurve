@@ -16,7 +16,10 @@ total 2:30
 
 
 TODO now
+test: when session_id changes, we can't access anymore
+fix tests
 
+observer rather than Q
 
 
 

@@ -10,9 +10,12 @@
 #include <sys/socket.h>
 #include <map>
 #include <netinet/in.h>
+#include "gtest/gtest_prod.h"
 
 class PlayerConnection {
 public:
+    FRIEND_TEST(GameTest, PlayerSessionIdChanges);
+
     const std::string &getName() const
     {
         return name;

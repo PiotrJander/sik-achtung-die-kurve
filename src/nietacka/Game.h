@@ -51,6 +51,9 @@ public:
         {
             return CoordinateLong(x, y);
         }
+
+    private:
+        const PlayerConnectionMap::iterator getPlayerConnection() const;
     };
 
     Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy);

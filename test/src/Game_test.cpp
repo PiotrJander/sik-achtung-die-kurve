@@ -4,6 +4,10 @@
 
 #include <nietacka/PlayerConnection.h>
 #include <nietacka/Game.h>
+#include <nietacka/event/NewGameEvent.h>
+#include <nietacka/event/PixelEvent.h>
+#include <nietacka/event/GameOverEvent.h>
+#include <nietacka/event/PlayerEliminatedEvent.h>
 #include "gtest/gtest.h"
 #include "setup.h"
 
@@ -45,7 +49,7 @@ protected:
 TEST_F(GameTest, PlayerGetters)
 {
     TEST_DESCRIPTION("getName, getDirection");
-    Game::Player player(11093891723921, 0, 456, conns);
+    Game::Player player(175173704325, 0, 456, conns);
     ASSERT_EQ(player.getTurnDirection(), -1);
     ASSERT_EQ(player.getName(), "Piotr");
 }
@@ -54,9 +58,19 @@ TEST_F(GameTest, PlayerCoordinates)
 {
     TEST_DESCRIPTION("setCoordinates, getCoordinates");
     CoordinateLong ints(12, 23);
-    Game::Player player(11093891723921, 0, 456, conns);
+    Game::Player player(175173704325, 0, 456, conns);
     player.setCoordinates(ints);
     ASSERT_EQ(player.getCoordinates(), ints);
+}
+
+TEST_F(GameTest, PlayerSessionIdChanges)
+{
+    TEST_DESCRIPTION("When sessionId changes, should act as if the player disconnected");
+    CoordinateLong ints(12, 23);
+    Game::Player player(175173704325, 0, 456, conns);
+    conns.at(175173704325).sessionId += 1;
+    ASSERT_EQ(player.getTurnDirection(), 0);
+    ASSERT_EQ(player.getName(), "");
 }
 
 TEST_F(GameTest, AddPlayers)

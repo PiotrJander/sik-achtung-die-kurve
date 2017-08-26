@@ -112,10 +112,20 @@ Game::Player::Player(std::size_t hash, uint8_t number, uint64_t sessionId, Playe
         : hash(hash), number(number), sessionId(sessionId), connections(connections)
 {}
 
+const PlayerConnectionMap::iterator Game::Player::getPlayerConnection() const
+{
+    const auto &conn = connections.find(hash);
+    if (conn == connections.end()) {
+        return connections.end();
+    } else {
+        return sessionId == conn->second.getSessionId() ? conn : connections.end();
+    }
+}
+
 std::string const &Game::Player::getName() const
 {
     static const std::string emptyString = "";
-    const auto &conn = connections.find(hash);
+    const auto &conn = getPlayerConnection();
     if (conn == connections.end()) {
         return emptyString;
     } else {
@@ -125,7 +135,7 @@ std::string const &Game::Player::getName() const
 
 int8_t Game::Player::getTurnDirection() const
 {
-    const auto &conn = connections.find(hash);
+    const auto &conn = getPlayerConnection();
     if (conn == connections.end()) {
         return 0;
     } else {
