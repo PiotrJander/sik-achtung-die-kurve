@@ -18,7 +18,7 @@ Game::Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy)
           matrix(maxx, std::vector<bool>(maxy, false)), events()
 {}
 
-void Game::addPlayers(std::map<uint64_t, PlayerConnection> &connections)
+void Game::addPlayers(PlayerConnectionMap &connections)
 {
     // get sessionIds for players with non-empty names
     std::vector<uint64_t> sessionIds;
@@ -108,7 +108,7 @@ int Game::numberOfPlayers() const
     return n;
 }
 
-Game::Player::Player(uint8_t number, uint64_t sessionId, std::map<uint64_t, PlayerConnection> &connections)
+Game::Player::Player(uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections)
         : number(number), sessionId(sessionId), connections(connections)
 {}
 

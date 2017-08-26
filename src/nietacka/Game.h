@@ -27,11 +27,11 @@ public:
 
     class Player {
     public:
-        Player(uint8_t number, uint64_t sessionId, std::map<uint64_t, PlayerConnection> &connections);
+        Player(uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections);
 
         uint8_t number;
         uint64_t sessionId;
-        std::map<uint64_t, PlayerConnection> &connections;
+        PlayerConnectionMap &connections;
         double x, y, heading;
         bool eliminated;
 
@@ -54,7 +54,7 @@ public:
 
     Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy);
 
-    void addPlayers(std::map<uint64_t, PlayerConnection> &connections);
+    void addPlayers(PlayerConnectionMap &connections);
 
     void start();
 

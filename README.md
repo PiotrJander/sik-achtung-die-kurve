@@ -2,8 +2,17 @@
 
 TODO now
 start 10:55
-end
+end 11:00
 impl interfaces
+
+
+ConnectedPlayer would store struct sockaddr and its length
+refactor from session_id to socket hash; get socket from struct sockaddr
+start 11:02
+
+ok now test it; create two structs by hand and see if different hashes
+
+
 
 
 
@@ -26,9 +35,7 @@ impl interfaces
 
 
 BACKLOG
-refactor from session_id to (socket, session_id); get socket from struct sockaddr
 add logging
-ConnectedPlayer would store struct sockaddr and its length
 
 ICEBOX
 pusta nazwa gracza jako ""

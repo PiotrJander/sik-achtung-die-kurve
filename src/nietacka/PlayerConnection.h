@@ -7,6 +7,8 @@
 
 
 #include <string>
+#include <sys/socket.h>
+#include <map>
 
 class PlayerConnection {
 public:
@@ -29,6 +31,8 @@ public:
             : socket(socket), sessionId(sessionId), turnDirection(turnDirection), name(name)
     {}
 
+    static std::size_t getHashFor(sockaddr *structsockaddr);
+
 private:
     uint64_t sessionId;
     int socket;
@@ -36,5 +40,6 @@ private:
     std::string name;
 };
 
+typedef std::map<std::size_t, PlayerConnection> PlayerConnectionMap;
 
 #endif //PROJECT_PLAYER_H

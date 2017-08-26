@@ -23,7 +23,7 @@
 TEST(GameTest, PlayerGetters)
 {
     TEST_DESCRIPTION("getName, getDirection");
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {456, PlayerConnection(456, 123, -1, "Piotr")},
             {654, PlayerConnection(654, 321, 1, "Stan")}
     };
@@ -36,7 +36,7 @@ TEST(GameTest, PlayerCoordinates)
 {
     TEST_DESCRIPTION("setCoordinates, getCoordinates");
     CoordinateLong ints(12, 23);
-    std::map<uint64_t, PlayerConnection> conns;
+    PlayerConnectionMap conns;
     Game::Player player(0, 456, conns);
     player.setCoordinates(ints);
     ASSERT_EQ(player.getCoordinates(), ints);
@@ -49,7 +49,7 @@ TEST(GameTest, AddPlayers)
             "Players should be sorted by name. "
             "Player objects should be created. "
     );
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {654, PlayerConnection(654, 321, 1, "Stan")},
             {456, PlayerConnection(456, 123, -1, "Piotr")},
             {123, PlayerConnection(123, 890, 0, "")}
@@ -71,15 +71,15 @@ TEST(GameTest, StartPixelEvents)
         "PixelEvent should be generated for every player. "
         "Should return true. "
     );
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {654, PlayerConnection(654, 321, 1, "Stan")},
             {456, PlayerConnection(456, 123, -1, "Piotr")},
     };
     Random random(123);
     Game game(random, 6, 800, 600);
     game.addPlayers(conns);
-
-    ASSERT_TRUE(game.start());
+    game.start();
+    ASSERT_TRUE(game.isInProgress());
 
     try {
         auto &newGameEvent = dynamic_cast<NewGameEvent &>(*game.getEvents().at(0));
@@ -111,15 +111,15 @@ TEST(GameTest, StartPlayerEliminated)
             "When pixel already taken, player should be eliminated. "
             "When one player left, should generate GameOverEvent. "
     );
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {654, PlayerConnection(654, 321, 1, "Stan")},
             {456, PlayerConnection(456, 123, -1, "Piotr")},
     };
     Random random(123);
     Game game(random, 6, 2, 2);
     game.addPlayers(conns);
-
-    ASSERT_FALSE(game.start());
+    game.start();
+    ASSERT_FALSE(game.isInProgress());
 
     try {
         auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEvents().at(1));
@@ -151,7 +151,7 @@ TEST(GameTest, TickGeneratesPixel)
         "Should generate a PixelEvent when a player position changes. "
         "Should return true if the game is going on."
     );
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {456, PlayerConnection(456, 123, -1, "Piotr")},
             {654, PlayerConnection(654, 321, 1, "Stan")},
     };
@@ -166,7 +166,8 @@ TEST(GameTest, TickGeneratesPixel)
             .setCoordinates(CoordinateUnsignedLong(5, 5))
             .heading = 45 + 180 - 6;
 
-    ASSERT_TRUE(game.tick());
+    game.tick();
+    ASSERT_TRUE(game.isInProgress());
 
     ASSERT_EQ(game.getEvents().size(), 1);
     ASSERT_EQ(game.players.at(0).heading, 45);
@@ -186,7 +187,7 @@ TEST(GameTest, TickEliminatePlayerGameOver)
         "Should eliminate the player who steps on a taken pixel. "
         "Should generate GameOverEvent when there is one player left. "
     );
-    std::map<uint64_t, PlayerConnection> conns = {
+    PlayerConnectionMap conns = {
             {456, PlayerConnection(456, 123, 0, "Piotr")},
             {654, PlayerConnection(654, 321, 0, "Stan")},
     };
@@ -203,7 +204,8 @@ TEST(GameTest, TickEliminatePlayerGameOver)
 
     game.setPixel(CoordinateUnsignedLong(6, 5));
 
-    ASSERT_FALSE(game.tick());
+    game.tick();
+    ASSERT_FALSE(game.isInProgress());
 
     try {
         auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEvents().at(1));
