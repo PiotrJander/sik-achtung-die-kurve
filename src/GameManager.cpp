@@ -9,7 +9,8 @@
 
 using namespace std::chrono;
 
-void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket)
+void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket,
+                                  const Game *game = nullptr)
 {
     ClientMessage message(*buffer);
 
@@ -34,12 +35,15 @@ void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const
         }
     }
 
-
+    // send response if game in progress
+    if (game) {
+        enqueueNewDatagramBatches(*game, message.getNextExpectedEventNo());
+    }
 }
 
 void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message)
 {
-    if (connectedPlayers.size() < 42) {
+    if (connectedPlayers.size() < 42 && !isPlayerNameTaken(message.getPlayerName())) {
         connectedPlayers[hash] =
                 PlayerConnection(socket, message.getSessionId(), message.getTurnDirection(), message.getPlayerName());
     }

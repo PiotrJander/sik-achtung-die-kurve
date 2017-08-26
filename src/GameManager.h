@@ -12,7 +12,7 @@
 
 class GameManager: public IDatagramObserver {
 public:
-    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket) override;
+    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket, const Game *game) override;
 
     void gameLoop();
 

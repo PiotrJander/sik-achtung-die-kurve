@@ -24,32 +24,7 @@ game manager phase 2
 start 18:33
 end
 
-
-
-
-
-
-
-
-
-
-
-immediately after getting client message, enqueue events from game
-when new player join during game; they get all events
-
-
-when new player joins, check if client name taken yet
-
-
-
-
-
-
-
-
-
-
-
+add ctor and defaults
 
 DEFAULTS
   -W n – szerokość planszy w pikselach (domyślnie 800)
@@ -60,6 +35,27 @@ DEFAULTS
   -t n – liczba całkowita wyznaczająca szybkość skrętu (parametr
           TURNING_SPEED, domyślnie 6)
   -r n – ziarno generatora liczb losowych (opisanego poniżej)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
