@@ -49,7 +49,7 @@ public:
               playerNames(playerNames)
     {}
 
-    static std::vector<std::string> parsePlayerNames(char *buffer, const char *endOfBuffer);
+    static std::vector<std::string> parsePlayerNames(const char *buffer, const char *endOfBuffer);
 
     bool operator==(const GameEvent &other) const override;
 

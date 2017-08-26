@@ -43,11 +43,11 @@ public:
     GameEvent(uint32_t eventNo, Type type) : eventNo(eventNo), type(type)
     {}
 
-    static std::pair<std::unique_ptr<GameEvent>, int>
-    readFrom(const char *buffer);
+    static std::unique_ptr<GameEvent>
+    readFrom(const char *buffer, uint32_t length);
 
-    void
-    writeTo(std::ostream &);
+    uint32_t
+    writeTo(char *);
 
     virtual bool operator==(const GameEvent &other) const;
 

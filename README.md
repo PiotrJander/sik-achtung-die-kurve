@@ -33,7 +33,16 @@ test all
 start 21:12
 
 
-now we could simplify by returing length
+const char *bufferLocation = buffer;
+uint32_t length = *reinterpret_cast<const uint32_t *>(bufferLocation);
+bufferLocation += sizeof(uint32_t);
+uint32_t expectedChecksum = *reinterpret_cast<const uint32_t *>(bufferLocation + length);
+uint32_t actualChecksum = crc32c(0, (unsigned const char *) bufferLocation, length);
+if (expectedChecksum != actualChecksum) {
+    // TODO
+}
+
+
 
 
 DEFAULTS

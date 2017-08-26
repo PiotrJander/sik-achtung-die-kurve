@@ -38,7 +38,7 @@ uint32_t NewGameEvent::getSizeofPlayerNames()
     return size;
 }
 
-std::vector<std::string> NewGameEvent::parsePlayerNames(char *readingLocation, const char *endOfBuffer)
+std::vector<std::string> NewGameEvent::parsePlayerNames(const char *readingLocation, const char *endOfBuffer)
 {
     std::vector<std::string> playerNames;
     std::string string;

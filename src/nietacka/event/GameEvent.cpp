@@ -4,7 +4,6 @@
 
 #include <sstream>
 #include "GameEvent.h"
-#include "../StreamUtils.h"
 #include "../crc32c.h"
 #include "PixelEvent.h"
 #include "PlayerEliminatedEvent.h"
@@ -15,55 +14,41 @@
 template class std::unique_ptr<char[]>;
 template class std::unique_ptr<std::vector<std::string>>;
 
-std::pair<std::unique_ptr<GameEvent>, int> GameEvent::readFrom(const char *buffer)
+std::unique_ptr<GameEvent> GameEvent::readFrom(const char *buffer, uint32_t length)
 {
-    auto res = StreamUtils::read_int<uint32_t>(buffer);
-    uint32_t length = res.first;
-    char *location = res.second;
-    auto bufferBox = std::make_unique<char[]>(length);
-    res = StreamUtils::read_int<uint32_t>(location + length);
-    uint32_t expectedChecksum = res.first;
-    uint32_t actualChecksum = crc32c(0, (unsigned char *) location, length);
-    if (expectedChecksum != actualChecksum) {
-        // TODO
-    }
-    
-    HeaderPacked *header = reinterpret_cast<HeaderPacked *>(location);
+    const HeaderPacked *header = reinterpret_cast<const HeaderPacked *>(buffer);
     switch (header->type) {
         case Type::NEW_GAME: {
-            auto packedNoPlayerNames = reinterpret_cast<NewGameEvent::SelfPackedNoPlayerNames *>(location);
+            auto packedNoPlayerNames = reinterpret_cast<const NewGameEvent::SelfPackedNoPlayerNames *>(buffer);
             auto playerNames = NewGameEvent::parsePlayerNames(
-                    location + sizeof(NewGameEvent::SelfPackedNoPlayerNames),
-                    location + length);
-            const auto newGameEvent = std::make_unique<NewGameEvent>(*packedNoPlayerNames, playerNames);
-            return std::make_pair(newGameEvent, length);
+                    buffer + sizeof(NewGameEvent::SelfPackedNoPlayerNames),
+                    buffer + length);
+            return std::make_unique<NewGameEvent>(*packedNoPlayerNames, playerNames);
         }
         case Type::PIXEL: {
-            auto pixelEvent = std::make_unique<PixelEvent>(*reinterpret_cast<PixelEvent::SelfPacked *>(location));
-            return std::make_pair(pixelEvent, length);
+            return std::make_unique<PixelEvent>(*reinterpret_cast<const PixelEvent::SelfPacked *>(buffer));
         }
         case Type::PLAYER_ELIMINATED: {
-            auto eliminatedPacked = reinterpret_cast<PlayerEliminatedEvent::SelfPacked *>(location);
-            auto eliminatedEvent = std::make_unique<PlayerEliminatedEvent>(*eliminatedPacked);
-            return std::make_pair(eliminatedEvent, length);
+            auto eliminatedPacked = reinterpret_cast<const PlayerEliminatedEvent::SelfPacked *>(buffer);
+            return std::make_unique<PlayerEliminatedEvent>(*eliminatedPacked);
         }
         case Type::GAME_OVER: {
-            auto gameOverEvent = std::make_unique<GameOverEvent>(*header);
-            return std::make_pair(gameOverEvent, length);
+            return std::make_unique<GameOverEvent>(*header);
         }
     }
 }
 
-void GameEvent::writeTo(std::ostream &s)
+uint32_t GameEvent::writeTo(char *buffer)
 {
     uint32_t length = getLength();
-    auto bufferBox = std::make_unique<char[]>(length);
-    char *buffer = bufferBox.get();
-    writeToBuffer(buffer);
     uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(buffer), length);
-    StreamUtils::write_int<uint32_t>(nullptr, length);
-    s.write(buffer, length);
-    StreamUtils::write_int<uint32_t>(nullptr, checksum);
+    char *bufferlocation = buffer;
+    *reinterpret_cast<uint32_t *>(bufferlocation) = length;
+    bufferlocation += sizeof(uint32_t);
+    writeToBuffer(bufferlocation);
+    bufferlocation += length;
+    *reinterpret_cast<uint32_t *>(bufferlocation) = checksum;
+    return length + 2 * sizeof(uint32_t);
 }
 
 bool GameEvent::operator==(const GameEvent &other) const
