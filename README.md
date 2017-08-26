@@ -16,10 +16,6 @@ total 2:30
 
 
 TODO now
-test: when session_id changes, we can't access anymore
-fix tests
-
-observer rather than Q
 
 
 
@@ -52,7 +48,9 @@ validate messages
 
 INTERFACES
 
-client messages fixed length, but can be any number of them: dynamically allocate
+IClientMessageObserver
+    process(char *buffer)
+
 
 interface IDatagram<size>, impl by EventBatch
     stores ref to event history on game, start and end position
@@ -76,19 +74,17 @@ init
 loop {
     // wait for game
     do
-        every 20 ms
-            while (UDPWorker.dequeueRecv) process client messages
+        poll for client messages and process them
     until ready for game
 
     // play game
     init game
     while game.isInProgress()
         start_of_frame = time now
-        while (UDPWorker.dequeueRecv) process client messages
         game.tick()
         for datagram in client_events
             UDPWorker.enqueueSend(IDatagram)
-        UDPWorker.workUntil(start_of_frame + frame)
+        UDPWorker.workUntil(start_of_frame + frame) -> observe for client messages and process them
 }
 maybe graceful exit on signal
 

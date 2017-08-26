@@ -8,14 +8,16 @@
 
 #include <memory>
 #include "IDatagram.h"
+#include "IDatagramObserver.h"
 
 class IUdpWorker {
 public:
     virtual void enqueue(std::unique_ptr<IDatagram>) = 0;
 
-    virtual std::unique_ptr<char[]> dequeue() = 0;
-
     virtual void workUntil(int time) = 0;
+
+private:
+    IDatagramObserver observer;
 };
 
 
