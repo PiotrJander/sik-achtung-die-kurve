@@ -8,7 +8,7 @@
 
 class IDatagramObserver {
 public:
-    virtual void process(const char *buffer) = 0;
+    virtual void processDatagram(const char *buffer) = 0;
 };
 
 

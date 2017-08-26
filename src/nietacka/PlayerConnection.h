@@ -53,6 +53,8 @@ private:
     sockaddr_storage socket;
     int8_t turnDirection;
     std::string name;
+    bool readyForGame;
+    uint32_t nextExpectedEvent;
 };
 
 typedef std::map<std::size_t, PlayerConnection> PlayerConnectionMap;

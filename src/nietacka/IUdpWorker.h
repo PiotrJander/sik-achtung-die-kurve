@@ -14,7 +14,9 @@ class IUdpWorker {
 public:
     virtual void enqueue(std::unique_ptr<IDatagram>) = 0;
 
-    virtual void workUntil(int time) = 0;
+    virtual const char *getDatagram() = 0;
+
+    virtual void workUntil(std::chrono::milliseconds time) = 0;
 
 private:
     IDatagramObserver observer;
