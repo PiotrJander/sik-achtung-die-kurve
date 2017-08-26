@@ -19,7 +19,10 @@ TEST(PlayerConnectioTest, Hash)
     uint8_t ipv6Address[16] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     memcpy((uint8_t *) ipv6.sin6_addr.__u6_addr.__u6_addr8, ipv6Address, 16);
 
-    ASSERT_EQ(PlayerConnection::getHashFor(reinterpret_cast<sockaddr *>(&ipv4)), 175173704325);
-    ASSERT_EQ(PlayerConnection::getHashFor(reinterpret_cast<sockaddr *>(&ipv6)), 7801689049451974840);
+    PlayerConnection pc1(reinterpret_cast<sockaddr *>(&ipv4), 123, -1, "Piotr");
+    PlayerConnection pc2(reinterpret_cast<sockaddr *>(&ipv6), 123, -1, "Jed");
+
+    ASSERT_EQ(pc1.hash(), 175173704325);
+    ASSERT_EQ(pc2.hash(), 7801689049451974840);
 
 }

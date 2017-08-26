@@ -27,8 +27,9 @@ public:
 
     class Player {
     public:
-        Player(uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections);
+        Player(std::size_t hash, uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections);
 
+        std::size_t hash;
         uint8_t number;
         uint64_t sessionId;
         PlayerConnectionMap &connections;

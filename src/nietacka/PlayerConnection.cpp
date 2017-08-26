@@ -9,6 +9,14 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
 
+#ifdef __APPLE__
+    #define IPV6_ADDR reinterpret_cast<const uint8_t *>(ipv6->sin6_addr.__u6_addr.__u6_addr8)
+#elif __linux__
+    #define IPV6_ADDR reinterpret_cast<const uint8_t *>(ipv6->sin6_addr.s6_addr)
+#else
+
+#endif
+
 template <class T>
 inline void hash_combine(std::size_t & s, const T & v)
 {
@@ -42,20 +50,20 @@ inline void hash_combine(std::size_t & s, const T & v)
 //    }
 //};
 
-std::size_t PlayerConnection::getHashFor(sockaddr *structsockaddr)
+size_t PlayerConnection::hash() const
 {
-    switch (structsockaddr->sa_family) {
+    std::size_t res = 0;
+    hash_combine(res, sessionId);
+    switch (socket.ss_family) {
         case AF_INET: {
-            auto ipv4 = reinterpret_cast<sockaddr_in *>(structsockaddr);
-            std::size_t res = 0;
+            auto ipv4 = reinterpret_cast<const sockaddr_in *>(&socket);
             hash_combine(res, ipv4->sin_addr.s_addr);
             hash_combine(res, ipv4->sin_port);
             return res;
         }
         case AF_INET6: {
-            auto ipv6 = reinterpret_cast<sockaddr_in6 *>(structsockaddr);
-            std::size_t res = 0;
-            uint8_t *addr = reinterpret_cast<uint8_t *>(ipv6->sin6_addr.__u6_addr.__u6_addr8);  // TODO different for linux here!
+            auto ipv6 = reinterpret_cast<const sockaddr_in6 *>(&socket);
+            const uint8_t *addr = IPV6_ADDR;
             for (int i = 0; i < 16; ++i) {
                 hash_combine(res, addr[i]);
             }

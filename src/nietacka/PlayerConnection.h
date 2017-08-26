@@ -9,6 +9,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <map>
+#include <netinet/in.h>
 
 class PlayerConnection {
 public:
@@ -27,15 +28,26 @@ public:
         return turnDirection;
     }
 
-    PlayerConnection(uint64_t sessionId, int socket, int8_t turnDirection, const std::string &name)
-            : socket(socket), sessionId(sessionId), turnDirection(turnDirection), name(name)
-    {}
+    PlayerConnection(sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name)
+            : sessionId(sessionId), turnDirection(turnDirection), name(name)
+    {
+        switch (socketArg->sa_family) {
+            case AF_INET: {
+                auto storage = reinterpret_cast<sockaddr_in *>(&socket);
+                *storage = sockaddr_in(*reinterpret_cast<sockaddr_in *>(socketArg));
+            }
+            case AF_INET6: {
+                auto storage = reinterpret_cast<sockaddr_in6 *>(&socket);
+                *storage = sockaddr_in6(*reinterpret_cast<sockaddr_in6 *>(socketArg));
+            }
+        }
+    }
 
-    static std::size_t getHashFor(sockaddr *structsockaddr);
+    size_t hash() const;
 
 private:
     uint64_t sessionId;
-    int socket;
+    sockaddr_storage socket;
     int8_t turnDirection;
     std::string name;
 };

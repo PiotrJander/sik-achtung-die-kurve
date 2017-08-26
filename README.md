@@ -1,19 +1,21 @@
 # Achtung Die Kurve clone: network sockets project 
 
-TODO now
+LOG
+
 start 10:55
 end 11:00
 impl interfaces
 
-
 ConnectedPlayer would store struct sockaddr and its length
 refactor from session_id to socket hash; get socket from struct sockaddr
 start 11:02
+end 13:36
+total 2:30
 
-ok now test it; create two structs by hand and see if different hashes
 
 
 
+TODO now
 
 
 

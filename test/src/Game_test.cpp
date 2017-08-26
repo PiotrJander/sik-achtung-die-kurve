@@ -4,77 +4,93 @@
 
 #include <nietacka/PlayerConnection.h>
 #include <nietacka/Game.h>
-#include <nietacka/event/NewGameEvent.h>
-#include <nietacka/event/PixelEvent.h>
-#include <nietacka/event/GameOverEvent.h>
-#include <nietacka/event/PlayerEliminatedEvent.h>
 #include "gtest/gtest.h"
 #include "setup.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "CannotResolve"
 
-//#define FAIL_ON_BAD_CAST(block) try { \
-//    block; \
-//} catch (std::bad_cast &e) { \
-//    FAIL() << "Bad event type"; \
-//}
 
-TEST(GameTest, PlayerGetters)
+class GameTest : public ::testing::Test {
+protected:
+    virtual void SetUp() {
+        ipv4_1.sin_family = AF_INET;
+        ipv4_1.sin_port = 1234;
+        ipv4_1.sin_addr.s_addr = 987654;
+
+        ipv4_2.sin_family = AF_INET;
+        ipv4_2.sin_port = 3456;
+        ipv4_2.sin_addr.s_addr = 876543;
+
+        ipv6.sin6_family = AF_INET6;
+        ipv6.sin6_port = 2345;
+        uint8_t ipv6Address[16] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+        memcpy((uint8_t *) ipv6.sin6_addr.__u6_addr.__u6_addr8, ipv6Address, 16);
+
+        PlayerConnection pc1(reinterpret_cast<sockaddr *>(&ipv4_1), 123, -1, "Piotr");
+        PlayerConnection pc2(reinterpret_cast<sockaddr *>(&ipv6), 321, 1, "Stan");
+        conns = {
+                {pc1.hash(), pc1},
+                {pc2.hash(), pc2}
+        };
+    }
+
+    sockaddr_in ipv4_1;
+    sockaddr_in ipv4_2;
+    sockaddr_in6 ipv6;
+
+    PlayerConnectionMap conns;
+};
+
+TEST_F(GameTest, PlayerGetters)
 {
     TEST_DESCRIPTION("getName, getDirection");
-    PlayerConnectionMap conns = {
-            {456, PlayerConnection(456, 123, -1, "Piotr")},
-            {654, PlayerConnection(654, 321, 1, "Stan")}
-    };
-    Game::Player player(0, 456, conns);
+    Game::Player player(11093891723921, 0, 456, conns);
     ASSERT_EQ(player.getTurnDirection(), -1);
     ASSERT_EQ(player.getName(), "Piotr");
 }
 
-TEST(GameTest, PlayerCoordinates)
+TEST_F(GameTest, PlayerCoordinates)
 {
     TEST_DESCRIPTION("setCoordinates, getCoordinates");
     CoordinateLong ints(12, 23);
-    PlayerConnectionMap conns;
-    Game::Player player(0, 456, conns);
+    Game::Player player(11093891723921, 0, 456, conns);
     player.setCoordinates(ints);
     ASSERT_EQ(player.getCoordinates(), ints);
 }
 
-TEST(GameTest, AddPlayers)
+TEST_F(GameTest, AddPlayers)
 {
-    TEST_DESCRIPTION(
+TEST_DESCRIPTION(
             "Empty names should be discarded. "
             "Players should be sorted by name. "
             "Player objects should be created. "
     );
-    PlayerConnectionMap conns = {
-            {654, PlayerConnection(654, 321, 1, "Stan")},
-            {456, PlayerConnection(456, 123, -1, "Piotr")},
-            {123, PlayerConnection(123, 890, 0, "")}
+    PlayerConnection pc1(reinterpret_cast<sockaddr *>(&ipv4_1), 321, 1, "Stan");
+    PlayerConnection pc2(reinterpret_cast<sockaddr *>(&ipv4_2), 123, -1, "Piotr");
+    PlayerConnection pc3(reinterpret_cast<sockaddr *>(&ipv6), 890, 0, "");
+    PlayerConnectionMap conns2 = {
+            {pc1.hash(), pc1},
+            {pc2.hash(), pc2},
+            {pc3.hash(), pc3}
     };
     Random random(123);
     Game game(random, 6, 800, 600);
-    game.addPlayers(conns);
+    game.addPlayers(conns2);
 
     ASSERT_EQ(game.players.size(), 2);
-    ASSERT_EQ(game.players.at(0).sessionId, 456);
-    ASSERT_EQ(game.players.at(1).sessionId, 654);
+    ASSERT_EQ(game.players.at(0).sessionId, 123);
+    ASSERT_EQ(game.players.at(1).sessionId, 321);
     ASSERT_EQ(game.players.at(0).getName(), "Piotr");
 }
 
-TEST(GameTest, StartPixelEvents)
+TEST_F(GameTest, StartPixelEvents)
 {
     TEST_DESCRIPTION(
         "NewGameEvent should be generated. "
         "PixelEvent should be generated for every player. "
         "Should return true. "
     );
-    PlayerConnectionMap conns = {
-            {654, PlayerConnection(654, 321, 1, "Stan")},
-            {456, PlayerConnection(456, 123, -1, "Piotr")},
-    };
     Random random(123);
     Game game(random, 6, 800, 600);
     game.addPlayers(conns);
@@ -105,16 +121,12 @@ TEST(GameTest, StartPixelEvents)
     }
 }
 
-TEST(GameTest, StartPlayerEliminated)
+TEST_F(GameTest, StartPlayerEliminated)
 {
     TEST_DESCRIPTION(
             "When pixel already taken, player should be eliminated. "
             "When one player left, should generate GameOverEvent. "
     );
-    PlayerConnectionMap conns = {
-            {654, PlayerConnection(654, 321, 1, "Stan")},
-            {456, PlayerConnection(456, 123, -1, "Piotr")},
-    };
     Random random(123);
     Game game(random, 6, 2, 2);
     game.addPlayers(conns);
@@ -143,7 +155,7 @@ TEST(GameTest, StartPlayerEliminated)
     }
 }
 
-TEST(GameTest, TickGeneratesPixel)
+TEST_F(GameTest, TickGeneratesPixel)
 {
     TEST_DESCRIPTION(
         "Players headings are updated. "
@@ -151,10 +163,6 @@ TEST(GameTest, TickGeneratesPixel)
         "Should generate a PixelEvent when a player position changes. "
         "Should return true if the game is going on."
     );
-    PlayerConnectionMap conns = {
-            {456, PlayerConnection(456, 123, -1, "Piotr")},
-            {654, PlayerConnection(654, 321, 1, "Stan")},
-    };
     Random random(123);
     Game game(random, 6, 10, 10);
     game.addPlayers(conns);
@@ -181,16 +189,12 @@ TEST(GameTest, TickGeneratesPixel)
     }
 }
 
-TEST(GameTest, TickEliminatePlayerGameOver)
+TEST_F(GameTest, TickEliminatePlayerGameOver)
 {
     TEST_DESCRIPTION(
         "Should eliminate the player who steps on a taken pixel. "
         "Should generate GameOverEvent when there is one player left. "
     );
-    PlayerConnectionMap conns = {
-            {456, PlayerConnection(456, 123, 0, "Piotr")},
-            {654, PlayerConnection(654, 321, 0, "Stan")},
-    };
     Random random(123);
     Game game(random, 6, 10, 10);
     game.addPlayers(conns);
@@ -223,15 +227,4 @@ TEST(GameTest, TickEliminatePlayerGameOver)
 }
 
 #pragma clang diagnostic pop
-
-
-
-
-
-
-
-
-
-
-
 

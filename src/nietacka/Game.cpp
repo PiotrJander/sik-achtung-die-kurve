@@ -21,20 +21,20 @@ Game::Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy)
 void Game::addPlayers(PlayerConnectionMap &connections)
 {
     // get sessionIds for players with non-empty names
-    std::vector<uint64_t> sessionIds;
+    std::vector<uint64_t> hashes;
     for (auto const &player : connections) {
         if (!player.second.getName().empty()) {
-            sessionIds.emplace_back(player.second.getSessionId());
+            hashes.emplace_back(player.second.hash());
         }
     }
 
     // sort by name
-    std::sort(sessionIds.begin(), sessionIds.end(), [connections](uint64_t s1, uint64_t s2) {
-        return connections.at(s1).getName() < connections.at(s2).getName();
+    std::sort(hashes.begin(), hashes.end(), [connections](uint64_t h1, uint64_t h2) {
+        return connections.at(h1).getName() < connections.at(h2).getName();
     });
 
-    for (uint8_t j = 0; j < sessionIds.size(); ++j) {
-        players.emplace_back(Player(j, sessionIds.at(j), connections));
+    for (uint8_t j = 0; j < hashes.size(); ++j) {
+        players.emplace_back(Player(hashes.at(j), j, connections.at(hashes.at(j)).getSessionId(), connections));
     }
 }
 
@@ -108,14 +108,14 @@ int Game::numberOfPlayers() const
     return n;
 }
 
-Game::Player::Player(uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections)
-        : number(number), sessionId(sessionId), connections(connections)
+Game::Player::Player(std::size_t hash, uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections)
+        : hash(hash), number(number), sessionId(sessionId), connections(connections)
 {}
 
 std::string const &Game::Player::getName() const
 {
     static const std::string emptyString = "";
-    const auto &conn = connections.find(sessionId);
+    const auto &conn = connections.find(hash);
     if (conn == connections.end()) {
         return emptyString;
     } else {
@@ -125,7 +125,7 @@ std::string const &Game::Player::getName() const
 
 int8_t Game::Player::getTurnDirection() const
 {
-    const auto &conn = connections.find(sessionId);
+    const auto &conn = connections.find(hash);
     if (conn == connections.end()) {
         return 0;
     } else {
