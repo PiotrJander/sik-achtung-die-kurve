@@ -24,32 +24,6 @@ inline void hash_combine(std::size_t & s, const T & v)
     s^= h(v) + 0x9e3779b9 + (s<< 6) + (s>> 2);
 }
 
-//template<> struct hash<sockaddr_in>
-//{
-//    typedef struct sockaddr_in argument_type;
-//    typedef std::size_t result_type;
-//    result_type operator()(argument_type const& s) const
-//    {
-//        std::size_t res = 0;
-//        hash_combine(res, s.sin_addr.s_addr);
-//        hash_combine(res, s.sin_port);
-//        return res;
-//    }
-//};
-//
-//template<> struct hash<sockaddr_in6>
-//{
-//    typedef struct sockaddr_in argument_type;
-//    typedef std::size_t result_type;
-//    result_type operator()(argument_type const& s) const
-//    {
-//        std::size_t res = 0;
-//        hash_combine(res, s.sin_addr.s_addr);
-//        hash_combine(res, s.sin_port);
-//        return res;
-//    }
-//};
-
 size_t PlayerConnection::hash() const
 {
     std::size_t res = 0;
@@ -73,6 +47,13 @@ size_t PlayerConnection::hash() const
             // TODO handle
             return 0;
     }
+}
+
+void PlayerConnection::resetAfterGame()
+{
+    turnDirection = 0;
+    readyForGame = false;
+    nextExpectedEvent = 0;
 }
 
 #pragma clang diagnostic pop

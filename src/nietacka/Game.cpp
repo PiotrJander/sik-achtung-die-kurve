@@ -71,6 +71,8 @@ void Game::start()
 
 void Game::tick()
 {
+    firstNewEventNumber = eventNoCounter;
+
     for (auto &&player : players) {
         // update heading
         player.heading += player.getTurnDirection() * turningSpeed;
@@ -106,6 +108,11 @@ int Game::numberOfPlayers() const
         }
     }
     return n;
+}
+
+uint32_t Game::getFirstNewEventNumber() const
+{
+    return firstNewEventNumber;
 }
 
 Game::Player::Player(std::size_t hash, uint8_t number, uint64_t sessionId, PlayerConnectionMap &connections)

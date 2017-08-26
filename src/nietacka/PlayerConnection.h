@@ -48,13 +48,15 @@ public:
 
     size_t hash() const;
 
+    void resetAfterGame();
+
 private:
     uint64_t sessionId;
     sockaddr_storage socket;
     int8_t turnDirection;
     std::string name;
-    bool readyForGame;
-    uint32_t nextExpectedEvent;
+    bool readyForGame = false;
+    uint32_t nextExpectedEvent = 0;
 };
 
 typedef std::map<std::size_t, PlayerConnection> PlayerConnectionMap;

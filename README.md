@@ -12,13 +12,19 @@ start 11:02
 end 13:36
 total 2:30
 
+game manager phase 1
+start 15:50
+end 17:50
+2h
 
 
 
 TODO now
-reqs for game manager
-start 15:50
-end
+game manager phase 2
+start
+
+
+
 
 
 
@@ -28,8 +34,6 @@ end
 
 empty player name also gets events; but can't join a game
 immediately after getting client message, enqueue events from game
-and also equeue them after a frame, i.e. new events
-divide event batches so that size smaller than 512
 when new player join during game; they get all events
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time
     but snake keep moving
@@ -63,7 +67,6 @@ DEFAULTS
 
 
 BACKLOG
-fix test and including gtest
 add logging
 event length and crc32; maybe refactor writeTo and readFrom
 
@@ -74,19 +77,6 @@ test conversion hton
 check field order in structs
 use poll in UDPWorker
 validate messages
-
-INTERFACES
-
-interface IDatagram<size>, impl by EventBatch
-    stores ref to event history on game, start and end position
-    stores ref to player connections
-    stores length
-    stores player id (hash, session)
-    unique ptr to buffer (pair?) makeBuffer()
-    getLength()
-    getStructSockaddr (through player connection)
-    ?? get sockaddr length
-    --> need to ensure that size is okay!
 
 Qs:
 64 bit random numbers but 32 bits game id

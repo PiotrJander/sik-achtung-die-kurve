@@ -49,7 +49,7 @@ protected:
 TEST_F(GameTest, PlayerGetters)
 {
     TEST_DESCRIPTION("getName, getDirection");
-    Game::Player player(175173704325, 0, 456, conns);
+    Game::Player player(175173704325, 0, 123, conns);
     ASSERT_EQ(player.getTurnDirection(), -1);
     ASSERT_EQ(player.getName(), "Piotr");
 }
@@ -112,7 +112,7 @@ TEST_F(GameTest, StartPixelEvents)
     ASSERT_TRUE(game.isInProgress());
 
     try {
-        auto &newGameEvent = dynamic_cast<NewGameEvent &>(*game.getEvents().at(0));
+        auto &newGameEvent = dynamic_cast<NewGameEvent &>(*game.getEventHistory().at(0));
         ASSERT_EQ(newGameEvent, NewGameEvent(0, 800, 600));
         ASSERT_EQ(newGameEvent.getPlayerNames().at(0), "Piotr");
         ASSERT_EQ(newGameEvent.getPlayerNames().at(1), "Stan");
@@ -121,14 +121,14 @@ TEST_F(GameTest, StartPixelEvents)
     }
 
     try {
-        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEvents().at(1));
+        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(1));
         ASSERT_EQ(pixelEvent, PixelEvent(1, 0, 123, 251));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
     }
 
     try {
-        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEvents().at(2));
+        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(2));
         ASSERT_EQ(pixelEvent, PixelEvent(2, 1, 261, 193));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
@@ -148,21 +148,21 @@ TEST_F(GameTest, StartPlayerEliminated)
     ASSERT_FALSE(game.isInProgress());
 
     try {
-        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEvents().at(1));
+        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(1));
         ASSERT_EQ(pixelEvent, PixelEvent(1, 0, 1, 1));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
     }
 
     try {
-        auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEvents().at(2));
+        auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEventHistory().at(2));
         ASSERT_EQ(playerEliminatedEvent, PlayerEliminatedEvent(2, 1));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
     }
 
     try {
-        auto &gameOverEvent = dynamic_cast<GameOverEvent &>(*game.getEvents().at(3));
+        auto &gameOverEvent = dynamic_cast<GameOverEvent &>(*game.getEventHistory().at(3));
         ASSERT_EQ(gameOverEvent, GameOverEvent(3));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
@@ -191,12 +191,12 @@ TEST_F(GameTest, TickGeneratesPixel)
     game.tick();
     ASSERT_TRUE(game.isInProgress());
 
-    ASSERT_EQ(game.getEvents().size(), 1);
+    ASSERT_EQ(game.getEventHistory().size(), 1);
     ASSERT_EQ(game.players.at(0).heading, 45);
     ASSERT_EQ(game.players.at(1).heading, 45 + 180);
 
     try {
-        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEvents().at(0));
+        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(0));
         ASSERT_EQ(pixelEvent, PixelEvent(0, 1, 4, 4));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
@@ -226,14 +226,14 @@ TEST_F(GameTest, TickEliminatePlayerGameOver)
     ASSERT_FALSE(game.isInProgress());
 
     try {
-        auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEvents().at(1));
+        auto &playerEliminatedEvent = dynamic_cast<PlayerEliminatedEvent &>(*game.getEventHistory().at(1));
         ASSERT_EQ(playerEliminatedEvent, PlayerEliminatedEvent(1, 1));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";
     }
 
     try {
-        auto &gameOverEvent = dynamic_cast<GameOverEvent &>(*game.getEvents().at(2));
+        auto &gameOverEvent = dynamic_cast<GameOverEvent &>(*game.getEventHistory().at(2));
         ASSERT_EQ(gameOverEvent, GameOverEvent(2));
     } catch (std::bad_cast &e) {
         FAIL() << "Bad event type";

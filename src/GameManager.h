@@ -28,6 +28,10 @@ private:
     Random random;
 
     bool canGameStart();
+
+    void resetPlayers();
+
+    void enqueueNewDatagramBatches(const Game &game);
 };
 
 

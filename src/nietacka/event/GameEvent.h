@@ -61,11 +61,11 @@ public:
         return type;
     }
 
+    virtual uint32_t getLength() = 0;
+
 private:
     uint32_t eventNo;
     GameEvent::Type type;
-
-    virtual uint32_t getLength() = 0;
 
     virtual void writeToBuffer(char *buffer) = 0;
 };

@@ -18,6 +18,7 @@
 typedef std::pair<long , long> CoordinateLong;
 typedef std::pair<unsigned long , unsigned long> CoordinateUnsignedLong;
 typedef std::pair<double , double> CoordinateDouble;
+typedef std::vector<std::unique_ptr<GameEvent>> EventHistory;
 
 class Game {
 public:
@@ -64,7 +65,7 @@ public:
 
     void tick();
 
-    const std::vector<std::unique_ptr<GameEvent>> &getEvents() const
+    const EventHistory &getEventHistory() const
     {
         return events;
     }
@@ -74,6 +75,8 @@ public:
         return inProgress;
     }
 
+    uint32_t getFirstNewEventNumber() const;
+
 private:
     Random random;
 
@@ -81,7 +84,7 @@ private:
 
     int turningSpeed;
 
-    uint32_t id, maxx, maxy, eventNoCounter = 0;
+    uint32_t id, maxx, maxy, eventNoCounter = 0, firstNewEventNumber;
 
     bool inProgress = true;
 
@@ -90,7 +93,7 @@ private:
      */
     std::vector<std::vector<bool>> matrix;
 
-    std::vector<std::unique_ptr<GameEvent>> events;
+    EventHistory events;
 
     void setPixel(CoordinateUnsignedLong c)
     {

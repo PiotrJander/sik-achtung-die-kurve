@@ -12,7 +12,7 @@
 
 class IUdpWorker {
 public:
-    virtual void enqueue(std::unique_ptr<IDatagram>) = 0;
+    virtual void enqueue(IDatagram) = 0;
 
     virtual const char *getDatagram() = 0;
 
