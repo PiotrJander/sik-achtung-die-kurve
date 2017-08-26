@@ -50,6 +50,11 @@ public:
 
     void resetAfterGame();
 
+    bool isReadyForGame() const
+    {
+        return readyForGame || name.empty();
+    }
+
 private:
     uint64_t sessionId;
     sockaddr_storage socket;

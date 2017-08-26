@@ -21,8 +21,11 @@ end 17:50
 
 TODO now
 game manager phase 2
-start
+start 18:33
+end
 
+
+for every
 
 
 

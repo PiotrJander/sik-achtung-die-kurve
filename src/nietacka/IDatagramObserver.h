@@ -6,9 +6,11 @@
 #define PROJECT_IDATAGRAMOBSERVER_H
 
 
+#include "ClientMessage.h"
+
 class IDatagramObserver {
 public:
-    virtual void processDatagram(const char *buffer) = 0;
+    virtual void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket) = 0;
 };
 
 

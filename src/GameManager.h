@@ -12,7 +12,7 @@
 
 class GameManager: public IDatagramObserver {
 public:
-    void processDatagram(const char *buffer) override;
+    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket) override;
 
     void gameLoop();
 
@@ -31,7 +31,7 @@ private:
 
     void resetPlayers();
 
-    void enqueueNewDatagramBatches(const Game &game);
+    void enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber);
 };
 
 

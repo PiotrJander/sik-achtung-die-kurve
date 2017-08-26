@@ -14,7 +14,7 @@ class IUdpWorker {
 public:
     virtual void enqueue(IDatagram) = 0;
 
-    virtual const char *getDatagram() = 0;
+    virtual std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() = 0;
 
     virtual void workUntil(std::chrono::milliseconds time) = 0;
 

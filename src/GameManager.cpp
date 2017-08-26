@@ -9,27 +9,30 @@
 
 using namespace std::chrono;
 
-void GameManager::processDatagram(const char *buffer)
+void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket)
 {
-
-    // TODO enqueue datagrams from next expected ...
+//    ClientMessage cm(*buffer);
+//    cm.
 }
 
 void GameManager::gameLoop()
 {
     do {
-        processDatagram(udpWorker.getDatagram());
+        auto res = udpWorker.getDatagram();
+        processDatagram(res.first, res.second);
     } while (!canGameStart());
 
     Game game(random, turningSpeed, maxx, maxy);
     game.addPlayers(connectedPlayers);
     game.start();
 
-    // send events even if end on start
+    // in case game is over already
+    enqueueNewDatagramBatches(game, 0);
+
     while (game.isInProgress()) {
         milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
         game.tick();
-        enqueueNewDatagramBatches(game);
+        enqueueNewDatagramBatches(game, 0);
         udpWorker.workUntil(startOfFrame);
     }
     resetPlayers();
@@ -37,7 +40,8 @@ void GameManager::gameLoop()
 
 bool GameManager::canGameStart()
 {
-    return false;  // TODO
+    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
+                       [](const auto &entry) { return entry.second.isReadyForGame(); });
 }
 
 void GameManager::resetPlayers()
@@ -47,11 +51,10 @@ void GameManager::resetPlayers()
     }
 }
 
-void GameManager::enqueueNewDatagramBatches(const Game &game)
+void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber = game.getFirstNewEventNumber())
 {
     const MAX_DATAGRAM_SIZE = 512;
-    const SIZEOF_HEADER = 0;  // TODO this should be non-zero
-    uint32_t startEventNumber = game.getFirstNewEventNumber();
+    const SIZEOF_HEADER = sizeof(uint32_t);
     int length = SIZEOF_HEADER;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
