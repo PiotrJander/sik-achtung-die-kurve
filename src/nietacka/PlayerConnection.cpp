@@ -26,8 +26,13 @@ inline void hash_combine(std::size_t & s, const T & v)
 
 size_t PlayerConnection::hash() const
 {
+    return getHashFor(reinterpret_cast<const sockaddr *>(&socket));
+}
+
+std::size_t PlayerConnection::getHashFor(const sockaddr *socket) const
+{
     std::size_t res = 0;
-    switch (socket.ss_family) {
+    switch (socket->sa_family) {
         case AF_INET: {
             auto ipv4 = reinterpret_cast<const sockaddr_in *>(&socket);
             hash_combine(res, ipv4->sin_addr.s_addr);

@@ -32,6 +32,10 @@ private:
     void resetPlayers();
 
     void enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber);
+
+    void addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message);
+
+    bool isPlayerNameTaken(const std::string &name) const;
 };
 
 

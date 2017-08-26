@@ -31,7 +31,7 @@ public:
         return turnDirection;
     }
 
-    PlayerConnection(sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name)
+    PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name)
             : sessionId(sessionId), turnDirection(turnDirection), name(name)
     {
         switch (socketArg->sa_family) {
@@ -48,11 +48,23 @@ public:
 
     size_t hash() const;
 
+    static std::size_t getHashFor(const sockaddr *socket) const;
+
     void resetAfterGame();
 
     bool isReadyForGame() const
     {
         return readyForGame || name.empty();
+    }
+
+    void setTurnDirection(int8_t turnDirection)
+    {
+        PlayerConnection::turnDirection = turnDirection;
+    }
+
+    void setNextExpectedEvent(uint32_t nextExpectedEvent)
+    {
+        PlayerConnection::nextExpectedEvent = nextExpectedEvent;
     }
 
 private:

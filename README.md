@@ -25,7 +25,6 @@ start 18:33
 end
 
 
-for every
 
 
 
@@ -35,16 +34,11 @@ for every
 
 
 
-empty player name also gets events; but can't join a game
 immediately after getting client message, enqueue events from game
 when new player join during game; they get all events
-when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time
-    but snake keep moving
+
+
 when new player joins, check if client name taken yet
-if greater session_id, disconnect and connect
-if smaller, ignore
-method readyForGame: all players have pressed an arrow (non-empty name), and more than one
-register time at start of frame so that frame takes 2 secs
 
 
 
@@ -74,6 +68,7 @@ add logging
 event length and crc32; maybe refactor writeTo and readFrom
 
 ICEBOX
+when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""
 streamUtils may not be used with sockets!
 test conversion hton

@@ -11,8 +11,38 @@ using namespace std::chrono;
 
 void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket)
 {
-//    ClientMessage cm(*buffer);
-//    cm.
+    ClientMessage message(*buffer);
+
+    // add or update connected player
+    size_t hash = PlayerConnection::getHashFor(socket);
+    const auto &entry = connectedPlayers.find(hash);
+    if (entry == connectedPlayers.end()) {
+        // new socket
+        addPlayerConnection(hash, socket, message);
+    } else {
+        auto &conn = entry->second;
+        if (conn.getSessionId() == message.getSessionId()) {
+            // same player, update fields
+            conn.setTurnDirection(message.getTurnDirection());
+            conn.setNextExpectedEvent(message.getNextExpectedEventNo());
+        } else if (conn.getSessionId() < message.getSessionId()) {
+            // same socket but different session; disconnect old and connect new
+            connectedPlayers.erase(hash);
+            addPlayerConnection(hash, socket, message);
+        } else {
+            // ignore
+        }
+    }
+
+
+}
+
+void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message)
+{
+    if (connectedPlayers.size() < 42) {
+        connectedPlayers[hash] =
+                PlayerConnection(socket, message.getSessionId(), message.getTurnDirection(), message.getPlayerName());
+    }
 }
 
 void GameManager::gameLoop()
@@ -69,4 +99,21 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
     }
     udpWorker.enqueue(EventBatch(length, game.getEventHistory(), startEventNumber,
                                  static_cast<uint32_t>(game.getEventHistory().size())));
+}
+
+bool GameManager::isPlayerNameTaken(const std::string &name) const
+{
+    // there can be many observing players
+    if (name.empty()) {
+        return false;
+    }
+
+    for (auto &&entry : connectedPlayers) {
+        if (entry.second.getName() == name) {
+            return true;
+        }
+    }
+
+    // else
+    return false;
 }
