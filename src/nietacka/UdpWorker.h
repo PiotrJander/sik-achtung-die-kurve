@@ -8,6 +8,7 @@
 
 #include <queue>
 #include "IUdpWorker.h"
+#include "Socket.h"
 
 class UdpWorker: public IUdpWorker {
 public:
@@ -17,21 +18,13 @@ public:
 
     void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override;
 
-    UdpWorker(uint16_t port);
-
-    virtual ~UdpWorker();
+    UdpWorker(uint16_t port) : queue(), socket(port)
+    {}
 
 private:
-    int socket_fd;
     ClientMessage::SelfPacked buffer;
-    sockaddr_storage sockaddrStorage;
-    socklen_t storageSize = sizeof(sockaddr_storage);
     std::queue<std::unique_ptr<IDatagram>> queue;
-
-    sockaddr *getSockaddr()
-    {
-        return reinterpret_cast<sockaddr *>(&sockaddrStorage);
-    }
+    Socket socket;
 };
 
 

@@ -14,12 +14,11 @@ total 1:20
 
 TODO
 now test what we have
-start 14:30
+start 15:00
 
-
-could add some logging to know what's going on
-then run the server; maybe spawn a process with it and then kill it?
-we could even fork
+make a client which will send a few messages to the server
+view logs to see they came through
+assert that sockaddr is set okay for client
 
 
 
