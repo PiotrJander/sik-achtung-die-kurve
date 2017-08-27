@@ -10,11 +10,11 @@
 
 TEST(EventBatchTest, GetBuffer)
 {
-    EventHistory eventHistory {
-            std::make_unique<PixelEvent>(0, 3, 45, 67),
-            std::make_unique<PlayerEliminatedEvent>(1, 3),
-            std::make_unique<GameOverEvent>(2)
-    };
+    EventHistory eventHistory;
+    eventHistory.emplace_back(std::make_unique<PixelEvent>(0, 3, 45, 67));
+    eventHistory.emplace_back(std::make_unique<PlayerEliminatedEvent>(1, 3));
+    eventHistory.emplace_back(std::make_unique<GameOverEvent>(2));
+
     uint32_t length = sizeof(uint32_t) + sizeof(PixelEvent) + sizeof(PlayerEliminatedEvent) + sizeof(GameOverEvent);
     EventBatch eventBatch(length, eventHistory, 0, eventHistory.size(), 123);
     const std::unique_ptr<char[]> &bufferBox = eventBatch.getBuffer();
@@ -25,28 +25,28 @@ TEST(EventBatchTest, GetBuffer)
 
     uint32_t length1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
-    const std::unique_ptr<GameEvent> &e1 = GameEvent::readFrom(bufferLocation, length1);
+    std::unique_ptr<GameEvent> e1 = GameEvent::readFrom(bufferLocation, length1);
     bufferLocation += length1;
     uint32_t crc1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
 
     uint32_t length2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
-    const std::unique_ptr<GameEvent> &e2 = GameEvent::readFrom(bufferLocation, length2);
+    std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(bufferLocation, length2);
     bufferLocation += length2;
     uint32_t crc2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
 
     uint32_t length3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
-    const std::unique_ptr<GameEvent> &e3 = GameEvent::readFrom(bufferLocation, length3);
+    std::unique_ptr<GameEvent> e3 = GameEvent::readFrom(bufferLocation, length3);
     bufferLocation += length3;
     uint32_t crc3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
     bufferLocation += sizeof(uint32_t);
 
     PixelEvent *pixelEvent = dynamic_cast<PixelEvent *>(e1.get());
-    PlayerEliminatedEvent *eliminatedEvent = dynamic_cast<PlayerEliminatedEvent *>(e1.get());
-    GameOverEvent *gameOverEvent = dynamic_cast<GameOverEvent *>(e1.get());
+    PlayerEliminatedEvent *eliminatedEvent = dynamic_cast<PlayerEliminatedEvent *>(e2.get());
+    GameOverEvent *gameOverEvent = dynamic_cast<GameOverEvent *>(e3.get());
 
     ASSERT_EQ(pixelEvent->getX(), 45);
     ASSERT_EQ(eliminatedEvent->getPlayerNumber(), 3);
