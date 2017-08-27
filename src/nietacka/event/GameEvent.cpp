@@ -42,12 +42,12 @@ uint32_t GameEvent::writeTo(char *buffer)
 {
     uint32_t length = getLength();
     char *bufferlocation = buffer;
-    *reinterpret_cast<uint32_t *>(bufferlocation) = length;
+    *reinterpret_cast<uint32_t *>(bufferlocation) = htonl(length);
     bufferlocation += sizeof(uint32_t);
     writeToBuffer(bufferlocation);
     uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(bufferlocation), length);
     bufferlocation += length;
-    *reinterpret_cast<uint32_t *>(bufferlocation) = checksum;
+    *reinterpret_cast<uint32_t *>(bufferlocation) = htonl(checksum);
     return length + 2 * sizeof(uint32_t);
 }
 

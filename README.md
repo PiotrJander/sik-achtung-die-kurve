@@ -2,43 +2,9 @@
 
 LOG
 
-start 10:55
-end 11:00
-impl interfaces
-
-ConnectedPlayer would store struct sockaddr and its length
-refactor from session_id to socket hash; get socket from struct sockaddr
-start 11:02
-end 13:36
-total 2:30
-
-game manager phase 1
-start 15:50
-end 17:50
-2h
-
-game manager phase 2
-start 18:33
-end 19:40
-total 1:07
-
-stream utils and fix bugs
-start 20:30
-end 21:10
-total 40 min
-
-refactor event read and write
-start 21:12
-end 22:16
-total 1h
-
-TODO now
-tests
-start 1:40
-end
+start 11:40
 
 TODO
-when writing game id, length, crc, itp, to buffer, need to hton or ntoh!!!
 
 
 
@@ -76,6 +42,7 @@ use poll in UDPWorker
 validate messages
 handle all kinds of exceptions!
 strange game test failures with hashing
+client: remember about hton!
 
 Qs:
 64 bit random numbers but 32 bits game id

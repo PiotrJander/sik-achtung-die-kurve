@@ -21,9 +21,12 @@ TEST(EventBatchTest, GetBuffer)
     char *bufferLocation = bufferBox.get();
 
     uint32_t gameId = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    gameId = ntohl(gameId);
+    EXPECT_EQ(gameId, 123);
     bufferLocation += sizeof(uint32_t);
 
     uint32_t length1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length1 = ntohl(length1);
     bufferLocation += sizeof(uint32_t);
     std::unique_ptr<GameEvent> e1 = GameEvent::readFrom(bufferLocation, length1);
     bufferLocation += length1;
@@ -31,6 +34,7 @@ TEST(EventBatchTest, GetBuffer)
     bufferLocation += sizeof(uint32_t);
 
     uint32_t length2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length2 = ntohl(length2);
     bufferLocation += sizeof(uint32_t);
     std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(bufferLocation, length2);
     bufferLocation += length2;
@@ -38,6 +42,7 @@ TEST(EventBatchTest, GetBuffer)
     bufferLocation += sizeof(uint32_t);
 
     uint32_t length3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length3 = ntohl(length3);
     bufferLocation += sizeof(uint32_t);
     std::unique_ptr<GameEvent> e3 = GameEvent::readFrom(bufferLocation, length3);
     bufferLocation += length3;
