@@ -15,8 +15,6 @@ public:
 
     Socket(struct addrinfo *servinfo);
 
-    Socket() = default;
-
     virtual ~Socket();
 
     ssize_t recvFrom(void *buffer, size_t length);

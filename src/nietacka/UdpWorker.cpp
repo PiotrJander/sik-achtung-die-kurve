@@ -15,7 +15,7 @@ std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDat
 {
     ssize_t length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
     if (length < sizeof(ClientMessage::SelfPacked)) {
-        throw new ProtocolException("Datagram too small to be valid");
+        throw ProtocolException("Datagram too small to be valid");
     } else {
         return std::make_pair(&buffer, socket.getSockaddr());
     }

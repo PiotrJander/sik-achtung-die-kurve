@@ -130,7 +130,8 @@ bool GameManager::isPlayerNameTaken(const std::string &name) const
     return false;
 }
 
-GameManager::GameManager(uint32_t maxx, uint32_t maxy, string &port, int roundsPerSecond, int turningSpeed, int seed)
+GameManager::GameManager(uint32_t maxx, uint32_t maxy, const string &port, int roundsPerSecond, int turningSpeed,
+                         int seed)
         : connectedPlayers(),
           maxx(maxx), maxy(maxy),
           port(port),

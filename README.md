@@ -16,8 +16,7 @@ TODO
 now test what we have
 start 15:00
 
-
-ok now have static method for addr info, can be used to get self sockaddr as well as other
+lesson in resource management and copy / move ctor!
 
 
 
@@ -65,6 +64,7 @@ UNDERSTANDING C++:
 * we use structs as buffers, except for EventBatch
 * we can define one ctor in terms of another
 * buffer: unsigned char?
+* initialization too complex for initializer list; how to avoid copying?
 
 TCP CAVEATS
 some messages can be variable length; we might need to encapsulate to know where a message starts and ends

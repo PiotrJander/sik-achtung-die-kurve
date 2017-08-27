@@ -19,7 +19,7 @@ public:
     FRIEND_TEST(GameManagerTest, CanGameStart);
     FRIEND_TEST(GameManagerTest, EnqueueNewDatagramBatches);
 
-    GameManager(uint32_t maxx, uint32_t maxy, string &port, int roundsPerSecond, int turningSpeed, int seed);
+    GameManager(uint32_t maxx, uint32_t maxy, const string &port, int roundsPerSecond, int turningSpeed, int seed);
 
     void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket, const Game *game) override;
 

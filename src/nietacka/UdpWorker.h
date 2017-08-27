@@ -19,12 +19,8 @@ public:
 
     void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override;
 
-    UdpWorker(string &port) : queue(), socket()
-    {
-        addrinfo *addrInfo = Socket::getAddrInfo(NULL, port.c_str());
-        socket = Socket(addrInfo);
-        freeaddrinfo(addrInfo);
-    }
+    UdpWorker(const string &port) : queue(), socket(Socket::getAddrInfo(NULL, port.c_str()))
+    {}
 
 private:
     ClientMessage::SelfPacked buffer;
