@@ -7,7 +7,7 @@ set(SOURCE_FILES ClientMessage.cpp ClientMessage.h event/GameEvent.h event/GameE
         crc32c.cpp crc32c.h event/PixelEvent.h event/PixelEvent.cpp event/PlayerEliminatedEvent.cpp
         event/PlayerEliminatedEvent.h event/GameOverEvent.h event/GameOverEvent.cpp event/NewGameEvent.cpp
         event/NewGameEvent.h Game.cpp Game.h PlayerConnection.h Random.h IUdpWorker.h IDatagram.h PlayerConnection.cpp
-        IDatagramObserver.h EventBatch.cpp EventBatch.h GameManager.h GameManager.cpp)
+        IDatagramObserver.h EventBatch.cpp EventBatch.h GameManager.h GameManager.cpp UdpWorker.cpp UdpWorker.h)
 
 include_directories(../../test/lib/googletest/include/)
 

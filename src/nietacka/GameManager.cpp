@@ -70,7 +70,7 @@ void GameManager::gameLoop()
         milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
         game.tick();
         enqueueNewDatagramBatches(game, 0);
-        udpWorker->workUntil(startOfFrame);
+        udpWorker->workUntil(startOfFrame, <#initializer#>);
     }
     resetPlayers();
 }

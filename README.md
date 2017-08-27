@@ -2,16 +2,14 @@
 
 LOG
 
+reading about C++
 start 11:40
+end 12:50
+total 1:10
 
 TODO
-
-
-
-
-
-
-
+impl udp worker
+start 12:50
 
 
 
@@ -38,11 +36,12 @@ when player inactive for 2 secs, disconnect; can check it periodically; need to 
 pusta nazwa gracza jako ""
 test conversion hton
 check field order in structs
-use poll in UDPWorker
 validate messages
 handle all kinds of exceptions!
-strange game test failures with hashing
 client: remember about hton!
+use vectors (contiguoes storage) rather than arrays
+dependency inversion and interface segregation: we shouldn't need to provide all connection details to
+    PlayerConnections when testing a Game!
 
 Qs:
 64 bit random numbers but 32 bits game id
@@ -51,6 +50,11 @@ what if we don't send all send Q in the time frame?
 UNDERSTANDING C++:
 * what to put in header files, what in cpp files?
 * pass functors rather than function pointers
+* copy and swap as exception safety
+* vectors as buffers: &myvec[0] is the way to go, also ::resize and ::assign
+* we use structs as buffers, except for EventBatch
+* we can define one ctor in terms of another
+* buffer: unsigned char?
 
 TCP CAVEATS
 some messages can be variable length; we might need to encapsulate to know where a message starts and ends

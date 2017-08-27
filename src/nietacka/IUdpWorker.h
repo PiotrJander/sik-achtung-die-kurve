@@ -17,7 +17,7 @@ public:
 
     virtual std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() = 0;
 
-    virtual void workUntil(std::chrono::milliseconds time) = 0;
+    virtual void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) = 0;
 
 private:
     std::unique_ptr<IDatagramObserver> observer;
