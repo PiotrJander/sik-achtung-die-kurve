@@ -44,3 +44,13 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
         return len;
     }
 }
+
+ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAddr)
+{
+    ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeof(sockaddr_storage));
+    if (len == -1) {
+        throw new SocketException(errno);
+    } else {
+        return len;
+    }
+}

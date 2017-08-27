@@ -16,6 +16,8 @@ public:
 
     ssize_t recvFrom(void *buffer, size_t length);
 
+    ssize_t sendTo(const void *buffer, size_t length, const sockaddr *sockAddr);
+
     sockaddr *getSockaddr()
     {
         return reinterpret_cast<sockaddr *>(&sockaddrStorage);
