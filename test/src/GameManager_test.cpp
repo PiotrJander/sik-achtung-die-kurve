@@ -129,20 +129,20 @@ TEST_F(GameManagerTest, CanGameStart)
 
 class MockUdpWorker: public IUdpWorker {
 public:
-    void enqueue(const IDatagram &datagram) override
+    void enqueue(std::unique_ptr<IDatagram> datagram) override
     {
         if (counter == 0) {
-            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(datagram.get());
             EXPECT_EQ(eventBatch->getStartEventNo(), 0);
             EXPECT_EQ(eventBatch->getEndEventNo(), 5);
             counter++;
         } else if (counter == 1) {
-            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(datagram.get());
             EXPECT_EQ(eventBatch->getStartEventNo(), 0);
             EXPECT_EQ(eventBatch->getEndEventNo(), 101);
             counter++;
         } else if (counter == 2) {
-            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(datagram.get());
             EXPECT_EQ(eventBatch->getStartEventNo(), 101);
             EXPECT_EQ(eventBatch->getEndEventNo(), 200);
             counter++;
@@ -164,9 +164,10 @@ public:
         return std::make_pair(&packed, reinterpret_cast<const sockaddr *>(&ipv4));
     }
 
-    void workUntil(std::chrono::milliseconds time) override
+    void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override
     {}
 
+private:
     int counter = 0;
 };
 

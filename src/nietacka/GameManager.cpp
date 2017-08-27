@@ -6,8 +6,32 @@
 #include "Game.h"
 #include "EventBatch.h"
 #include "GameManager.h"
+#include "UdpWorker.h"
 
 using namespace std::chrono;
+
+void GameManager::gameLoop()
+{
+    do {
+        auto res = udpWorker->getDatagram();
+        processDatagram(res.first, res.second, nullptr);
+    } while (!canGameStart());
+
+    Game game(random, turningSpeed, maxx, maxy);
+    game.addPlayers(connectedPlayers);
+    game.start();
+
+    // in case game is over already
+    enqueueNewDatagramBatches(game, 0);
+
+    while (game.isInProgress()) {
+        milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+        game.tick();
+        enqueueNewDatagramBatches(game, 0);
+//        udpWorker->workUntil(startOfFrame, <#initializer#>);
+    }
+    resetPlayers();
+}
 
 void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket,
                                   const Game *game = nullptr)
@@ -52,33 +76,11 @@ void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, 
     }
 }
 
-void GameManager::gameLoop()
-{
-    do {
-        auto res = udpWorker->getDatagram();
-        processDatagram(res.first, res.second);
-    } while (!canGameStart());
-
-    Game game(random, turningSpeed, maxx, maxy);
-    game.addPlayers(connectedPlayers);
-    game.start();
-
-    // in case game is over already
-    enqueueNewDatagramBatches(game, 0);
-
-    while (game.isInProgress()) {
-        milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-        game.tick();
-        enqueueNewDatagramBatches(game, 0);
-        udpWorker->workUntil(startOfFrame, <#initializer#>);
-    }
-    resetPlayers();
-}
-
 bool GameManager::canGameStart()
 {
-    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
-                       [](const auto &entry) { return entry.second.isReadyForGame(); });
+//    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
+//                       [](const auto &entry) { return entry.second.isReadyForGame(); });
+    return false;  // TODO revert
 }
 
 void GameManager::resetPlayers()
@@ -129,10 +131,11 @@ bool GameManager::isPlayerNameTaken(const std::string &name) const
 }
 
 GameManager::GameManager(uint32_t maxx, uint32_t maxy, uint16_t port, int roundsPerSecond, int turningSpeed, int seed)
-        : connectedPlayers(), udpWorker(),
+        : connectedPlayers(),
           maxx(maxx), maxy(maxy),
           port(port),
           roundsPerSecond(roundsPerSecond),
           turningSpeed(turningSpeed),
-          random(seed)
+          random(seed),
+          udpWorker(std::make_unique<UdpWorker>(port))
 {}

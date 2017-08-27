@@ -7,14 +7,19 @@ start 11:40
 end 12:50
 total 1:10
 
-TODO
 impl udp worker
 start 12:50
+end 14:10
+total 1:20
+
+TODO
+now test what we have
+start 14:30
 
 
-
-
-
+could add some logging to know what's going on
+then run the server; maybe spawn a process with it and then kill it?
+we could even fork
 
 
 
@@ -40,9 +45,9 @@ validate messages
 handle all kinds of exceptions!
 client: remember about hton!
 use vectors (contiguoes storage) rather than arrays
-dependency inversion and interface segregation: we shouldn't need to provide all connection details to
-    PlayerConnections when testing a Game!
+let PlayerConnection impl two interfaces; one for Game and other for sockets
 what if datagram bigger than size of buffer?
+no better way to have polymorphic class members and containers than unique_ptr?
 
 Qs:
 64 bit random numbers but 32 bits game id

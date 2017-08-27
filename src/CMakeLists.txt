@@ -9,6 +9,7 @@ set(SOURCE_FILES main.cpp)
 add_subdirectory(nietacka)
 include_directories(include)
 include_directories(nietacka)
+include_directories(../test/lib/googletest/include)
 
 add_executable(achtung ${SOURCE_FILES})
 target_link_libraries(achtung nietacka)

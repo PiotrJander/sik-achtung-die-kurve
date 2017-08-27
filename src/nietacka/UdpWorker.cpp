@@ -4,10 +4,11 @@
 
 #include <unistd.h>
 #include "UdpWorker.h"
+#include "Exceptions.h"
 
 void UdpWorker::enqueue(std::unique_ptr<IDatagram> datagram)
 {
-    queue.emplace(datagram);
+    queue.emplace(std::move(datagram));
 }
 
 std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDatagram()
@@ -27,7 +28,7 @@ void UdpWorker::workUntil(std::chrono::milliseconds time, IDatagramObserver &obs
 
 }
 
-UdpWorker::UdpWorker(uint16_t port, const std::queue &queue) : queue(queue)
+UdpWorker::UdpWorker(uint16_t port) : queue()
 {
     if ((socket_fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
         throw new SocketException(errno);
@@ -46,6 +47,9 @@ UdpWorker::UdpWorker(uint16_t port, const std::queue &queue) : queue(queue)
 
 UdpWorker::~UdpWorker()
 {
-    close(socket_fd);
+    if (close(socket_fd) == -1) {
+        // I know that throwing from dtors is dangerous
+        throw new SocketException(errno);
+    }
 }
 
