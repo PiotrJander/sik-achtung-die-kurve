@@ -31,3 +31,9 @@ const std::string &ClientMessage::getPlayerName() const
 {
     return playerName;
 }
+
+void ClientMessage::sendto(Socket &socket, const sockaddr *addr)
+{
+    SelfPacked packed(*this);
+    socket.sendTo(&packed, sizeof(SelfPacked), addr);
+}

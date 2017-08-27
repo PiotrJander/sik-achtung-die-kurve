@@ -7,14 +7,21 @@
 #include "EventBatch.h"
 #include "GameManager.h"
 #include "UdpWorker.h"
+#include "easylogging++.h"
+#include "Exceptions.h"
 
 using namespace std::chrono;
 
 void GameManager::gameLoop()
 {
     do {
-        auto res = udpWorker->getDatagram();
-        processDatagram(res.first, res.second, nullptr);
+        try {
+            auto res = udpWorker->getDatagram();
+            LOG(INFO) << "Got a client message";
+            processDatagram(res.first, res.second, nullptr);
+        } catch (ProtocolException &e) {
+            LOG(INFO) << "Protocol exception: " << e.what();
+        };
     } while (!canGameStart());
 
     Game game(random, turningSpeed, maxx, maxy);

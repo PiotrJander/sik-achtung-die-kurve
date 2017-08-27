@@ -13,9 +13,13 @@ class Socket {
 public:
     static struct addrinfo *getAddrInfo(const char *hostname, const char *port);
 
-    Socket(struct addrinfo *servinfo);
+    Socket();
 
     virtual ~Socket();
+
+    void bindSocket(struct addrinfo *servinfo);
+
+    void bindSocket(const char *hostname, const char *port);
 
     ssize_t recvFrom(void *buffer, size_t length);
 

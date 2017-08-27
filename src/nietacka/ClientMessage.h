@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include "Socket.h"
 
 using std::string;
 
@@ -56,6 +57,8 @@ public:
     uint32_t getNextExpectedEventNo() const;
 
     const std::string &getPlayerName() const;
+
+    void sendto(Socket &socket, const sockaddr *addr);
 
 private:
     uint64_t sessionId;

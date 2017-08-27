@@ -53,19 +53,27 @@ struct addrinfo *Socket::getAddrInfo(const char *hostname, const char *port)
     return servinfo;
 }
 
-Socket::Socket(struct addrinfo *servinfo)
+Socket::Socket()
 {
     socket_fd = socket(PF_INET, SOCK_DGRAM, 0);
     if (socket_fd == -1) {
         throw SocketException(errno);
     }
+}
 
+void Socket::bindSocket(struct addrinfo *servinfo)
+{
     int res = bind(socket_fd, servinfo->ai_addr, sizeof(sockaddr_in));
     if (res == -1) {
         throw SocketException(errno);
     }
+}
 
-    freeaddrinfo(servinfo);
+void Socket::bindSocket(const char *hostname, const char *port)
+{
+    addrinfo *addrInfo = getAddrInfo(hostname, port);
+    bindSocket(addrInfo);
+    freeaddrinfo(addrInfo);
 }
 
 Socket::~Socket()
@@ -81,7 +89,6 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
     socklen_t storageSize = sizeof(sockaddr_storage);
     ssize_t len = recvfrom(socket_fd, buffer, length, 0, getSockaddr(), &storageSize);
     if (len == -1) {
-        LOG(ERROR) << "errno is " << errno;
         throw SocketException(errno);
     } else {
         return len;
@@ -90,7 +97,7 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
 
 ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAddr)
 {
-    ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeof(sockaddr_storage));
+    ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeof(sockaddr_in));  // TODO what about IPv6?
     if (len == -1) {
         throw SocketException(errno);
     } else {

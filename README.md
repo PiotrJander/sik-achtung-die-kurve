@@ -12,11 +12,19 @@ start 12:50
 end 14:10
 total 1:20
 
+socket wrappers
+start 15:00
+end 17:20
+total 2:20
+
 TODO
 now test what we have
-start 15:00
+start 18:30
+now 19:40
 
-lesson in resource management and copy / move ctor!
+freeaddrinfo(servinfo);
+
+
 
 
 
@@ -37,9 +45,6 @@ assert that sockaddr is set okay for client
 
 
 BACKLOG
-add logging
-
-ICEBOX
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""
 test conversion hton
@@ -65,6 +70,7 @@ UNDERSTANDING C++:
 * we can define one ctor in terms of another
 * buffer: unsigned char?
 * initialization too complex for initializer list; how to avoid copying?
+* how to transfer resources in move ctor / assignment?
 
 TCP CAVEATS
 some messages can be variable length; we might need to encapsulate to know where a message starts and ends

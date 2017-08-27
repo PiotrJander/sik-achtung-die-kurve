@@ -25,3 +25,8 @@ void UdpWorker::workUntil(std::chrono::milliseconds time, IDatagramObserver &obs
 {
 
 }
+
+UdpWorker::UdpWorker(const string &port) : queue(), socket()
+{
+    socket.bindSocket(NULL, port.c_str());
+}
