@@ -16,7 +16,10 @@ TODO
 now test what we have
 start 15:00
 
-now socket also needs to be able to sendto
+
+ok now have static method for addr info, can be used to get self sockaddr as well as other
+
+
 
 make a client which will send a few messages to the server
 view logs to see they came through

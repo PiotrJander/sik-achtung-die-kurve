@@ -7,6 +7,7 @@
 
 
 #include <queue>
+#include <netdb.h>
 #include "IUdpWorker.h"
 #include "Socket.h"
 
@@ -18,8 +19,12 @@ public:
 
     void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override;
 
-    UdpWorker(uint16_t port) : queue(), socket(port)
-    {}
+    UdpWorker(string &port) : queue(), socket()
+    {
+        addrinfo *addrInfo = Socket::getAddrInfo(NULL, port.c_str());
+        socket = Socket(addrInfo);
+        freeaddrinfo(addrInfo);
+    }
 
 private:
     ClientMessage::SelfPacked buffer;

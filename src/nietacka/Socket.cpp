@@ -6,24 +6,62 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <netdb.h>
 #include "Socket.h"
 #include "Exceptions.h"
 
-Socket::Socket(uint16_t port)
+//Socket::Socket(uint16_t port)
+//{
+//    if ((socket_fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
+//        throw new SocketException(errno);
+//    }
+//
+//    // TODO maybe use getaddrinfo
+//    sockaddr_in address;
+//    address.sin_family = AF_INET;
+//    address.sin_addr.s_addr = INADDR_ANY;
+//    address.sin_port = htons(port);
+//
+//    int res = bind(socket_fd, reinterpret_cast<sockaddr *>(&address), sizeof(sockaddr_in));
+//    if (res == -1) {
+//        throw new SocketException(errno);
+//    }
+//}
+
+/**
+ * Call freeaddrinfo(servinfo) after use!
+ */
+struct addrinfo *Socket::getAddrInfo(const char *hostname, const char *port)
+{
+    int status;
+    struct addrinfo hints;
+    struct addrinfo *servinfo;  // will point to the results
+
+    memset(&hints, 0, sizeof hints); // make sure the struct is empty
+    hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+    hints.ai_socktype = SOCK_DGRAM; // TCP stream sockets
+//    hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+    status = getaddrinfo(hostname, port, &hints, &servinfo);
+    if (status == -1) {
+        throw new SocketException(errno);
+    }
+
+    return servinfo;
+}
+
+Socket::Socket(struct addrinfo *servinfo)
 {
     if ((socket_fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
         throw new SocketException(errno);
     }
 
-    sockaddr_in address;
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(port);
-
-    int res = bind(socket_fd, reinterpret_cast<sockaddr *>(&address), sizeof(sockaddr_in));
+    int res = bind(socket_fd, servinfo->ai_addr, sizeof(sockaddr_in));
     if (res == -1) {
         throw new SocketException(errno);
     }
+
+    freeaddrinfo(servinfo);
 }
 
 Socket::~Socket()

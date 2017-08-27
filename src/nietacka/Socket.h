@@ -7,10 +7,15 @@
 
 
 #include <sys/socket.h>
+#include <string>
 
 class Socket {
 public:
-    Socket(uint16_t port);
+    static struct addrinfo *getAddrInfo(const char *hostname, const char *port);
+
+    Socket(struct addrinfo *servinfo);
+
+    Socket() = default;
 
     virtual ~Socket();
 
