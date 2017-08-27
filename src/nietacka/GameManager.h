@@ -17,6 +17,7 @@ public:
     FRIEND_TEST(GameManagerTest, UpdateConnectedPlayers);
     FRIEND_TEST(GameManagerTest, IsPlayerNameTaken);
     FRIEND_TEST(GameManagerTest, CanGameStart);
+    FRIEND_TEST(GameManagerTest, EnqueueNewDatagramBatches);
 
     GameManager(uint32_t maxx, uint32_t maxy, uint16_t port, int roundsPerSecond, int turningSpeed, int seed);
 

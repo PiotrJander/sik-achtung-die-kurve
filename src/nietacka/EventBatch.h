@@ -13,7 +13,7 @@ class EventBatch: public IDatagram {
 public:
     EventBatch(int length, const EventHistory &eventHistory, uint32_t startEventNo, uint32_t endEventNo,
                uint32_t gameId, size_t socketHash = EventBatch::BROADCAST)
-            : length(length), socketHash(socketHash), eventHistory(eventHistory), 
+            : length(length), socketHash(socketHash), eventHistory(eventHistory),
               startEventNo(startEventNo), endEventNo(endEventNo), gameId(gameId)
     {}
 
@@ -27,6 +27,16 @@ public:
     size_t getSocketHash() override
     {
         return socketHash;
+    }
+
+    uint32_t getStartEventNo() const
+    {
+        return startEventNo;
+    }
+
+    uint32_t getEndEventNo() const
+    {
+        return endEventNo;
     }
 
     static const int BROADCAST = 0;

@@ -40,13 +40,7 @@ end
 TODO
 when writing game id, length, crc, itp, to buffer, need to hton or ntoh!!!
 
-tests
 
-GameManager
-
-    enqueueNewDatagramBatches
-        should pack all events in one datagram
-        should split into many if greater than 521
 
 
 

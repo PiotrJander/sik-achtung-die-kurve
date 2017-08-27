@@ -4,6 +4,8 @@
 
 #include <netinet/in.h>
 #include <nietacka/GameManager.h>
+#include <nietacka/event/GameOverEvent.h>
+#include <nietacka/EventBatch.h>
 #include "gtest/gtest.h"
 
 /**
@@ -125,7 +127,68 @@ TEST_F(GameManagerTest, CanGameStart)
     EXPECT_FALSE(gameManager.canGameStart());
 }
 
+class MockUdpWorker: public IUdpWorker {
+public:
+    void enqueue(const IDatagram &datagram) override
+    {
+        if (counter == 0) {
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            EXPECT_EQ(eventBatch->getStartEventNo(), 0);
+            EXPECT_EQ(eventBatch->getEndEventNo(), 5);
+            counter++;
+        } else if (counter == 1) {
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            EXPECT_EQ(eventBatch->getStartEventNo(), 0);
+            EXPECT_EQ(eventBatch->getEndEventNo(), 101);
+            counter++;
+        } else if (counter == 2) {
+            const EventBatch *eventBatch = dynamic_cast<const EventBatch *>(&datagram);
+            EXPECT_EQ(eventBatch->getStartEventNo(), 101);
+            EXPECT_EQ(eventBatch->getEndEventNo(), 200);
+            counter++;
+        } else {
+            FAIL() << "Too many calls";
+        }
+    }
 
+    std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() override
+    {
+        ClientMessage message(123, 0, 0, "Piotr");
+        ClientMessage::SelfPacked packed(message);
+
+        sockaddr_in ipv4;
+        ipv4.sin_family = AF_INET;
+        ipv4.sin_port = 1234;
+        ipv4.sin_addr.s_addr = 987654;
+
+        return std::make_pair(&packed, reinterpret_cast<const sockaddr *>(&ipv4));
+    }
+
+    void workUntil(std::chrono::milliseconds time) override
+    {}
+
+    int counter = 0;
+};
+
+TEST_F(GameManagerTest, EnqueueNewDatagramBatches)
+{
+    gameManager.udpWorker = std::make_unique<MockUdpWorker>();
+    Random rand(123);
+    Game game(rand, 6, 600, 800);
+    for (int i = 0; i < 5; ++i) {
+        game.events.emplace_back(std::make_unique<GameOverEvent>(0));
+    }
+    
+    // should pack all events in one datagram
+    gameManager.enqueueNewDatagramBatches(game, 0);
+    
+    // should split into many if greater than 512
+    game.events.clear();
+    for (int j = 0; j < 200; ++j) {
+        game.events.emplace_back(std::make_unique<GameOverEvent>(j));
+    }
+    gameManager.enqueueNewDatagramBatches(game, 0);
+}
 
 
 
