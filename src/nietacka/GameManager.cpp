@@ -28,6 +28,7 @@ void GameManager::updateConnectedPlayers(const ClientMessage &message, const soc
         // new socket
         addPlayerConnection(hash, socket, message);
     } else {
+        // existing socket
         auto &conn = entry->second;
         if (conn.getSessionId() == message.getSessionId()) {
             // same player, update fields
@@ -96,9 +97,8 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
             udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));
-            length = SIZEOF_HEADER;
+            length = SIZEOF_HEADER + eventSize;
             startEventNumber = eventNumber;
-            eventNumber--;
         } else {
             length += eventSize;
         }

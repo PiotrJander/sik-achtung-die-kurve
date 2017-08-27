@@ -6,6 +6,7 @@
 #define PROJECT_GAMEMANAGER_H
 
 
+#include "gtest/gtest_prod.h"
 #include "IDatagramObserver.h"
 #include "PlayerConnection.h"
 #include "IUdpWorker.h"
@@ -13,6 +14,10 @@
 
 class GameManager: public IDatagramObserver {
 public:
+    FRIEND_TEST(GameManagerTest, UpdateConnectedPlayers);
+    FRIEND_TEST(GameManagerTest, IsPlayerNameTaken);
+    FRIEND_TEST(GameManagerTest, CanGameStart);
+
     GameManager(uint32_t maxx, uint32_t maxy, uint16_t port, int roundsPerSecond, int turningSpeed, int seed);
 
     void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket, const Game *game) override;

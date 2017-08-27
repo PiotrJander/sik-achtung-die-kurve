@@ -20,8 +20,8 @@ TEST(ClientMessage__Test, First)
 
     ClientMessage cm2(packedCm2);
 
-    ASSERT_EQ(cm1.getSessionId(), cm2.getSessionId());
-    ASSERT_EQ(cm1.getTurnDirection(), cm2.getTurnDirection());
-    ASSERT_EQ(cm1.getNextExpectedEventNo(), cm2.getNextExpectedEventNo());
-    ASSERT_EQ(cm1.getPlayerName(), cm2.getPlayerName());
+    EXPECT_EQ(cm1.getSessionId(), cm2.getSessionId());
+    EXPECT_EQ(cm1.getTurnDirection(), cm2.getTurnDirection());
+    EXPECT_EQ(cm1.getNextExpectedEventNo(), cm2.getNextExpectedEventNo());
+    EXPECT_EQ(cm1.getPlayerName(), cm2.getPlayerName());
 }

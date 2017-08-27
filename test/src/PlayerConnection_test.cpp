@@ -22,7 +22,7 @@ TEST(PlayerConnectioTest, Hash)
     PlayerConnection pc1(reinterpret_cast<sockaddr *>(&ipv4), 123, -1, "Piotr");
     PlayerConnection pc2(reinterpret_cast<sockaddr *>(&ipv6), 123, -1, "Jed");
 
-    ASSERT_EQ(pc1.hash(), 175173704325);
-    ASSERT_EQ(pc2.hash(), 7801689049451974840);
+    EXPECT_EQ(pc1.hash(), 175173704325);
+    EXPECT_EQ(pc2.hash(), 7801689049451974840);
 
 }

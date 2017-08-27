@@ -48,7 +48,7 @@ TEST(EventBatchTest, GetBuffer)
     PlayerEliminatedEvent *eliminatedEvent = dynamic_cast<PlayerEliminatedEvent *>(e2.get());
     GameOverEvent *gameOverEvent = dynamic_cast<GameOverEvent *>(e3.get());
 
-    ASSERT_EQ(pixelEvent->getX(), 45);
-    ASSERT_EQ(eliminatedEvent->getPlayerNumber(), 3);
-    ASSERT_EQ(gameOverEvent->getEventNo(), 2);
+    EXPECT_EQ(pixelEvent->getX(), 45);
+    EXPECT_EQ(eliminatedEvent->getPlayerNumber(), 3);
+    EXPECT_EQ(gameOverEvent->getEventNo(), 2);
 }

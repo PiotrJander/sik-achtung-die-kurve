@@ -7,6 +7,7 @@
 
 
 #include "ClientMessage.h"
+#include "Game.h"
 
 class IDatagramObserver {
 public:

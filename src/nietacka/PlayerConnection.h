@@ -15,6 +15,7 @@
 class PlayerConnection {
 public:
     FRIEND_TEST(GameTest, PlayerSessionIdChanges);
+    FRIEND_TEST(GameManagerTest, CanGameStart);
 
     const std::string &getName() const
     {
@@ -49,6 +50,11 @@ public:
     bool isReadyForGame() const
     {
         return readyForGame || name.empty();
+    }
+
+    uint32_t getNextExpectedEvent() const
+    {
+        return nextExpectedEvent;
     }
 
     void setTurnDirection(int8_t turnDirection)

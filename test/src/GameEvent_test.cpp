@@ -22,13 +22,13 @@ TEST(GameEventTest, NewGameEvent)
     auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t) , sizeof(NewGameEvent));
     auto *e2 = (NewGameEvent *) _e2.get();
 
-    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
-    ASSERT_EQ(e1.getType(), e2->getType());
-    ASSERT_EQ(e1.getMaxx(), e2->getMaxx());
-    ASSERT_EQ(e1.getMaxy(), e2->getMaxy());
-    ASSERT_EQ(e1.getPlayerNames().at(0), e2->getPlayerNames().at(0));
-    ASSERT_EQ(e1.getPlayerNames().at(1), e2->getPlayerNames().at(1));
-    ASSERT_EQ(e1.getPlayerNames().at(2), e2->getPlayerNames().at(2));
+    EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
+    EXPECT_EQ(e1.getType(), e2->getType());
+    EXPECT_EQ(e1.getMaxx(), e2->getMaxx());
+    EXPECT_EQ(e1.getMaxy(), e2->getMaxy());
+    EXPECT_EQ(e1.getPlayerNames().at(0), e2->getPlayerNames().at(0));
+    EXPECT_EQ(e1.getPlayerNames().at(1), e2->getPlayerNames().at(1));
+    EXPECT_EQ(e1.getPlayerNames().at(2), e2->getPlayerNames().at(2));
 }
 
 TEST(GameEventTest, PixelEvent)
@@ -41,11 +41,11 @@ TEST(GameEventTest, PixelEvent)
     auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(PixelEvent));
     auto *e2 = (PixelEvent *) _e2.get();
 
-    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
-    ASSERT_EQ(e1.getType(), e2->getType());
-    ASSERT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
-    ASSERT_EQ(e1.getX(), e2->getX());
-    ASSERT_EQ(e1.getY(), e2->getY());
+    EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
+    EXPECT_EQ(e1.getType(), e2->getType());
+    EXPECT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
+    EXPECT_EQ(e1.getX(), e2->getX());
+    EXPECT_EQ(e1.getY(), e2->getY());
 }
 
 TEST(GameEventTest, PlayerEliminatedEvent)
@@ -58,9 +58,9 @@ TEST(GameEventTest, PlayerEliminatedEvent)
     auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(PlayerEliminatedEvent));
     auto *e2 = (PlayerEliminatedEvent *) _e2.get();
 
-    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
-    ASSERT_EQ(e1.getType(), e2->getType());
-    ASSERT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
+    EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
+    EXPECT_EQ(e1.getType(), e2->getType());
+    EXPECT_EQ(e1.getPlayerNumber(), e2->getPlayerNumber());
 }
 
 TEST(GameEventTest, GameOverEvent)
@@ -73,6 +73,6 @@ TEST(GameEventTest, GameOverEvent)
     auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(GameOverEvent));
     auto *e2 = (GameOverEvent *) _e2.get();
 
-    ASSERT_EQ(e1.getEventNo(), e2->getEventNo());
-    ASSERT_EQ(e1.getType(), e2->getType());
+    EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
+    EXPECT_EQ(e1.getType(), e2->getType());
 }

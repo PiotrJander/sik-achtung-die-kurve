@@ -33,18 +33,20 @@ end 22:16
 total 1h
 
 TODO now
-ctor
-test all
-start 22:55
+tests
+start 1:40
+end
 
+TODO
+when writing game id, length, crc, itp, to buffer, need to hton or ntoh!!!
 
 tests
 
 GameManager
 
-
-
-
+    enqueueNewDatagramBatches
+        should pack all events in one datagram
+        should split into many if greater than 521
 
 
 
