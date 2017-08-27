@@ -22,9 +22,16 @@ private:
 };
 
 
+class ProtocolException: public std::runtime_error {
+public:
+    ProtocolException(const string &desc) : runtime_error(desc)
+    {}
+};
+
+
 class UdpWorker: public IUdpWorker {
 public:
-    void enqueue(const IDatagram &datagram) override;
+    void enqueue(std::unique_ptr<IDatagram> datagram) override;
 
     std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() override;
 
@@ -36,7 +43,15 @@ public:
 
 private:
     int socket_fd;
-    std::queue queue;
+    ClientMessage::SelfPacked buffer;
+    sockaddr_storage sockaddrStorage;
+    socklen_t storageSize = sizeof(sockaddr_storage);
+    std::queue<std::unique_ptr<IDatagram>> queue;
+
+    sockaddr *getSockaddr() const
+    {
+        return reinterpret_cast<sockaddr *>(&sockaddrStorage);
+    }
 };
 
 

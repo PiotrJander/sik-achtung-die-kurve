@@ -42,6 +42,7 @@ client: remember about hton!
 use vectors (contiguoes storage) rather than arrays
 dependency inversion and interface segregation: we shouldn't need to provide all connection details to
     PlayerConnections when testing a Game!
+what if datagram bigger than size of buffer?
 
 Qs:
 64 bit random numbers but 32 bits game id

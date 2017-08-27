@@ -13,7 +13,7 @@
 class IUdpWorker {
 public:
 
-    virtual void enqueue(const IDatagram &) = 0;
+    virtual void enqueue(std::unique_ptr<IDatagram>) = 0;
 
     virtual std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() = 0;
 

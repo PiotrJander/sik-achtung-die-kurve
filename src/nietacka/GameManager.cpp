@@ -96,7 +96,10 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
-            udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));
+            udpWorker->enqueue(
+                    std::make_unique<EventBatch>(length, game.getEventHistory(),
+                                                 startEventNumber, eventNumber, game.getId())
+            );
             length = SIZEOF_HEADER + eventSize;
             startEventNumber = eventNumber;
         } else {
@@ -104,7 +107,8 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
         }
     }
     uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
-    udpWorker->enqueue(EventBatch(length, game.getEventHistory(), startEventNumber, endEventNo, game.getId()));
+    udpWorker->enqueue(std::make_unique<EventBatch>(length, game.getEventHistory(),
+                                                    startEventNumber, endEventNo, game.getId()));
 }
 
 bool GameManager::isPlayerNameTaken(const std::string &name) const

@@ -5,14 +5,21 @@
 #include <unistd.h>
 #include "UdpWorker.h"
 
-void UdpWorker::enqueue(const IDatagram &datagram)
+void UdpWorker::enqueue(std::unique_ptr<IDatagram> datagram)
 {
-
+    queue.emplace(datagram);
 }
 
 std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDatagram()
 {
-    return nullptr;
+    ssize_t length = recvfrom(socket_fd, &buffer, sizeof(ClientMessage::SelfPacked), 0, getSockaddr(), &storageSize);
+    if (length == -1) {
+        throw new SocketException(errno);
+    } else if (length < sizeof(ClientMessage::SelfPacked)) {
+        throw new ProtocolException("Datagram too small to be valid");
+    } else {
+        return std::make_pair(&buffer, getSockaddr());
+    }
 }
 
 void UdpWorker::workUntil(std::chrono::milliseconds time, IDatagramObserver &observer)
@@ -23,7 +30,7 @@ void UdpWorker::workUntil(std::chrono::milliseconds time, IDatagramObserver &obs
 UdpWorker::UdpWorker(uint16_t port, const std::queue &queue) : queue(queue)
 {
     if ((socket_fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
-        throw new SocketException(socket_fd);
+        throw new SocketException(errno);
     }
 
     sockaddr_in address;
@@ -31,9 +38,9 @@ UdpWorker::UdpWorker(uint16_t port, const std::queue &queue) : queue(queue)
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    int res = 0;
-    if ((res = bind(socket_fd, reinterpret_cast<sockaddr *>(&address), sizeof(sockaddr_in))) == -1) {
-        throw new SocketException(res);
+    int res = bind(socket_fd, reinterpret_cast<sockaddr *>(&address), sizeof(sockaddr_in));
+    if (res == -1) {
+        throw new SocketException(errno);
     }
 }
 
