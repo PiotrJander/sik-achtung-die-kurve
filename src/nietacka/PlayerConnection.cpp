@@ -58,7 +58,6 @@ void PlayerConnection::resetAfterGame()
 {
     turnDirection = 0;
     readyForGame = false;
-    nextExpectedEvent = 0;
 }
 
 PlayerConnection::PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection,

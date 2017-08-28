@@ -20,7 +20,8 @@ public:
     FRIEND_TEST(GameManagerTest, CanGameStart);
     FRIEND_TEST(GameManagerTest, EnqueueNewDatagramBatches);
 
-    GameManager(uint32_t maxx, uint32_t maxy, const string &port, int roundsPerSecond, int turningSpeed, int seed);
+    GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int turningSpeed,
+                int seed, std::unique_ptr<IUdpWorker> udpWorker);
 
     void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr) override;
 
@@ -34,7 +35,6 @@ private:
     std::unique_ptr<IUdpWorker> udpWorker;
 
     uint32_t maxx, maxy;
-    std::string port;
     int roundsPerSecond;
     int turningSpeed;
     Random random;

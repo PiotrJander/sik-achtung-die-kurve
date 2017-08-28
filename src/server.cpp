@@ -1,12 +1,14 @@
 #include <iostream>
 #include <GameManager.h>
+#include <UdpWorker.h>
 #include "easylogging++.h"
 
-INITIALIZE_EASYLOGGINGPP
+
 
 int main(int argc, const char *argv[]) {
+    std::unique_ptr<IUdpWorker> udpWorker = std::make_unique<UdpWorker>("12345");
     try {
-        GameManager gameManager(5, 5, std::string("12345"), 50, 6, 123);
+        GameManager gameManager(5, 5, 50, 6, 123, std::move(udpWorker));
         LOG(INFO) << "Entering game loop";
         while (true) {
             gameManager.gameLoop();

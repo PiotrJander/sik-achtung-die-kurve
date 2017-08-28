@@ -19,7 +19,7 @@ void GameManager::gameLoop()
         udpWorker->work(*this);
     } while (!canGameStart());
 
-    Game game(random, turningSpeed, maxx, maxy);
+    game = Game(random, turningSpeed, maxx, maxy);
     game.addPlayers(connectedPlayers);
     game.start();
 
@@ -80,6 +80,23 @@ void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, 
     }
 }
 
+bool GameManager::isPlayerNameTaken(const std::string &name) const
+{
+    // there can be many observing players
+    if (name.empty()) {
+        return false;
+    }
+
+    for (auto &&entry : connectedPlayers) {
+        if (entry.second.getName() == name) {
+            return true;
+        }
+    }
+
+    // else
+    return false;
+}
+
 bool GameManager::canGameStart()
 {
     return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
@@ -121,35 +138,6 @@ std::vector<std::shared_ptr<EventBatch>> GameManager::getEventBatches(const Game
     return vector;
 }
 
-bool GameManager::isPlayerNameTaken(const std::string &name) const
-{
-    // there can be many observing players
-    if (name.empty()) {
-        return false;
-    }
-
-    for (auto &&entry : connectedPlayers) {
-        if (entry.second.getName() == name) {
-            return true;
-        }
-    }
-
-    // else
-    return false;
-}
-
-GameManager::GameManager(uint32_t maxx, uint32_t maxy, const string &port, int roundsPerSecond, int turningSpeed,
-                         int seed)
-        : connectedPlayers(),
-          maxx(maxx), maxy(maxy),
-          port(port),
-          roundsPerSecond(roundsPerSecond),
-          turningSpeed(turningSpeed),
-          random(seed),
-          udpWorker(std::make_unique<UdpWorker>(port)),
-          game(random, turningSpeed, maxx, maxy)
-{}
-
 void GameManager::broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches)
 {
     for (auto &&eventBatch : eventBatches) {
@@ -164,3 +152,14 @@ void GameManager::broadcastNewDatagrams(const Game &game)
     auto eventBatches = getEventBatches(game, game.getFirstNewEventNumber());
     broadcastDatagrams(eventBatches);
 }
+
+GameManager::GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int turningSpeed,
+                         int seed, std::unique_ptr<IUdpWorker> udpWorker)
+        : connectedPlayers(),
+          maxx(maxx), maxy(maxy),
+          roundsPerSecond(roundsPerSecond),
+          turningSpeed(turningSpeed),
+          random(seed),
+          udpWorker(std::move(udpWorker)),
+          game(random, turningSpeed, maxx, maxy)
+{}

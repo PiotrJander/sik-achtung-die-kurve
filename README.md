@@ -24,6 +24,13 @@ now 19:40
 TODO
 fix tests
 
+test
+    udp worker
+
+    game manager
+        get event batches
+        broadcastDatagrams
+
 
 
 
@@ -39,6 +46,7 @@ fix tests
 
 
 BACKLOG
+could still test udp worker; but would need to have abstract interface for socket: dependency inversion
 maybe cache buffer
 test IP v 4 6
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
@@ -59,14 +67,10 @@ what if we don't send all send Q in the time frame?
 
 UNDERSTANDING C++:
 * what to put in header files, what in cpp files?
-* pass functors rather than function pointers
 * copy and swap as exception safety
 * vectors as buffers: &myvec[0] is the way to go, also ::resize and ::assign
-* we use structs as buffers, except for EventBatch
-* we can define one ctor in terms of another
-* buffer: unsigned char?
-* initialization too complex for initializer list; how to avoid copying?
-* how to transfer resources in move ctor / assignment?
+* buffer: unsigned char
+* empty unique pointer: std::unique_ptr<int> foo; compare with optional
 
 TCP CAVEATS
 some messages can be variable length; we might need to encapsulate to know where a message starts and ends

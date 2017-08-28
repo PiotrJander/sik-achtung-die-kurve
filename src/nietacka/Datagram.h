@@ -28,6 +28,11 @@ public:
         return reinterpret_cast<const sockaddr *>(&sockaddrStorage);
     }
 
+    const std::shared_ptr<EventBatch> &getEventBatch() const
+    {
+        return eventBatch;
+    }
+
 private:
     std::shared_ptr<EventBatch> eventBatch;
     sockaddr_storage sockaddrStorage;
