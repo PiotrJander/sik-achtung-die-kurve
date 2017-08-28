@@ -12,7 +12,7 @@
 #include "Socket.h"
 
 #ifdef __linux__
-include <endian.h>
+#include <endian.h>
 #define htonll htobe64
 #define ntohll be64toh
 #endif
