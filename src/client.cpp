@@ -8,11 +8,11 @@
 
 int main(int argc, const char *argv[]) {
     Socket socket1, socket2, socket3;
-    socket1.bindSocket(NULL, "12346");
-    socket2.bindSocket(NULL, "12347");
-    socket3.bindSocket(NULL, "12348");
+    socket1.bindSocket(NULL, "8071");
+    socket2.bindSocket(NULL, "8072");
+    socket3.bindSocket(NULL, "8073");
 
-    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "12345");
+    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "8070");
     const sockaddr *addr = servinfoOther->ai_addr;
     
     ClientMessage cm1(123, 0, 0, "");
