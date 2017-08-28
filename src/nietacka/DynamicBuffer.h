@@ -25,7 +25,7 @@ public:
         return *this;
     }
 
-    const char *get()
+    const char *getStartPointer()
     {
         return &buffer[0];
     }
@@ -37,7 +37,7 @@ public:
 
     const char *currentLocation()
     {
-        return get() + size();
+        return getStartPointer() + size();
     }
 
     void writeCharString(const std::string &str);

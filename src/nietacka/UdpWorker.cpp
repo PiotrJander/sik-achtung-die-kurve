@@ -91,12 +91,10 @@ void UdpWorker::sendDatagram()
         auto datagram = std::move(queue.front());
         queue.pop_front();
         const sockaddr *sockAddr = datagram->getSockAddr();
-        int length = datagram->getLength();
-        auto bufferBox = datagram->getBuffer();
-        const char *buffer = bufferBox.get();
+        DynamicBuffer buffer = datagram->getBuffer();
 
         try {
-            socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
+            socket.sendTo(buffer.getStartPointer(), static_cast<size_t>(buffer.size()), sockAddr);
             LOG(INFO) << "Sending datagram; " << queue.size() << " left in the queue";
         } catch (WouldBlockException &e) {
             // try again next time
