@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string.h>
+#include <netinet/in.h>
 #include "Socket.h"
 
 #ifdef __linux__
