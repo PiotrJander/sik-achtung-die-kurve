@@ -10,6 +10,11 @@
 #include <iostream>
 #include "Socket.h"
 
+#ifdef __linux__
+#define htonll htobe64
+#define ntohll be64toh
+#endif
+
 using std::string;
 
 class ClientMessage {
