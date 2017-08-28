@@ -8,6 +8,8 @@
 #include <nietacka/event/GameOverEvent.h>
 #include "gtest/gtest.h"
 
+//INITIALIZE_EASYLOGGINGPP
+
 TEST(EventBatchTest, GetBuffer)
 {
     Random rand(123);
@@ -21,40 +23,40 @@ TEST(EventBatchTest, GetBuffer)
     DynamicBuffer buffer = eventBatch.getBuffer();
     const char *bufferLocation = buffer.getStartPointer();
 
-//    uint32_t gameId = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    gameId = ntohl(gameId);
-//    EXPECT_EQ(gameId, 123);
-//    bufferLocation += sizeof(uint32_t);
-//
-//    uint32_t length1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    length1 = ntohl(length1);
-//    bufferLocation += sizeof(uint32_t);
-//    std::unique_ptr<GameEvent> e1 = GameEvent::readFrom(bufferLocation, length1);
-//    bufferLocation += length1;
-//    uint32_t crc1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    bufferLocation += sizeof(uint32_t);
-//
-//    uint32_t length2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    length2 = ntohl(length2);
-//    bufferLocation += sizeof(uint32_t);
-//    std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(bufferLocation, length2);
-//    bufferLocation += length2;
-//    uint32_t crc2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    bufferLocation += sizeof(uint32_t);
-//
-//    uint32_t length3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    length3 = ntohl(length3);
-//    bufferLocation += sizeof(uint32_t);
-//    std::unique_ptr<GameEvent> e3 = GameEvent::readFrom(bufferLocation, length3);
-//    bufferLocation += length3;
-//    uint32_t crc3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
-//    bufferLocation += sizeof(uint32_t);
-//
-//    PixelEvent *pixelEvent = dynamic_cast<PixelEvent *>(e1.get());
-//    PlayerEliminatedEvent *eliminatedEvent = dynamic_cast<PlayerEliminatedEvent *>(e2.get());
-//    GameOverEvent *gameOverEvent = dynamic_cast<GameOverEvent *>(e3.get());
-//
-//    EXPECT_EQ(pixelEvent->getX(), 45);
-//    EXPECT_EQ(eliminatedEvent->getPlayerNumber(), 3);
-//    EXPECT_EQ(gameOverEvent->getEventNo(), 2);
+    uint32_t gameId = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    gameId = ntohl(gameId);
+    EXPECT_EQ(gameId, 456);
+    bufferLocation += sizeof(uint32_t);
+
+    uint32_t length1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length1 = ntohl(length1);
+    bufferLocation += sizeof(uint32_t);
+    std::unique_ptr<GameEvent> e1 = GameEvent::readFrom(bufferLocation, length1);
+    bufferLocation += length1;
+    uint32_t crc1 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    bufferLocation += sizeof(uint32_t);
+
+    uint32_t length2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length2 = ntohl(length2);
+    bufferLocation += sizeof(uint32_t);
+    std::unique_ptr<GameEvent> e2 = GameEvent::readFrom(bufferLocation, length2);
+    bufferLocation += length2;
+    uint32_t crc2 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    bufferLocation += sizeof(uint32_t);
+
+    uint32_t length3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    length3 = ntohl(length3);
+    bufferLocation += sizeof(uint32_t);
+    std::unique_ptr<GameEvent> e3 = GameEvent::readFrom(bufferLocation, length3);
+    bufferLocation += length3;
+    uint32_t crc3 = *reinterpret_cast<const uint32_t *>(bufferLocation);
+    bufferLocation += sizeof(uint32_t);
+
+    PixelEvent *pixelEvent = dynamic_cast<PixelEvent *>(e1.get());
+    PlayerEliminatedEvent *eliminatedEvent = dynamic_cast<PlayerEliminatedEvent *>(e2.get());
+    GameOverEvent *gameOverEvent = dynamic_cast<GameOverEvent *>(e3.get());
+
+    EXPECT_EQ(pixelEvent->getX(), 45);
+    EXPECT_EQ(eliminatedEvent->getPlayerNumber(), 3);
+    EXPECT_EQ(gameOverEvent->getEventNo(), 2);
 }

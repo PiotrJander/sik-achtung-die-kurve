@@ -47,9 +47,9 @@ bool GameEvent::operator==(const GameEvent &other) const
 void GameEvent::write(DynamicBuffer &buffer)
 {
     uint32_t length = selfLength();
-    buffer << length;
+    buffer << htonl(length);
     const char *start = buffer.currentLocation();
     writeSelf(buffer);
     uint32_t checksum = crc32c(0, (const unsigned char *) start, length);
-    buffer << checksum;
+    buffer << htonl(checksum);
 }

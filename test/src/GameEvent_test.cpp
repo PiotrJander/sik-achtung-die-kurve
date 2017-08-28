@@ -12,14 +12,13 @@
 
 TEST(GameEventTest, NewGameEvent)
 {
-    char buffer[sizeof(NewGameEvent) + 2 * sizeof(uint32_t)];
-
     std::vector<std::string> names {"Piotr", "John", "Jane"};
     NewGameEvent e1 {123, 800, 600, names};
 
-    e1.writeTo(buffer);
+    DynamicBuffer buffer;
+    e1.write(buffer);
 
-    auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t) , sizeof(NewGameEvent));
+    auto _e2 = GameEvent::readFrom(buffer.getStartPointer() + sizeof(uint32_t) , sizeof(NewGameEvent));
     auto *e2 = (NewGameEvent *) _e2.get();
 
     EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
@@ -33,12 +32,12 @@ TEST(GameEventTest, NewGameEvent)
 
 TEST(GameEventTest, PixelEvent)
 {
-    char buffer[sizeof(PixelEvent) + 2 * sizeof(uint32_t)];
-
     PixelEvent e1 {123, 4, 567, 890};
-    e1.writeTo(buffer);
 
-    auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(PixelEvent));
+    DynamicBuffer buffer;
+    e1.write(buffer);
+
+    auto _e2 = GameEvent::readFrom(buffer.getStartPointer() + sizeof(uint32_t), sizeof(PixelEvent));
     auto *e2 = (PixelEvent *) _e2.get();
 
     EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
@@ -50,12 +49,12 @@ TEST(GameEventTest, PixelEvent)
 
 TEST(GameEventTest, PlayerEliminatedEvent)
 {
-    char buffer[sizeof(PlayerEliminatedEvent) + 2 * sizeof(uint32_t)];
-
     PlayerEliminatedEvent e1 {123, 2};
-    e1.writeTo(buffer);
 
-    auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(PlayerEliminatedEvent));
+    DynamicBuffer buffer;
+    e1.write(buffer);
+
+    auto _e2 = GameEvent::readFrom(buffer.getStartPointer() + sizeof(uint32_t), sizeof(PlayerEliminatedEvent));
     auto *e2 = (PlayerEliminatedEvent *) _e2.get();
 
     EXPECT_EQ(e1.getEventNo(), e2->getEventNo());
@@ -65,12 +64,12 @@ TEST(GameEventTest, PlayerEliminatedEvent)
 
 TEST(GameEventTest, GameOverEvent)
 {
-    char buffer[sizeof(GameOverEvent) + 2 * sizeof(uint32_t)];
-
     GameOverEvent e1 {123};
-    e1.writeTo(buffer);
 
-    auto _e2 = GameEvent::readFrom(buffer + sizeof(uint32_t), sizeof(GameOverEvent));
+    DynamicBuffer buffer;
+    e1.write(buffer);
+
+    auto _e2 = GameEvent::readFrom(buffer.getStartPointer() + sizeof(uint32_t), sizeof(GameOverEvent));
     auto *e2 = (GameOverEvent *) _e2.get();
 
     EXPECT_EQ(e1.getEventNo(), e2->getEventNo());

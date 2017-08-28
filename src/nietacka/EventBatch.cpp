@@ -7,7 +7,7 @@
 DynamicBuffer EventBatch::getBuffer()
 {
     DynamicBuffer buffer;
-    buffer << gameId;
+    buffer << htonl(gameId);
 
     for (auto &&item : events) {
         item->write(buffer);

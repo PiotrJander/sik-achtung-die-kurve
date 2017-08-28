@@ -102,7 +102,7 @@ public:
     sockaddr_in ipv4_3_;
 
     GameManager gameManager;
-    
+
     sockaddr *ipv4_1;
     sockaddr *ipv4_2;
     sockaddr *ipv4_3;
