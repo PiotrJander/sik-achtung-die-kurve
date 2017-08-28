@@ -97,7 +97,7 @@ void UdpWorker::sendDatagram()
 
         try {
             socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
-            LOG(INFO) << "Sending datagram";
+            LOG(INFO) << "Sending datagram; " << queue.size() << " left in the queue";
         } catch (WouldBlockException &e) {
             // try again next time
             queue.emplace_front(std::move(datagram));

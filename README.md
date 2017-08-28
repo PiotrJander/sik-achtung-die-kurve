@@ -29,6 +29,9 @@ TODO
 
 3 players, 6 event batches
 
+now we have eliminated, game over, and eliminated
+
+that's when this happens
 
 
 

@@ -9,18 +9,18 @@
 
 class Datagram: public IDatagram {
 public:
-    Datagram(const std::shared_ptr<EventBatch> &eventBatch, const sockaddr_storage &sockaddrStorage)
+    Datagram(const EventBatch &eventBatch, const sockaddr_storage &sockaddrStorage)
             : eventBatch(eventBatch), sockaddrStorage(sockaddrStorage)
     {}
 
     std::unique_ptr<char[]> getBuffer() override
     {
-        return eventBatch->getBuffer();
+        return eventBatch.getBuffer();
     }
 
     int getLength() override
     {
-        return eventBatch->getLength();
+        return eventBatch.getLength();
     }
 
     const sockaddr *getSockAddr() override
@@ -28,13 +28,13 @@ public:
         return reinterpret_cast<const sockaddr *>(&sockaddrStorage);
     }
 
-    const std::shared_ptr<EventBatch> &getEventBatch() const
+    const EventBatch &getEventBatch() const
     {
         return eventBatch;
     }
 
 private:
-    std::shared_ptr<EventBatch> eventBatch;
+    EventBatch eventBatch;
     sockaddr_storage sockaddrStorage;
 };
 

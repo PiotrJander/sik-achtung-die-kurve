@@ -23,12 +23,14 @@ void GameManager::gameLoop()
     game.start();
 
     // in case game is over already
+    LOG(INFO) << "Enqueuing new game datagrams";
     broadcastNewDatagrams(game);
 
     while (game.isInProgress()) {
         milliseconds endOfFrame =
                 duration_cast<milliseconds>(system_clock::now().time_since_epoch()) + milliseconds(200);  // TODO don't hardcode
         game.tick();
+        LOG(INFO) << "Enqueuing tick datagrams";
         broadcastNewDatagrams(game);
         udpWorker->workUntil(endOfFrame, *this);
     }
@@ -118,17 +120,17 @@ void GameManager::resetPlayers()
     }
 }
 
-std::vector<std::shared_ptr<EventBatch>> GameManager::getEventBatches(const Game &game, uint32_t startEventNumber)
+std::vector<EventBatch> GameManager::getEventBatches(const Game &game, uint32_t startEventNumber)
 {
     const int MAX_DATAGRAM_SIZE = 512;
     const int SIZEOF_HEADER = sizeof(uint32_t);
     int length = SIZEOF_HEADER;
-    std::vector<std::shared_ptr<EventBatch>> vector;
+    std::vector<EventBatch> vector;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
-            vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
-                                                             startEventNumber, eventNumber, game.getId()));
+            LOG(INFO) << "getEventBatches: producing a batch of length " << length;
+            vector.emplace_back(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));
             length = SIZEOF_HEADER + eventSize;
             startEventNumber = eventNumber;
         } else {
@@ -138,15 +140,17 @@ std::vector<std::shared_ptr<EventBatch>> GameManager::getEventBatches(const Game
 
     // only make an event batch if there any new events
     if (length > SIZEOF_HEADER) {
+        LOG(INFO) << "getEventBatches: producing a batch of length " << length;
         uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
-        vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
-                                                         startEventNumber, endEventNo, game.getId()));
+        vector.emplace_back(EventBatch(length, game.getEventHistory(), startEventNumber, endEventNo, game.getId()));
+    } else {
+        LOG(INFO) << "getEventBatches: no new events to enqueue";
     }
 
     return vector;
 }
 
-void GameManager::broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches)
+void GameManager::broadcastDatagrams(std::vector<EventBatch> eventBatches)
 {
     for (auto &&eventBatch : eventBatches) {
         for (auto &&player : connectedPlayers) {
@@ -157,6 +161,7 @@ void GameManager::broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> ev
 
 void GameManager::broadcastNewDatagrams(const Game &game)
 {
+    LOG(INFO) << "broadcastNewDatagrams: calling getEventBatches";
     auto eventBatches = getEventBatches(game, game.getFirstNewEventNumber());
     broadcastDatagrams(eventBatches);
 }

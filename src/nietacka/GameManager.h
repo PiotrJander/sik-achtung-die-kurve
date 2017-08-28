@@ -43,7 +43,7 @@ private:
 
     void resetPlayers();
 
-    std::vector<std::shared_ptr<EventBatch>> getEventBatches(const Game &game, uint32_t startEventNumber);
+    std::vector<EventBatch> getEventBatches(const Game &game, uint32_t startEventNumber);
 
     void addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message);
 
@@ -51,7 +51,7 @@ private:
 
     void updateConnectedPlayers(const ClientMessage &message, const sockaddr *socket);
 
-    void broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches);
+    void broadcastDatagrams(std::vector<EventBatch> eventBatches);
 
     void broadcastNewDatagrams(const Game &game);
 };

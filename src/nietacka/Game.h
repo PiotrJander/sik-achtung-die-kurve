@@ -90,7 +90,7 @@ private:
 
     int turningSpeed;
 
-    uint32_t id, maxx, maxy, eventNoCounter = 0, firstNewEventNumber;
+    uint32_t id, maxx, maxy, eventNoCounter = 0, firstNewEventNumber = 0;
 
     bool inProgress = true;
 
