@@ -7,7 +7,10 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <poll.h>
+#include <sys/ioctl.h>
 #include <netdb.h>
+#include <fcntl.h>
 #include "Socket.h"
 #include "Exceptions.h"
 #include "easylogging++.h"
@@ -103,4 +106,61 @@ ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAd
     } else {
         return len;
     }
+}
+
+
+short Socket::socketPoll(long long int timeout)
+{
+    struct pollfd fds[1];
+
+    memset(fds, 0 , sizeof(fds));
+    fds[0].fd = socket_fd;
+    fds[0].events = POLLIN | POLLOUT;
+
+    int rc = poll(fds, 1, timeout);
+    if (rc == -1) {
+        throw SocketException(errno);
+    } else if (rc == 0) {
+        // timeout
+        return 0;
+    } else if (fds[0].revents & POLLHUP || fds[0].revents & POLLERR || fds[0].revents & POLLNVAL) {
+        std::ostringstream stringStream;
+        stringStream << "Poll revents error: " << fds[0].revents;
+        throw SocketException(0, stringStream.str());
+    } else {
+        return fds[0].revents;
+    }
+}
+
+/**
+ * I hope I don't mess with other flags.
+ *
+ * TODO ioctl vs fcntl
+ */
+void Socket::setBlocking()
+{
+    if (fcntl(socket_fd, F_SETFL, 0) < 0) {
+        throw SocketException(errno);
+    }
+}
+
+void Socket::setNonBlocking()
+{
+    if (fcntl(socket_fd, F_SETFL, O_NONBLOCK) < 0) {
+        throw SocketException(errno);
+    }
+}
+
+sockaddr_storage Socket::copySockAddrToStorage(const sockaddr *sockAddr)
+{
+    sockaddr_storage res;
+    switch (sockAddr->sa_family) {
+        case AF_INET: {
+            memcpy(&res, sockAddr, sizeof(sockaddr_in));
+        }
+        case AF_INET6: {
+            memcpy(&res, sockAddr, sizeof(sockaddr_in6));
+        }
+    }
+    return res;
 }

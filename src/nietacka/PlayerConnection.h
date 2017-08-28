@@ -35,7 +35,7 @@ public:
     PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name);
 
     PlayerConnection(const PlayerConnection &pc)
-            : sessionId(pc.sessionId), socket(pc.socket),
+            : sessionId(pc.sessionId), socketStorage(pc.socketStorage),
               turnDirection(pc.turnDirection), name(pc.name),
               readyForGame(pc.readyForGame),
               nextExpectedEvent(pc.nextExpectedEvent)
@@ -67,9 +67,14 @@ public:
         PlayerConnection::nextExpectedEvent = nextExpectedEvent;
     }
 
+    const sockaddr_storage &getSocketStorage() const
+    {
+        return socketStorage;
+    }
+
 private:
     uint64_t sessionId;
-    sockaddr_storage socket;
+    sockaddr_storage socketStorage;
     int8_t turnDirection;
     std::string name;
     bool readyForGame = false;

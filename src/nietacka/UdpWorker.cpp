@@ -2,13 +2,18 @@
 // Created by Piotr Jander on 27/08/2017.
 //
 
+#include <chrono>
 #include <unistd.h>
+#include <poll.h>
 #include "UdpWorker.h"
 #include "Exceptions.h"
+#include "GameManager.h"
+
+using namespace std::chrono;
 
 void UdpWorker::enqueue(std::unique_ptr<IDatagram> datagram)
 {
-    queue.emplace(std::move(datagram));
+    queue.emplace_back(std::move(datagram));
 }
 
 std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDatagram()
@@ -21,9 +26,60 @@ std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDat
     }
 }
 
-void UdpWorker::workUntil(std::chrono::milliseconds time, IDatagramObserver &observer)
+/**
+ * 
+ */
+void UdpWorker::workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer)
 {
+    while (true) {
+        auto remainingTime = endOfFrame - system_clock::now().time_since_epoch();
+        milliseconds remainingTimeMs = std::chrono::duration_cast<milliseconds>(remainingTime);
+        long long remainingTimeLong = remainingTimeMs.count();
+        
+        int rc = socket.socketPoll(remainingTimeLong);
+        if (rc == 0) {
+            // timeout
+            break;
+        } else {
+            if (rc & POLLIN) {
+                getDatagramFromNonblockingSocket(observer);
+            }
+            if (rc & POLLOUT) {
+                sendDatagramToNonblockingSocket(observer);
+            }
+        }
+    }
+}
 
+void UdpWorker::sendDatagramToNonblockingSocket(IDatagramObserver &observer)
+{
+    auto datagram = std::move(queue.front());
+    const sockaddr *sockAddr = datagram->getSockAddr();
+    int length = datagram->getLength();
+    auto bufferBox = datagram->getBuffer();
+    const char *buffer = bufferBox.get();
+
+    try {
+        socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
+    } catch (WouldBlockException &e) {
+        // try again next time
+        queue.emplace_front(std::move(datagram));
+    };
+}
+
+void UdpWorker::getDatagramFromNonblockingSocket(IDatagramObserver &observer)
+{
+    ssize_t length=0;
+
+    try {
+        length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
+    } catch (WouldBlockException &e) {};
+
+    if (length < sizeof(ClientMessage::SelfPacked)) {
+        throw ProtocolException("Datagram too small to be valid");
+    } else {
+        observer.processDatagram(&buffer, socket.getSockaddr());
+    }
 }
 
 UdpWorker::UdpWorker(const string &port) : queue(), socket()

@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "PlayerConnection.h"
+#include "Socket.h"
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
@@ -26,7 +27,7 @@ inline void hash_combine(std::size_t & s, const T & v)
 
 size_t PlayerConnection::hash() const
 {
-    return getHashFor(reinterpret_cast<const sockaddr *>(&socket));
+    return getHashFor(reinterpret_cast<const sockaddr *>(&socketStorage));
 }
 
 std::size_t PlayerConnection::getHashFor(const sockaddr *socket)
@@ -62,17 +63,9 @@ void PlayerConnection::resetAfterGame()
 
 PlayerConnection::PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection,
                                    const std::string &name)
-        : sessionId(sessionId), turnDirection(turnDirection), name(name)
-{
-    switch (socketArg->sa_family) {
-        case AF_INET: {
-            memcpy(&socket, socketArg, sizeof(sockaddr_in));
-        }
-        case AF_INET6: {
-            memcpy(&socket, socketArg, sizeof(sockaddr_in6));
-        }
-    }
-}
+        : sessionId(sessionId), turnDirection(turnDirection), name(name), 
+          socketStorage(Socket::copySockAddrToStorage(socketArg))
+{}
 
 #pragma clang diagnostic pop
 

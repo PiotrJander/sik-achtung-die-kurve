@@ -164,7 +164,7 @@ public:
         return std::make_pair(&packed, reinterpret_cast<const sockaddr *>(&ipv4));
     }
 
-    void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override
+    void workUntil(std::chrono::milliseconds time, GameManager observer, Game game) override
     {}
 
 private:
@@ -181,14 +181,14 @@ TEST_F(GameManagerTest, EnqueueNewDatagramBatches)
     }
     
     // should pack all events in one datagram
-    gameManager.enqueueNewDatagramBatches(game, 0);
+    gameManager.getEventBatches(game, 0);
     
     // should split into many if greater than 512
     game.events.clear();
     for (int j = 0; j < 200; ++j) {
         game.events.emplace_back(std::make_unique<GameOverEvent>(j));
     }
-    gameManager.enqueueNewDatagramBatches(game, 0);
+    gameManager.getEventBatches(game, 0);
 }
 
 

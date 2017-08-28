@@ -21,6 +21,13 @@ private:
 };
 
 
+class WouldBlockException: public SocketException {
+public:
+    WouldBlockException() : SocketException(EWOULDBLOCK)
+    {}
+};
+
+
 class ProtocolException: public std::runtime_error {
 public:
     ProtocolException(const std::string &desc) : runtime_error(desc)

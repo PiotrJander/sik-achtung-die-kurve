@@ -17,20 +17,24 @@ start 15:00
 end 17:20
 total 2:20
 
-TODO
-now test what we have
+now test basic communication
 start 18:30
 now 19:40
 
-freeaddrinfo(servinfo);
+TODO
+sort out the mess with chrono and conversion; maybe just use gettimeofday and long long
 
+now we always listen for messages, but we only want to send messages when queue not empty
+-> TODO only when Q non empty
 
+fix tests
 
-
-
-make a client which will send a few messages to the server
-view logs to see they came through
-assert that sockaddr is set okay for client
+refactor
+auto res = udpWorker->getDatagram();
+processDatagram(res.first, res.second);
+with callback and unify with getting from unblocking socket
+set socket to unblocking at the start of the game
+invalidate caches afterwards
 
 
 
@@ -45,6 +49,7 @@ assert that sockaddr is set okay for client
 
 
 BACKLOG
+test IP v 4 6
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""
 test conversion hton

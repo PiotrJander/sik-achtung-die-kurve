@@ -9,45 +9,52 @@
 #include "UdpWorker.h"
 #include "easylogging++.h"
 #include "Exceptions.h"
+#include "Datagram.h"
 
 using namespace std::chrono;
 
 void GameManager::gameLoop()
 {
+    gamePtr = nullptr;
     do {
         try {
             auto res = udpWorker->getDatagram();
             LOG(INFO) << "Got a client message";
-            processDatagram(res.first, res.second, nullptr);
+            processDatagram(res.first, res.second);
         } catch (ProtocolException &e) {
             LOG(INFO) << "Protocol exception: " << e.what();
         };
     } while (!canGameStart());
 
     Game game(random, turningSpeed, maxx, maxy);
+    gamePtr = &game;
     game.addPlayers(connectedPlayers);
     game.start();
 
     // in case game is over already
-    enqueueNewDatagramBatches(game, 0);
+    broadcastNewDatagrams(game);
 
     while (game.isInProgress()) {
-        milliseconds startOfFrame = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+        auto endOfFrame = system_clock::now().time_since_epoch() + milliseconds(200);  // TODO don't hardcode
         game.tick();
-        enqueueNewDatagramBatches(game, 0);
-//        udpWorker->workUntil(startOfFrame, <#initializer#>);
+        broadcastNewDatagrams(game);
+        udpWorker->workUntil(endOfFrame, *this);
     }
     resetPlayers();
+    gamePtr = nullptr;
 }
 
-void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket,
-                                  const Game *game = nullptr)
+void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr)
 {
     ClientMessage message(*buffer);
-    updateConnectedPlayers(message, socket);
+    updateConnectedPlayers(message, socketAddr);
 
-    if (game) {
-        enqueueNewDatagramBatches(*game, message.getNextExpectedEventNo());
+    if (gamePtr) {
+        auto datagramBatches = getEventBatches(*gamePtr, message.getNextExpectedEventNo());
+        sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
+        for (auto &&batch : datagramBatches) {
+            udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
+        }
     }
 }
 
@@ -85,9 +92,8 @@ void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, 
 
 bool GameManager::canGameStart()
 {
-//    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
-//                       [](const auto &entry) { return entry.second.isReadyForGame(); });
-    return false;  // TODO revert
+    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
+                       [](const auto &entry) { return entry.second.isReadyForGame(); });
 }
 
 void GameManager::resetPlayers()
@@ -97,18 +103,17 @@ void GameManager::resetPlayers()
     }
 }
 
-void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber)
+std::vector<std::shared_ptr<EventBatch>> GameManager::getEventBatches(const Game &game, uint32_t startEventNumber)
 {
     const int MAX_DATAGRAM_SIZE = 512;
     const int SIZEOF_HEADER = sizeof(uint32_t);
     int length = SIZEOF_HEADER;
+    std::vector<std::shared_ptr<EventBatch>> vector;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
         uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
-            udpWorker->enqueue(
-                    std::make_unique<EventBatch>(length, game.getEventHistory(),
-                                                 startEventNumber, eventNumber, game.getId())
-            );
+            vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
+                                                             startEventNumber, eventNumber, game.getId()));
             length = SIZEOF_HEADER + eventSize;
             startEventNumber = eventNumber;
         } else {
@@ -116,8 +121,9 @@ void GameManager::enqueueNewDatagramBatches(const Game &game, uint32_t startEven
         }
     }
     uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
-    udpWorker->enqueue(std::make_unique<EventBatch>(length, game.getEventHistory(),
-                                                    startEventNumber, endEventNo, game.getId()));
+    vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
+                                                     startEventNumber, endEventNo, game.getId()));
+    return vector;
 }
 
 bool GameManager::isPlayerNameTaken(const std::string &name) const
@@ -147,3 +153,18 @@ GameManager::GameManager(uint32_t maxx, uint32_t maxy, const string &port, int r
           random(seed),
           udpWorker(std::make_unique<UdpWorker>(port))
 {}
+
+void GameManager::broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches)
+{
+    for (auto &&eventBatch : eventBatches) {
+        for (auto &&player : connectedPlayers) {
+            udpWorker->enqueue(std::make_unique<Datagram>(eventBatch, player.second.getSocketStorage()));
+        }
+    }
+}
+
+void GameManager::broadcastNewDatagrams(const Game &game)
+{
+    auto eventBatches = getEventBatches(game, game.getFirstNewEventNumber());
+    broadcastDatagrams(eventBatches);
+}

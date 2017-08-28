@@ -9,24 +9,19 @@
 #include "IDatagram.h"
 #include "Game.h"
 
-class EventBatch: public IDatagram {
+class EventBatch {
 public:
-    EventBatch(int length, const EventHistory &eventHistory, uint32_t startEventNo, uint32_t endEventNo,
-               uint32_t gameId, size_t socketHash = EventBatch::BROADCAST)
-            : length(length), socketHash(socketHash), eventHistory(eventHistory),
+    EventBatch(int length, const EventHistory &eventHistory, 
+               uint32_t startEventNo, uint32_t endEventNo, uint32_t gameId)
+            : length(length), eventHistory(eventHistory),
               startEventNo(startEventNo), endEventNo(endEventNo), gameId(gameId)
     {}
 
-    std::unique_ptr<char[]> getBuffer() override;
+    std::unique_ptr<char[]> getBuffer();
 
-    int getLength() override
+    int getLength()
     {
         return length;
-    }
-
-    size_t getSocketHash() override
-    {
-        return socketHash;
     }
 
     uint32_t getStartEventNo() const
@@ -39,11 +34,8 @@ public:
         return endEventNo;
     }
 
-    static const int BROADCAST = 0;
-
 private:
     int length;
-    std::size_t socketHash;  // 0 means broadcast
     const EventHistory &eventHistory;
     uint32_t gameId;
     uint32_t startEventNo, endEventNo;  // start is inclusive, end is non-inclusive

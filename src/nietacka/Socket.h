@@ -14,6 +14,8 @@ public:
     static struct addrinfo *getAddrInfo(const char *hostname, const char *port);
 
     Socket();
+    Socket(const Socket&) = delete;
+    Socket & operator=(const Socket&) = delete;
 
     virtual ~Socket();
 
@@ -30,9 +32,17 @@ public:
         return reinterpret_cast<sockaddr *>(&sockaddrStorage);
     }
 
+    short socketPoll(long long int timeout);
+    
+    static sockaddr_storage copySockAddrToStorage(const sockaddr *sockAddr);
+
 private:
     int socket_fd;
     sockaddr_storage sockaddrStorage;
+
+    void setBlocking();
+
+    void setNonBlocking();
 };
 
 

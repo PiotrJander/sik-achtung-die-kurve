@@ -21,12 +21,14 @@ public:
 
     GameManager(uint32_t maxx, uint32_t maxy, const string &port, int roundsPerSecond, int turningSpeed, int seed);
 
-    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket, const Game *game) override;
+    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr) override;
 
     void gameLoop();
 
 private:
     PlayerConnectionMap connectedPlayers;
+
+    Game *gamePtr;
 
     std::unique_ptr<IUdpWorker> udpWorker;
 
@@ -40,13 +42,17 @@ private:
 
     void resetPlayers();
 
-    void enqueueNewDatagramBatches(const Game &game, uint32_t startEventNumber);
+    std::vector<std::shared_ptr<EventBatch>> getEventBatches(const Game &game, uint32_t startEventNumber);
 
     void addPlayerConnection(std::size_t hash, const sockaddr *socket, const ClientMessage &message);
 
     bool isPlayerNameTaken(const std::string &name) const;
 
     void updateConnectedPlayers(const ClientMessage &message, const sockaddr *socket);
+
+    void broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches);
+
+    void broadcastNewDatagrams(const Game &game);
 };
 
 

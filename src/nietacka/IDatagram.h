@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include <sys/socket.h>
 
 class IDatagram {
 public:
@@ -14,7 +15,7 @@ public:
 
     virtual int getLength() = 0;
 
-    virtual std::size_t getSocketHash() = 0;
+    virtual const sockaddr * getSockAddr() = 0;
 };
 
 

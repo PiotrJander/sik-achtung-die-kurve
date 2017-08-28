@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include "IUdpWorker.h"
 #include "Socket.h"
+#include "GameManager.h"
 
 class UdpWorker: public IUdpWorker {
 public:
@@ -17,14 +18,18 @@ public:
 
     std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() override;
 
-    void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) override;
+    void workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer) override;
 
     UdpWorker(const string &port);
 
 private:
     ClientMessage::SelfPacked buffer;
-    std::queue<std::unique_ptr<IDatagram>> queue;
+    std::deque<std::unique_ptr<IDatagram>> queue;
     Socket socket;
+
+    void getDatagramFromNonblockingSocket(IDatagramObserver &observer);
+
+    void sendDatagramToNonblockingSocket(IDatagramObserver &observer);
 };
 
 
