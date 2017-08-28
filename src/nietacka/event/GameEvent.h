@@ -6,6 +6,7 @@
 #define PROJECT_GAMEEVENT_H
 
 #include <iostream>
+#include <memory>
 #include <netinet/in.h>
 
 
