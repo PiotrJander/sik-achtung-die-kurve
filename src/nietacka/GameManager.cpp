@@ -17,11 +17,7 @@ void GameManager::gameLoop()
 {
     gamePtr = nullptr;
     do {
-        try {
-            udpWorker->getDatagram(*this);
-        } catch (ProtocolException &e) {
-            LOG(INFO) << "Protocol exception: " << e.what();
-        };
+        udpWorker->getDatagram(*this);
     } while (!canGameStart());
 
     Game game(random, turningSpeed, maxx, maxy);

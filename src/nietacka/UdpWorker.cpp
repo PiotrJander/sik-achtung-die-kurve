@@ -22,7 +22,7 @@ void UdpWorker::getDatagram(IDatagramObserver &observer)
      ssize_t length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
 
     if (length < sizeof(ClientMessage::SelfPacked)) {
-        throw ProtocolException("Datagram too small to be valid");
+        LOG(WARNING) << "Datagram too small to be valid";
     }
 
     observer.processDatagram(&buffer, socket.getSockaddr());

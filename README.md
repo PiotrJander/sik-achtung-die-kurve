@@ -22,9 +22,11 @@ start 18:30
 now 19:40
 
 TODO
-
+review last commits
 
 fix tests
+
+
 
 
 
