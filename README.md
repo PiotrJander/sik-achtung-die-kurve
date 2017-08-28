@@ -22,23 +22,11 @@ start 18:30
 now 19:40
 
 TODO
-sort out the mess with chrono and conversion; maybe just use gettimeofday and long long
 
-7600 lines in logging
-
-now we always listen for messages, but we only want to send messages when queue not empty
--> TODO only when Q non empty
 
 fix tests
 
-refactor
-auto res = udpWorker->getDatagram();
-processDatagram(res.first, res.second);
-with callback and unify with getting from unblocking socket
 
-set socket to unblocking at the start of the game
-
-invalidate caches afterwards
 
 
 
@@ -53,6 +41,7 @@ invalidate caches afterwards
 
 
 BACKLOG
+maybe cache buffer
 test IP v 4 6
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""

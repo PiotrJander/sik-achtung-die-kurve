@@ -18,9 +18,7 @@ void GameManager::gameLoop()
     gamePtr = nullptr;
     do {
         try {
-            auto res = udpWorker->getDatagram();
-            LOG(INFO) << "Got a client message";
-            processDatagram(res.first, res.second);
+            udpWorker->getDatagram(*this);
         } catch (ProtocolException &e) {
             LOG(INFO) << "Protocol exception: " << e.what();
         };

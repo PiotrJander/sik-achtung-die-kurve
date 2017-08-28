@@ -16,11 +16,21 @@ class UdpWorker: public IUdpWorker {
 public:
     void enqueue(std::unique_ptr<IDatagram> datagram) override;
 
-    std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() override;
+    void getDatagram(IDatagramObserver &observer) override;
 
     void workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer) override;
 
     UdpWorker(const string &port);
+
+//    void setSocketToNonblocking()
+//    {
+//        socket.setNonBlocking();
+//    }
+//
+//    void setSocketToBlocking()
+//    {
+//        socket.setBlocking();
+//    }
 
 private:
     ClientMessage::SelfPacked buffer;

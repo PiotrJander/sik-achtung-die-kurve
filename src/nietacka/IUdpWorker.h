@@ -15,7 +15,7 @@ public:
 
     virtual void enqueue(std::unique_ptr<IDatagram>) = 0;
 
-    virtual std::pair<const ClientMessage::SelfPacked *, const sockaddr *> getDatagram() = 0;
+    virtual void getDatagram(IDatagramObserver &observer) = 0;
 
     virtual void workUntil(std::chrono::milliseconds time, IDatagramObserver &observer) = 0;
 

@@ -32,17 +32,17 @@ public:
         return reinterpret_cast<sockaddr *>(&sockaddrStorage);
     }
 
-    short socketPoll(long long int timeout);
+    short socketPoll(long long int timeout, bool send);
     
     static sockaddr_storage copySockAddrToStorage(const sockaddr *sockAddr);
-
-private:
-    int socket_fd;
-    sockaddr_storage sockaddrStorage;
 
     void setBlocking();
 
     void setNonBlocking();
+
+private:
+    int socket_fd;
+    sockaddr_storage sockaddrStorage;
 };
 
 

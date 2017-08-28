@@ -92,7 +92,11 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
     socklen_t storageSize = sizeof(sockaddr_storage);
     ssize_t len = recvfrom(socket_fd, buffer, length, 0, getSockaddr(), &storageSize);
     if (len == -1) {
-        throw SocketException(errno);
+        if (errno == EWOULDBLOCK) {
+            throw WouldBlockException();
+        } else {
+            throw SocketException(errno);
+        }
     } else {
         return len;
     }
@@ -102,20 +106,24 @@ ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAd
 {
     ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeof(sockaddr_in));  // TODO what about IPv6?
     if (len == -1) {
-        throw SocketException(errno);
+        if (errno == EWOULDBLOCK) {
+            throw WouldBlockException();
+        } else {
+            throw SocketException(errno);
+        }
     } else {
         return len;
     }
 }
 
 
-short Socket::socketPoll(long long int timeout)
+short Socket::socketPoll(long long int timeout, bool send)
 {
     struct pollfd fds[1];
 
     memset(fds, 0 , sizeof(fds));
     fds[0].fd = socket_fd;
-    fds[0].events = POLLIN | POLLOUT;
+    fds[0].events = POLLIN | (send ? POLLOUT : 0);
 
     int rc = poll(fds, 1, timeout);
     if (rc == -1) {

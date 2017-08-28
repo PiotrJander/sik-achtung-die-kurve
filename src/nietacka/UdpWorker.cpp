@@ -8,6 +8,7 @@
 #include "UdpWorker.h"
 #include "Exceptions.h"
 #include "GameManager.h"
+#include "easylogging++.h"
 
 using namespace std::chrono;
 
@@ -16,14 +17,16 @@ void UdpWorker::enqueue(std::unique_ptr<IDatagram> datagram)
     queue.emplace_back(std::move(datagram));
 }
 
-std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDatagram()
+void UdpWorker::getDatagram(IDatagramObserver &observer)
 {
-    ssize_t length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
+     ssize_t length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
+
     if (length < sizeof(ClientMessage::SelfPacked)) {
         throw ProtocolException("Datagram too small to be valid");
-    } else {
-        return std::make_pair(&buffer, socket.getSockaddr());
     }
+
+    observer.processDatagram(&buffer, socket.getSockaddr());
+    LOG(INFO) << "Got a client message";
 }
 
 /**
@@ -31,53 +34,50 @@ std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDat
  */
 void UdpWorker::workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer)
 {
+    socket.setNonBlocking();
+
     while (true) {
         milliseconds remainingTime = endOfFrame - duration_cast<milliseconds>(system_clock::now().time_since_epoch());
         long long remainingTimeLong = remainingTime.count();
+
+        if (remainingTimeLong <= 0) {
+            break;
+        }
         
-        int rc = socket.socketPoll(remainingTimeLong);
+        int rc = socket.socketPoll(remainingTimeLong, !queue.empty());
         if (rc == 0) {
             // timeout
             break;
         } else {
             if (rc & POLLIN) {
-                getDatagramFromNonblockingSocket(observer);
+                try {
+                    getDatagram(observer);
+                } catch (WouldBlockException &e) {};
             }
             if (rc & POLLOUT) {
                 sendDatagramToNonblockingSocket(observer);
             }
         }
     }
+
+    socket.setBlocking();
 }
 
 void UdpWorker::sendDatagramToNonblockingSocket(IDatagramObserver &observer)
 {
-    auto datagram = std::move(queue.front());
-    const sockaddr *sockAddr = datagram->getSockAddr();
-    int length = datagram->getLength();
-    auto bufferBox = datagram->getBuffer();
-    const char *buffer = bufferBox.get();
+    if (!queue.empty()) {
+        auto datagram = std::move(queue.front());
+        const sockaddr *sockAddr = datagram->getSockAddr();
+        int length = datagram->getLength();
+        auto bufferBox = datagram->getBuffer();
+        const char *buffer = bufferBox.get();
 
-    try {
-        socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
-    } catch (WouldBlockException &e) {
-        // try again next time
-        queue.emplace_front(std::move(datagram));
-    };
-}
-
-void UdpWorker::getDatagramFromNonblockingSocket(IDatagramObserver &observer)
-{
-    ssize_t length=0;
-
-    try {
-        length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
-    } catch (WouldBlockException &e) {};
-
-    if (length < sizeof(ClientMessage::SelfPacked)) {
-        throw ProtocolException("Datagram too small to be valid");
-    } else {
-        observer.processDatagram(&buffer, socket.getSockaddr());
+        try {
+            socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
+        } catch (WouldBlockException &e) {
+            // try again next time
+            queue.emplace_front(std::move(datagram));
+        };
     }
 }
 
