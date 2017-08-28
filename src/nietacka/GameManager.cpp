@@ -170,7 +170,7 @@ GameManager::GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int 
                          long long seed, std::unique_ptr<IUdpWorker> udpWorker)
         : connectedPlayers(),
           maxx(maxx), maxy(maxy),
-          roundsPerSecond(roundsPerSecond),
+          frameDurationMs(1000 / roundsPerSecond),
           turningSpeed(turningSpeed),
           random(seed),
           udpWorker(std::move(udpWorker)),

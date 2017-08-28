@@ -35,7 +35,7 @@ private:
     std::unique_ptr<IUdpWorker> udpWorker;
 
     uint32_t maxx, maxy;
-    int roundsPerSecond;
+    int frameDurationMs;
     int turningSpeed;
     Random random;
 
