@@ -5,10 +5,9 @@ LOG
 
 
 TODO
+use valgrind
 
-why do tests fail on linux?
 
-gcc vs clang
 
 
 
@@ -22,6 +21,7 @@ gcc vs clang
 
 
 BACKLOG
+why does pixel test fail on linux?
 could still test udp worker; but would need to have abstract interface for socket: dependency inversion
 shared_ptr and weak_ptr
 maybe cache buffer
