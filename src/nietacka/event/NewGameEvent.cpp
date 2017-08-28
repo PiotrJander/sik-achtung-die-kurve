@@ -3,10 +3,13 @@
 //
 
 #include "NewGameEvent.h"
+#include "../easylogging++.h"
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy)
         : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames()
-{}
+{
+    LOG(INFO) << "NewGameEvent";
+}
 
 NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames)
         : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames(playerNames)

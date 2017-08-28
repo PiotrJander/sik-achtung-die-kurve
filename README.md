@@ -49,6 +49,7 @@ could still test udp worker; but would need to have abstract interface for socke
 shared_ptr and weak_ptr
 maybe cache buffer
 test IP v 4 6
+learn to use valgrind
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
 pusta nazwa gracza jako ""
 test conversion hton

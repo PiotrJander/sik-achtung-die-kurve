@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "GameEvent.h"
+#include "../easylogging++.h"
 
 class PixelEvent : public GameEvent {
 public:
@@ -49,7 +50,9 @@ public:
 
     PixelEvent(uint32_t eventNo, uint8_t player_number, uint32_t x, uint32_t y)
             : GameEvent(eventNo, Type::PIXEL), playerNumber(player_number), x(x), y(y)
-    {}
+    {
+        LOG(INFO) << "PixelEvent";
+    }
 
 //    PixelEvent(const PixelEvent &pixelEvent)
 //            : GameEvent(pixelEvent),

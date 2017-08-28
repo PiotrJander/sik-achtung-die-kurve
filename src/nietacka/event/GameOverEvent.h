@@ -7,6 +7,7 @@
 
 
 #include "GameEvent.h"
+#include "../easylogging++.h"
 
 class GameOverEvent: public GameEvent {
 public:
@@ -14,7 +15,9 @@ public:
     {}
 
     explicit GameOverEvent(uint32_t eventNo) : GameEvent(eventNo, Type::GAME_OVER)
-    {}
+    {
+        LOG(INFO) << "GameOverEvent";
+    }
 
 //    GameOverEvent(const GameOverEvent &event) : GameEvent(event) {}
 

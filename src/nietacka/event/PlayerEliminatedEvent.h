@@ -7,6 +7,7 @@
 
 
 #include "GameEvent.h"
+#include "../easylogging++.h"
 
 class PlayerEliminatedEvent: public GameEvent {
 public:
@@ -35,7 +36,9 @@ public:
 
     PlayerEliminatedEvent(uint32_t eventNo, uint8_t playerNumber)
             : GameEvent(eventNo, Type::PLAYER_ELIMINATED), playerNumber(playerNumber)
-    {}
+    {
+        LOG(INFO) << "PlayerEliminatedEvent";
+    }
 
 //    PlayerEliminatedEvent(const PlayerEliminatedEvent& event)
 //            : GameEvent(event), playerNumber(event.playerNumber)
