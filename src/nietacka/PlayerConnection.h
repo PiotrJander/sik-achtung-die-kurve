@@ -59,6 +59,9 @@ public:
 
     void setTurnDirection(int8_t turnDirection)
     {
+        if (turnDirection == -1 || turnDirection == 1) {
+            readyForGame = true;
+        }
         PlayerConnection::turnDirection = turnDirection;
     }
 

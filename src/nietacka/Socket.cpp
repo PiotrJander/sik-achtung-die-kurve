@@ -131,7 +131,11 @@ short Socket::socketPoll(long long int timeout, bool send)
 
     int rc = poll(fds, 1, timeout);
     if (rc == -1) {
-        throw SocketException(errno);
+        if (errno == EINTR) {
+            throw InterruptedException();
+        } else {
+            throw SocketException(errno);
+        }
     } else if (rc == 0) {
         // timeout
         return 0;

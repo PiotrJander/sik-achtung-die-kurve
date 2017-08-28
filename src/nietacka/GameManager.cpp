@@ -59,14 +59,18 @@ void GameManager::updateConnectedPlayers(const ClientMessage &message, const soc
         auto &conn = entry->second;
         if (conn.getSessionId() == message.getSessionId()) {
             // same player, update fields
+            LOG(INFO) << "Player connection update; "
+                       << " new turn direction " << static_cast<int>(message.getTurnDirection())
+                       << " new next expected " << message.getNextExpectedEventNo();
             conn.setTurnDirection(message.getTurnDirection());
             conn.setNextExpectedEvent(message.getNextExpectedEventNo());
         } else if (conn.getSessionId() < message.getSessionId()) {
             // same socket but different session; disconnect old and connect new
+            LOG(INFO) << "Player connection replace: greater session id";
             connectedPlayers.erase(hash);
             addPlayerConnection(hash, socket, message);
         } else {
-            // ignore
+            LOG(INFO) << "Player connection ignore; smaller session id";
         }
     }
 }
@@ -76,6 +80,7 @@ void GameManager::addPlayerConnection(std::size_t hash, const sockaddr *socket, 
     if (connectedPlayers.size() < 42 && !isPlayerNameTaken(message.getPlayerName())) {
         PlayerConnection pc(socket, message.getSessionId(), message.getTurnDirection(), message.getPlayerName());
         connectedPlayers.insert(std::make_pair(hash, pc));
+        LOG(INFO) << "Player connection added";
     }
 }
 
@@ -100,9 +105,10 @@ bool GameManager::canGameStart()
 {
     bool allReady = std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
                                 [](const auto &entry) { return entry.second.isReadyForGame(); });
-    bool moreThanOne = std::count_if(connectedPlayers.begin(), connectedPlayers.end(),
-                                     [](const auto &entry)  { return !entry.second.getName().empty(); }) > 1;
-    return allReady && moreThanOne;
+    long participatingPlayers = std::count_if(connectedPlayers.begin(), connectedPlayers.end(),
+                                     [](const auto &entry)  { return !entry.second.getName().empty(); });
+    LOG(INFO) << "canGameStart: Players ready: " << allReady << "; participating players: " << participatingPlayers;
+    return allReady && participatingPlayers > 1;
 }
 
 void GameManager::resetPlayers()

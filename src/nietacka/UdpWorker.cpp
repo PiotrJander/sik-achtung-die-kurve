@@ -19,7 +19,13 @@ void UdpWorker::enqueue(std::unique_ptr<IDatagram> datagram)
 void UdpWorker::work(IDatagramObserver &observer)
 {
     // -1 means block indefinitely; can do it as game not in progress
-    short rc = socket.socketPoll(-1, !queue.empty());
+    short rc;
+    try {
+        rc = socket.socketPoll(-1, !queue.empty());
+    } catch (InterruptedException &e) {
+        return;
+    }
+
     actOnSocket(rc, observer);
 }
 
@@ -33,7 +39,13 @@ void UdpWorker::workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserve
             break;
         }
 
-        short rc = socket.socketPoll(remainingTimeLong, !queue.empty());
+        short rc=0;
+        try {
+            rc = socket.socketPoll(remainingTimeLong, !queue.empty());
+        } catch (InterruptedException &e) {
+            continue;
+        }
+
         if (rc == 0) {
             // timeout
             break;
