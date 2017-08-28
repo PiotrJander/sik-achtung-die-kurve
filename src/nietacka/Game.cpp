@@ -16,7 +16,9 @@
 Game::Game(Random &random, int turningSpeed, uint32_t maxx, uint32_t maxy)
         : random(random), players(), id(random.rand()), turningSpeed(turningSpeed), maxx(maxx), maxy(maxy),
           matrix(maxx, std::vector<bool>(maxy, false)), events()
-{}
+{
+    LOG(INFO) << "Creating game with board size " << maxx << " x " << maxy;
+}
 
 void Game::addPlayers(PlayerConnectionMap &connections)
 {
@@ -54,6 +56,7 @@ void Game::start()
         CoordinateLong coors((random.rand() % maxx) + 0.5, (random.rand() % maxy) + 0.5);
         player.setCoordinates(coors);
         player.heading = random.rand() % 360;
+        LOG(INFO) << "Initial heading " << player.heading;
 
         if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
@@ -77,14 +80,25 @@ void Game::tick()
     for (auto &&player : players) {
         // update heading
         player.heading += player.getTurnDirection() * turningSpeed;
+        LOG(INFO) << "Updating heading to " << player.heading << " turn direction " << (int) player.getTurnDirection()
+                     << " turning speed " << turningSpeed;
+
 
         // save old position and update position
         CoordinateLong previousPosition = player.getCoordinates();
-        player.x += cos(player.heading * M_PI / 180);
-        player.y += sin(player.heading * M_PI / 180);
+        double heading_radians = player.heading * M_PI / 180;
+        LOG(INFO) << "Heading: degrees " << player.heading << " radians " << heading_radians;
+        double delta_x = cos(heading_radians);
+        double delta_y = sin(player.heading * M_PI / 180);
+        LOG(INFO) << "Position change: " << delta_x << ":" << delta_y;
+        player.x += delta_x;
+        player.y += delta_y;
         CoordinateLong newPosition = player.getCoordinates();
 
-        if (previousPosition == newPosition) {
+        LOG(INFO) << "Previous: " << previousPosition.first << ":" << previousPosition.second
+                  << "; new: " << newPosition.first << ":" << newPosition.second;
+
+        if (previousPosition.first == newPosition.first && previousPosition.second == newPosition.second) {
             // do nothing
         } else if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
@@ -96,7 +110,8 @@ void Game::tick()
             }
         } else {
             setPixel(newPosition);
-            events.emplace_back(std::make_shared<PixelEvent>(nextEventNo(), player.number, newPosition.first, newPosition.second));
+            events.emplace_back(std::make_shared<PixelEvent>(nextEventNo(), player.number,
+                                                             newPosition.first, newPosition.second));
         }
     }
 }

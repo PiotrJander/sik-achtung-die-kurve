@@ -19,16 +19,22 @@ public:
             switch (opt) {
                 case 'W':
                     width = std::stoi(optarg);
+                    break;
                 case 'H':
                     height = std::stoi(optarg);
+                    break;
                 case 'p':
                     port = optarg;
+                    break;
                 case 's':
                     ROUNDS_PER_SEC = std::stoi(optarg);
+                    break;
                 case 't':
                     TURNING_SPEED = std::stoi(optarg);
+                    break;
                 case 'r':
                     seed = std::stoll(optarg);
+                    break;
             }
         }
     }

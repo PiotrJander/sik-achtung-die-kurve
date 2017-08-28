@@ -14,9 +14,10 @@
 #include "PlayerConnection.h"
 #include "event/GameEvent.h"
 #include "Random.h"
+#include "easylogging++.h"
 
 typedef std::pair<long , long> CoordinateLong;
-typedef std::pair<unsigned long , unsigned long> CoordinateUnsignedLong;
+typedef std::pair<unsigned long, unsigned long> CoordinateUnsignedLong;
 typedef std::pair<double , double> CoordinateDouble;
 typedef std::vector<std::shared_ptr<GameEvent>> EventHistory;
 
@@ -104,11 +105,14 @@ private:
 
     void setPixel(CoordinateUnsignedLong c)
     {
+        LOG(INFO) << "setPixel: " << c.first << ":" << c.second;
+        LOG(INFO) << "setPixel: " << (unsigned long) c.first << ":" << (unsigned long) c.second;
         matrix.at(c.first).at(c.second) = true;
     }
 
     bool isSetPixel(CoordinateUnsignedLong c) const
     {
+        LOG(INFO) << "isSetPixel: " << c.first << ":" << c.second;
         return matrix.at(c.first).at(c.second);
     }
 
