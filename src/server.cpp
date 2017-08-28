@@ -8,7 +8,7 @@ INITIALIZE_EASYLOGGINGPP
 
 class Arguments {
 public:
-    Arguments(int argc, const char * argv[])
+    Arguments(int argc, char * const *argv)
     {
         port = "12345";
         seed = time(NULL);
@@ -40,7 +40,7 @@ public:
     int64_t seed;
 };
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     try {
         Arguments args(argc, argv);
