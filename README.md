@@ -5,9 +5,9 @@ LOG
 
 
 TODO
-let datagram and batch event use dynamic buffer
-clean old events interfaces
-
+creating event batches
+consuming buffers
+impl self length for new game
 
 
 

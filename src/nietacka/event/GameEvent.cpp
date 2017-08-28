@@ -38,19 +38,6 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(const char *buffer, uint32_t leng
     }
 }
 
-uint32_t GameEvent::writeTo(char *buffer)
-{
-    uint32_t length = selfLength();
-    char *bufferlocation = buffer;
-    *reinterpret_cast<uint32_t *>(bufferlocation) = htonl(length);
-    bufferlocation += sizeof(uint32_t);
-    writeToBuffer(bufferlocation);
-    uint32_t checksum = crc32c(0, reinterpret_cast<unsigned char *>(bufferlocation), length);
-    bufferlocation += length;
-    *reinterpret_cast<uint32_t *>(bufferlocation) = htonl(checksum);
-    return length + 2 * sizeof(uint32_t);
-}
-
 bool GameEvent::operator==(const GameEvent &other) const
 {
     return other.getEventNo() == getEventNo()

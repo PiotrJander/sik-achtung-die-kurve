@@ -15,27 +15,10 @@ NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::
         : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames(playerNames)
 {}
 
-uint32_t NewGameEvent::selfLength()
-{
-    return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();
-}
-
-void NewGameEvent::writeToBuffer(char *buffer)
-{
-    auto buf = reinterpret_cast<SelfPackedNoPlayerNames *>(buffer);
-    *buf = SelfPackedNoPlayerNames(*this);
-
-    char *writeLocation = buffer + sizeof(SelfPackedNoPlayerNames);
-    for (auto &name : playerNames) {
-        strcpy(writeLocation, name.c_str());
-        writeLocation += name.size() + 1;
-    }
-}
-
-uint32_t NewGameEvent::getSizeofPlayerNames()
+uint32_t NewGameEvent::getSizeofPlayerNames() const
 {
     uint32_t size = 0;
-    for (std::string &name : playerNames) {
+    for (const std::string &name : playerNames) {
         size += name.size() + 1;
     }
     return size;
@@ -72,4 +55,9 @@ void NewGameEvent::writeSelf(DynamicBuffer &buffer)
     for (auto &&name : playerNames) {
         buffer.writeCharString(name);
     }
+}
+
+uint32_t NewGameEvent::selfLength() const
+{
+    return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();
 }

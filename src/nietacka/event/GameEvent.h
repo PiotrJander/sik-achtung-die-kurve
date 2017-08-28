@@ -49,6 +49,8 @@ public:
 
     void write(DynamicBuffer &buffer);
 
+    std::unique_ptr<GameEvent> readFrom(const char *buffer, uint32_t length)
+
     virtual bool operator==(const GameEvent &other) const;
 
     uint32_t getEventNo() const
@@ -61,8 +63,13 @@ public:
         return type;
     }
 
+    uint32_t getLength() const
+    {
+        return selfLength() + 2 * sizeof(uint32_t);
+    }
+
 protected:
-    virtual uint32_t selfLength() = 0;
+    virtual uint32_t selfLength() const = 0;
 
     virtual void writeSelf(DynamicBuffer &buffer) = 0;
 

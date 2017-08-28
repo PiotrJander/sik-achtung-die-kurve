@@ -75,11 +75,9 @@ private:
 
     std::vector<std::string> playerNames;
 
-    uint32_t getSizeofPlayerNames();
+    uint32_t getSizeofPlayerNames() const;
 
-    uint32_t selfLength() override;
-
-    void writeToBuffer(char *buffer) override;
+    uint32_t selfLength() const override;
 };
 
 #endif //PROJECT_NEWGAMEEVENT_H

@@ -41,10 +41,6 @@ public:
         LOG(INFO) << "PlayerEliminatedEvent";
     }
 
-//    PlayerEliminatedEvent(const PlayerEliminatedEvent& event)
-//            : GameEvent(event), playerNumber(event.playerNumber)
-//    {}
-
     bool operator==(const GameEvent &other) const override;
 
     uint8_t getPlayerNumber() const
@@ -57,11 +53,10 @@ public:
 private:
     uint8_t playerNumber;
 
-    uint32_t selfLength() override {
+    uint32_t selfLength() const override
+    {
         return sizeof(SelfPacked);
     }
-
-    void writeToBuffer(char *buffer) override;
 };
 
 #endif //PROJECT_PLAYERELIMINATEDEVENT_H

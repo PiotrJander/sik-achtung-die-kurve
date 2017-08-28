@@ -4,12 +4,6 @@
 
 #include "PlayerEliminatedEvent.h"
 
-void PlayerEliminatedEvent::writeToBuffer(char *buffer)
-{
-    auto buf = reinterpret_cast<SelfPacked *>(buffer);
-    *buf = SelfPacked(*this);
-}
-
 bool PlayerEliminatedEvent::operator==(const GameEvent &other) const
 {
     if (auto *o = dynamic_cast<const PlayerEliminatedEvent *>(&other)) {

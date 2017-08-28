@@ -79,7 +79,7 @@ private:
 
     void writeToBuffer(char *buffer) override;
 
-    uint32_t selfLength() override
+    uint32_t selfLength() const override
     {
         return sizeof(SelfPacked);
     }
