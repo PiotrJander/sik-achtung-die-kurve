@@ -15,13 +15,11 @@ using namespace std::chrono;
 
 void GameManager::gameLoop()
 {
-    gamePtr = nullptr;
     do {
-        udpWorker->getDatagram(*this);
+        udpWorker->work(*this);
     } while (!canGameStart());
 
     Game game(random, turningSpeed, maxx, maxy);
-    gamePtr = &game;
     game.addPlayers(connectedPlayers);
     game.start();
 
@@ -36,7 +34,6 @@ void GameManager::gameLoop()
         udpWorker->workUntil(endOfFrame, *this);
     }
     resetPlayers();
-    gamePtr = nullptr;
 }
 
 void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr)
@@ -44,12 +41,10 @@ void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const
     ClientMessage message(*buffer);
     updateConnectedPlayers(message, socketAddr);
 
-    if (gamePtr) {
-        auto datagramBatches = getEventBatches(*gamePtr, message.getNextExpectedEventNo());
-        sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
-        for (auto &&batch : datagramBatches) {
-            udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
-        }
+    auto datagramBatches = getEventBatches(game, message.getNextExpectedEventNo());
+    sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
+    for (auto &&batch : datagramBatches) {
+        udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
     }
 }
 
@@ -115,9 +110,14 @@ std::vector<std::shared_ptr<EventBatch>> GameManager::getEventBatches(const Game
             length += eventSize;
         }
     }
-    uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
-    vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
-                                                     startEventNumber, endEventNo, game.getId()));
+
+    // only make an event batch if there any new events
+    if (length > SIZEOF_HEADER) {
+        uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
+        vector.emplace_back(std::make_shared<EventBatch>(length, game.getEventHistory(),
+                                                         startEventNumber, endEventNo, game.getId()));
+    }
+
     return vector;
 }
 
@@ -146,7 +146,8 @@ GameManager::GameManager(uint32_t maxx, uint32_t maxy, const string &port, int r
           roundsPerSecond(roundsPerSecond),
           turningSpeed(turningSpeed),
           random(seed),
-          udpWorker(std::make_unique<UdpWorker>(port))
+          udpWorker(std::make_unique<UdpWorker>(port)),
+          game(random, turningSpeed, maxx, maxy)
 {}
 
 void GameManager::broadcastDatagrams(std::vector<std::shared_ptr<EventBatch>> eventBatches)

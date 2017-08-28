@@ -16,30 +16,22 @@ class UdpWorker: public IUdpWorker {
 public:
     void enqueue(std::unique_ptr<IDatagram> datagram) override;
 
-    void getDatagram(IDatagramObserver &observer) override;
-
     void workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer) override;
 
-    UdpWorker(const string &port);
+    void work(IDatagramObserver &observer) override;
 
-//    void setSocketToNonblocking()
-//    {
-//        socket.setNonBlocking();
-//    }
-//
-//    void setSocketToBlocking()
-//    {
-//        socket.setBlocking();
-//    }
+    UdpWorker(const string &port);
 
 private:
     ClientMessage::SelfPacked buffer;
     std::deque<std::unique_ptr<IDatagram>> queue;
     Socket socket;
 
-    void getDatagramFromNonblockingSocket(IDatagramObserver &observer);
+    void actOnSocket(short pollResult, IDatagramObserver &observer);
 
-    void sendDatagramToNonblockingSocket(IDatagramObserver &observer);
+    void sendDatagram();
+
+    void receiveDatagram(IDatagramObserver &observer);
 };
 
 

@@ -29,7 +29,7 @@ public:
 private:
     PlayerConnectionMap connectedPlayers;
 
-    Game *gamePtr;
+    Game game;
 
     std::unique_ptr<IUdpWorker> udpWorker;
 
