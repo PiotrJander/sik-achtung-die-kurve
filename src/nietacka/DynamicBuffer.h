@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <string>
 #include <gtest/gtest_prod.h>
 
 class DynamicBuffer {
