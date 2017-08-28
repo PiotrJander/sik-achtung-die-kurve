@@ -94,6 +94,8 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
     if (len == -1) {
         if (errno == EWOULDBLOCK) {
             throw WouldBlockException();
+        } else if (errno == EINTR) {
+            throw InterruptedException();
         } else {
             throw SocketException(errno);
         }
@@ -108,6 +110,8 @@ ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAd
     if (len == -1) {
         if (errno == EWOULDBLOCK) {
             throw WouldBlockException();
+        } else if (errno == EINTR) {
+            throw InterruptedException();
         } else {
             throw SocketException(errno);
         }

@@ -28,6 +28,13 @@ public:
 };
 
 
+class InterruptedException: public SocketException {
+public:
+    InterruptedException() : SocketException(EINTR)
+    {}
+};
+
+
 class ProtocolException: public std::runtime_error {
 public:
     ProtocolException(const std::string &desc) : runtime_error(desc)

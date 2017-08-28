@@ -60,6 +60,8 @@ void UdpWorker::receiveDatagram(IDatagramObserver &observer)
         length = socket.recvFrom(&buffer, sizeof(ClientMessage::SelfPacked));
     } catch (WouldBlockException &e) {
         return;
+    } catch (InterruptedException &e) {
+        return;
     };
 
     if (length < sizeof(ClientMessage::SelfPacked)) {
@@ -85,7 +87,9 @@ void UdpWorker::sendDatagram()
         } catch (WouldBlockException &e) {
             // try again next time
             queue.emplace_front(std::move(datagram));
-        };
+        } catch (InterruptedException &e) {
+            queue.emplace_front(std::move(datagram));
+        }
     }
 }
 
