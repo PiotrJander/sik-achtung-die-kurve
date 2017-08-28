@@ -66,6 +66,10 @@ Socket::Socket()
 
 void Socket::bindSocket(struct addrinfo *servinfo)
 {
+    if (servinfo == NULL) {
+        throw SocketException(0, "Invalid address or port");
+    }
+
     int res = bind(socket_fd, servinfo->ai_addr, sizeof(sockaddr_in));
     if (res == -1) {
         throw SocketException(errno);

@@ -16,25 +16,31 @@ public:
         char optstr[] = "W:H:p:s:t:r:";
         int opt;
         while ((opt = getopt(argc, argv, optstr)) != -1) {
-            switch (opt) {
-                case 'W':
-                    width = std::stoi(optarg);
-                    break;
-                case 'H':
-                    height = std::stoi(optarg);
-                    break;
-                case 'p':
-                    port = optarg;
-                    break;
-                case 's':
-                    ROUNDS_PER_SEC = std::stoi(optarg);
-                    break;
-                case 't':
-                    TURNING_SPEED = std::stoi(optarg);
-                    break;
-                case 'r':
-                    seed = std::stoll(optarg);
-                    break;
+            try {
+                switch (opt) {
+                    case 'W':
+                        width = std::stoi(optarg);
+                        break;
+                    case 'H':
+                        height = std::stoi(optarg);
+                        break;
+                    case 'p':
+                        port = optarg;
+                        break;
+                    case 's':
+                        ROUNDS_PER_SEC = std::stoi(optarg);
+                        break;
+                    case 't':
+                        TURNING_SPEED = std::stoi(optarg);
+                        break;
+                    case 'r':
+                        seed = std::stoll(optarg);
+                        break;
+                    case '?':
+                        throw std::runtime_error("Unknown argument");
+                }
+            } catch (std::invalid_argument &e) {
+                throw std::runtime_error("Invalid argument for option " + std::string(1, opt));
             }
         }
     }
@@ -55,10 +61,16 @@ int main(int argc, char *argv[])
         GameManager gameManager(args.width, args.height, args.ROUNDS_PER_SEC, args.TURNING_SPEED, args.seed, std::move(udpWorker));
 
         LOG(INFO) << "Entering game loop";
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
         while (true) {
             gameManager.gameLoop();
         }
+#pragma clang diagnostic pop
+
     } catch (std::runtime_error &e) {
         LOG(ERROR) << "Runtime error: " << e.what();
+        return 1;
     }
 }
