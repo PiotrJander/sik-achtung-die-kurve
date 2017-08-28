@@ -11,6 +11,7 @@
 #include "PlayerConnection.h"
 #include "IUdpWorker.h"
 #include "Game.h"
+#include "EventBatch.h"
 
 class GameManager: public IDatagramObserver {
 public:

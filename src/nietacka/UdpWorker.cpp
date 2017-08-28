@@ -32,9 +32,8 @@ std::pair<const ClientMessage::SelfPacked *, const sockaddr *> UdpWorker::getDat
 void UdpWorker::workUntil(std::chrono::milliseconds endOfFrame, IDatagramObserver &observer)
 {
     while (true) {
-        auto remainingTime = endOfFrame - system_clock::now().time_since_epoch();
-        milliseconds remainingTimeMs = std::chrono::duration_cast<milliseconds>(remainingTime);
-        long long remainingTimeLong = remainingTimeMs.count();
+        milliseconds remainingTime = endOfFrame - duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+        long long remainingTimeLong = remainingTime.count();
         
         int rc = socket.socketPoll(remainingTimeLong);
         if (rc == 0) {

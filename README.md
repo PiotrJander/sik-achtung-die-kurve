@@ -24,6 +24,8 @@ now 19:40
 TODO
 sort out the mess with chrono and conversion; maybe just use gettimeofday and long long
 
+7600 lines in logging
+
 now we always listen for messages, but we only want to send messages when queue not empty
 -> TODO only when Q non empty
 
@@ -33,7 +35,9 @@ refactor
 auto res = udpWorker->getDatagram();
 processDatagram(res.first, res.second);
 with callback and unify with getting from unblocking socket
+
 set socket to unblocking at the start of the game
+
 invalidate caches afterwards
 
 

@@ -35,7 +35,8 @@ void GameManager::gameLoop()
     broadcastNewDatagrams(game);
 
     while (game.isInProgress()) {
-        auto endOfFrame = system_clock::now().time_since_epoch() + milliseconds(200);  // TODO don't hardcode
+        milliseconds endOfFrame =
+                duration_cast<milliseconds>(system_clock::now().time_since_epoch()) + milliseconds(200);  // TODO don't hardcode
         game.tick();
         broadcastNewDatagrams(game);
         udpWorker->workUntil(endOfFrame, *this);
