@@ -139,12 +139,12 @@ TEST_F(GameTest, StartPixelEvents)
     }
 
     // TODO why fail on linux?
-//    try {
-//        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(2));
-//        EXPECT_EQ(pixelEvent, PixelEvent(2, 1, 261, 193));
-//    } catch (std::bad_cast &e) {
-//        FAIL() << "Bad event type";
-//    }
+    try {
+        auto &pixelEvent = dynamic_cast<PixelEvent &>(*game.getEventHistory().at(2));
+        EXPECT_EQ(pixelEvent, PixelEvent(2, 1, 261, 193));
+    } catch (std::bad_cast &e) {
+        FAIL() << "Bad event type";
+    }
 }
 
 TEST_F(GameTest, StartPlayerEliminated)
