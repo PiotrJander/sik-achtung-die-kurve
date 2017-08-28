@@ -127,7 +127,7 @@ std::vector<EventBatch> GameManager::getEventBatches(const Game &game, uint32_t 
     int length = SIZEOF_HEADER;
     std::vector<EventBatch> vector;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
-        uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
+        uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength() + 2 * sizeof(uint32_t);
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
             LOG(INFO) << "getEventBatches: producing a batch of length " << length;
             vector.emplace_back(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));

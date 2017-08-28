@@ -36,7 +36,7 @@ public:
         uint64_t sessionId;
         PlayerConnectionMap &connections;
         double x, y, heading;
-        bool eliminated;
+        bool eliminated = false;
 
         std::string const & getName() const;
 
