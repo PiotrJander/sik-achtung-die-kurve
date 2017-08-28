@@ -7,7 +7,6 @@ LOG
 TODO
 creating event batches
 consuming buffers
-impl self length for new game
 
 
 

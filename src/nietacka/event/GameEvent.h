@@ -76,8 +76,6 @@ protected:
 private:
     uint32_t eventNo;
     GameEvent::Type type;
-
-    virtual void writeToBuffer(char *buffer) = 0;
 };
 
 #endif //PROJECT_GAMEEVENT_H

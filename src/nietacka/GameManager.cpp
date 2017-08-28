@@ -127,10 +127,10 @@ std::vector<EventBatch> GameManager::getEventBatches(const Game &game, uint32_t 
     int length = SIZEOF_HEADER;
     std::vector<EventBatch> vector;
     for (uint32_t eventNumber = startEventNumber; eventNumber < game.getEventHistory().size(); ++eventNumber) {
-        uint32_t eventSize = game.getEventHistory().at(startEventNumber)->selfLength() + 2 * sizeof(uint32_t);
+        uint32_t eventSize = game.getEventHistory().at(startEventNumber)->getLength();
         if (length + eventSize > MAX_DATAGRAM_SIZE) {
             LOG(INFO) << "getEventBatches: producing a batch of length " << length;
-            vector.emplace_back(EventBatch(length, game.getEventHistory(), startEventNumber, eventNumber, game.getId()));
+            vector.emplace_back(EventBatch(game, startEventNumber, eventNumber));
             length = SIZEOF_HEADER + eventSize;
             startEventNumber = eventNumber;
         } else {
@@ -142,7 +142,7 @@ std::vector<EventBatch> GameManager::getEventBatches(const Game &game, uint32_t 
     if (length > SIZEOF_HEADER) {
         LOG(INFO) << "getEventBatches: producing a batch of length " << length;
         uint32_t endEventNo = static_cast<uint32_t>(game.getEventHistory().size());
-        vector.emplace_back(EventBatch(length, game.getEventHistory(), startEventNumber, endEventNo, game.getId()));
+        vector.emplace_back(EventBatch(game, startEventNumber, endEventNo));
     } else {
         LOG(INFO) << "getEventBatches: no new events to enqueue";
     }
