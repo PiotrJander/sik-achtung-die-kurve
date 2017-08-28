@@ -17,5 +17,5 @@ add_executable(client client.cpp)
 target_link_libraries(server nietacka)
 target_link_libraries(client nietacka)
 
-#install(TARGETS achtung DESTINATION bin)
+install(TARGETS server client DESTINATION bin)
 
