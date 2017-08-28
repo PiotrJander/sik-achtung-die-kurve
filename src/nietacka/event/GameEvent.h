@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <netinet/in.h>
+#include "../DynamicBuffer.h"
 
 
 class GameEvent {
@@ -54,6 +55,10 @@ public:
     uint32_t
     writeTo(char *);
 
+    void write(DynamicBuffer &buffer);
+
+    virtual void writeSelf(DynamicBuffer &buffer) = 0;
+
     virtual bool operator==(const GameEvent &other) const;
 
     uint32_t getEventNo() const
@@ -66,7 +71,7 @@ public:
         return type;
     }
 
-    virtual uint32_t getLength() = 0;
+    virtual uint32_t selfLength() = 0;
 
 private:
     uint32_t eventNo;

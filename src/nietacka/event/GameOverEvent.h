@@ -6,6 +6,7 @@
 #define PROJECT_GAMEOVEREVENT_H
 
 
+#include "../DynamicBuffer.h"
 #include "GameEvent.h"
 #include "../easylogging++.h"
 
@@ -19,10 +20,11 @@ public:
         LOG(INFO) << "GameOverEvent";
     }
 
-//    GameOverEvent(const GameOverEvent &event) : GameEvent(event) {}
+    void writeSelf(DynamicBuffer &buffer) override;
+
 
 private:
-    uint32_t getLength() override
+    uint32_t selfLength() override
     {
         return sizeof(HeaderPacked);
     }

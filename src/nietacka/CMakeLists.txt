@@ -8,7 +8,7 @@ set(SOURCE_FILES ClientMessage.cpp ClientMessage.h event/GameEvent.h event/GameE
         event/PlayerEliminatedEvent.h event/GameOverEvent.h event/GameOverEvent.cpp event/NewGameEvent.cpp
         event/NewGameEvent.h Game.cpp Game.h PlayerConnection.h Random.h IUdpWorker.h IDatagram.h PlayerConnection.cpp
         IDatagramObserver.h EventBatch.cpp EventBatch.h GameManager.h GameManager.cpp UdpWorker.cpp UdpWorker.h
-        Exceptions.h easylogging++.cc easylogging++.h Socket.cpp Socket.h Datagram.h)
+        Exceptions.h easylogging++.cc easylogging++.h Socket.cpp Socket.h Datagram.h DynamicBuffer.cpp DynamicBuffer.h)
 
 include_directories(../../test/lib/googletest/include/)
 

@@ -6,6 +6,7 @@
 #define PROJECT_PLAYERELIMINATEDEVENT_H
 
 
+#include "../DynamicBuffer.h"
 #include "GameEvent.h"
 #include "../easylogging++.h"
 
@@ -51,10 +52,12 @@ public:
         return playerNumber;
     }
 
+    void writeSelf(DynamicBuffer &buffer) override;
+
 private:
     uint8_t playerNumber;
 
-    uint32_t getLength() override {
+    uint32_t selfLength() override {
         return sizeof(SelfPacked);
     }
 

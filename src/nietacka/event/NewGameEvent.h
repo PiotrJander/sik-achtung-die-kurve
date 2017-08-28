@@ -42,20 +42,6 @@ public:
 
     NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::vector<std::string> playerNames);
 
-//    NewGameEvent(const NewGameEvent &newGameEvent)
-//            : GameEvent(newGameEvent),
-//              maxx(newGameEvent.maxx),
-//              maxy(newGameEvent.maxy),
-//              playerNames(newGameEvent.playerNames)
-//    {}
-//
-//    NewGameEvent(NewGameEvent &&newGameEvent)
-//            : GameEvent(newGameEvent),
-//              maxx(newGameEvent.maxx),
-//              maxy(newGameEvent.maxy),
-//              playerNames(newGameEvent.playerNames)
-//    {}
-
     NewGameEvent(const SelfPackedNoPlayerNames &selfPacked, std::vector<std::string> playerNames)
             : GameEvent(selfPacked.header),
               maxx(ntohl(selfPacked.data.maxx)),
@@ -82,6 +68,8 @@ public:
         return playerNames;
     }
 
+    void writeSelf(DynamicBuffer &buffer) override;
+
 private:
     uint32_t maxx, maxy;
 
@@ -89,7 +77,7 @@ private:
 
     uint32_t getSizeofPlayerNames();
 
-    uint32_t getLength() override;
+    uint32_t selfLength() override;
 
     void writeToBuffer(char *buffer) override;
 };

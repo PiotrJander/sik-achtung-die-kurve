@@ -40,7 +40,7 @@ std::unique_ptr<GameEvent> GameEvent::readFrom(const char *buffer, uint32_t leng
 
 uint32_t GameEvent::writeTo(char *buffer)
 {
-    uint32_t length = getLength();
+    uint32_t length = selfLength();
     char *bufferlocation = buffer;
     *reinterpret_cast<uint32_t *>(bufferlocation) = htonl(length);
     bufferlocation += sizeof(uint32_t);
@@ -55,4 +55,14 @@ bool GameEvent::operator==(const GameEvent &other) const
 {
     return other.getEventNo() == getEventNo()
            && other.getType() == getType();
+}
+
+void GameEvent::write(DynamicBuffer &buffer)
+{
+    uint32_t length = selfLength();
+    buffer << length;
+    const char *start = buffer.currentLocation();
+    writeSelf(buffer);
+    uint32_t checksum = crc32c(0, (const unsigned char *) start, length);
+    buffer << checksum;
 }

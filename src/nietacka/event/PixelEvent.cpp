@@ -23,4 +23,10 @@ bool PixelEvent::operator==(const GameEvent &other) const
     }
 }
 
+void PixelEvent::writeSelf(DynamicBuffer &buffer)
+{
+    SelfPacked packed(*this);
+    buffer << packed;
+}
+
 

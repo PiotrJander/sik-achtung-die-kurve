@@ -18,3 +18,9 @@ bool PlayerEliminatedEvent::operator==(const GameEvent &other) const
         return false;
     }
 }
+
+void PlayerEliminatedEvent::writeSelf(DynamicBuffer &buffer)
+{
+    SelfPacked packed(*this);
+    buffer << packed;
+}

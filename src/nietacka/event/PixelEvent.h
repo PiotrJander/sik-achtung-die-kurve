@@ -54,13 +54,6 @@ public:
         LOG(INFO) << "PixelEvent";
     }
 
-//    PixelEvent(const PixelEvent &pixelEvent)
-//            : GameEvent(pixelEvent),
-//              playerNumber(pixelEvent.playerNumber),
-//              x(pixelEvent.x),
-//              y(pixelEvent.y)
-//    {}
-
     bool operator==(const GameEvent &other) const override;
 
     uint8_t getPlayerNumber() const
@@ -78,13 +71,15 @@ public:
         return y;
     }
 
+    void writeSelf(DynamicBuffer &buffer) override;
+
 private:
     uint8_t playerNumber;
     uint32_t x, y;
 
     void writeToBuffer(char *buffer) override;
 
-    uint32_t getLength() override
+    uint32_t selfLength() override
     {
         return sizeof(SelfPacked);
     }

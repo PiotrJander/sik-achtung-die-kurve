@@ -15,7 +15,7 @@ NewGameEvent::NewGameEvent(uint32_t eventNo, uint32_t maxx, uint32_t maxy, std::
         : GameEvent(eventNo, Type::NEW_GAME), maxx(maxx), maxy(maxy), playerNames(playerNames)
 {}
 
-uint32_t NewGameEvent::getLength()
+uint32_t NewGameEvent::selfLength()
 {
     return sizeof(SelfPackedNoPlayerNames) + getSizeofPlayerNames();
 }
@@ -61,5 +61,15 @@ bool NewGameEvent::operator==(const GameEvent &other) const
                && o->getMaxy() == getMaxy();
     } else {
         return false;
+    }
+}
+
+void NewGameEvent::writeSelf(DynamicBuffer &buffer)
+{
+    SelfPackedNoPlayerNames packed(*this);
+    buffer << packed;
+
+    for (auto &&name : playerNames) {
+        buffer.writeCharString(name);
     }
 }

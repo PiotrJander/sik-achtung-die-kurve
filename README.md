@@ -5,9 +5,7 @@ LOG
 
 
 TODO
-use valgrind
-
-
+test buffer for string
 
 
 
