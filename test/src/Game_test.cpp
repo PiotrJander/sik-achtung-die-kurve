@@ -30,7 +30,12 @@ public:
         ipv6.sin6_family = AF_INET6;
         ipv6.sin6_port = 2345;
         uint8_t ipv6Address[16] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+#ifdef __APPLE__
         memcpy((uint8_t *) ipv6.sin6_addr.__u6_addr.__u6_addr8, ipv6Address, 16);
+#elif __linux__
+        memcpy((uint8_t *) ipv6.sin6_addr.s6_addr, ipv6Address, 16);
+#endif
 
         PlayerConnection pc1(reinterpret_cast<sockaddr *>(&ipv4_1), 123, -1, "Piotr");
         PlayerConnection pc2(reinterpret_cast<sockaddr *>(&ipv6), 321, 1, "Stan");
