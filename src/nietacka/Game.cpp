@@ -61,6 +61,7 @@ void Game::start()
             if (numberOfPlayers() == 1) {
                 events.emplace_back(std::make_shared<GameOverEvent>(nextEventNo()));
                 inProgress = false;
+                return;
             }
         } else {
             setPixel(player.getCoordinates());
@@ -91,6 +92,7 @@ void Game::tick()
             if (numberOfPlayers() == 1) {
                 events.emplace_back(std::make_shared<GameOverEvent>(nextEventNo()));
                 inProgress = false;
+                return;
             }
         } else {
             setPixel(newPosition);

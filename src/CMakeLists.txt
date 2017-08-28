@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.2)
 project(achtung)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -DELPP_DISABLE_INFO_LOGS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ")
+
+# -DELPP_DISABLE_INFO_LOGS
 
 set(SOURCE_FILES server.cpp client.cpp)
 
