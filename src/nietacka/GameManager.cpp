@@ -99,8 +99,11 @@ bool GameManager::isPlayerNameTaken(const std::string &name) const
 
 bool GameManager::canGameStart()
 {
-    return std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
-                       [](const auto &entry) { return entry.second.isReadyForGame(); });
+    bool allReady = std::all_of(connectedPlayers.begin(), connectedPlayers.end(),
+                                [](const auto &entry) { return entry.second.isReadyForGame(); });
+    bool moreThanOne = std::count_if(connectedPlayers.begin(), connectedPlayers.end(),
+                                     [](const auto &entry)  { return !entry.second.getName().empty(); }) > 1;
+    return allReady && moreThanOne;
 }
 
 void GameManager::resetPlayers()

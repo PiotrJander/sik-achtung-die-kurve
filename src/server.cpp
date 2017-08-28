@@ -3,7 +3,7 @@
 #include <UdpWorker.h>
 #include "easylogging++.h"
 
-
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char *argv[]) {
     std::unique_ptr<IUdpWorker> udpWorker = std::make_unique<UdpWorker>("12345");

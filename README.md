@@ -21,15 +21,11 @@ now test basic communication
 start 18:30
 now 19:40
 
+today
+11-13 some solid work
+
 TODO
-fix tests
 
-test
-    udp worker
-
-    game manager
-        get event batches
-        broadcastDatagrams
 
 
 
