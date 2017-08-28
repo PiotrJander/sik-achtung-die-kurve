@@ -18,7 +18,7 @@
 typedef std::pair<long , long> CoordinateLong;
 typedef std::pair<unsigned long , unsigned long> CoordinateUnsignedLong;
 typedef std::pair<double , double> CoordinateDouble;
-typedef std::vector<std::unique_ptr<GameEvent>> EventHistory;
+typedef std::vector<std::shared_ptr<GameEvent>> EventHistory;
 
 class Game {
 public:

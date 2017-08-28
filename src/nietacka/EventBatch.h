@@ -17,22 +17,7 @@ public:
               startEventNo(startEventNo), endEventNo(endEventNo), gameId(gameId)
     {}
 
-    std::unique_ptr<char[]> getBuffer();
-
-    int getLength()
-    {
-        return length;
-    }
-
-    uint32_t getStartEventNo() const
-    {
-        return startEventNo;
-    }
-
-    uint32_t getEndEventNo() const
-    {
-        return endEventNo;
-    }
+    DynamicBuffer getBuffer();
 
 private:
     int length;

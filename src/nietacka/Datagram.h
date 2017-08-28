@@ -13,24 +13,14 @@ public:
             : eventBatch(eventBatch), sockaddrStorage(sockaddrStorage)
     {}
 
-    std::unique_ptr<char[]> getBuffer() override
+    DynamicBuffer getBuffer() override
     {
         return eventBatch.getBuffer();
-    }
-
-    int getLength() override
-    {
-        return eventBatch.getLength();
     }
 
     const sockaddr *getSockAddr() override
     {
         return reinterpret_cast<const sockaddr *>(&sockaddrStorage);
-    }
-
-    const EventBatch &getEventBatch() const
-    {
-        return eventBatch;
     }
 
 private:

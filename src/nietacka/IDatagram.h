@@ -8,12 +8,11 @@
 
 #include <memory>
 #include <sys/socket.h>
+#include "DynamicBuffer.h"
 
 class IDatagram {
 public:
-    virtual std::unique_ptr<char[]> getBuffer() = 0;
-
-    virtual int getLength() = 0;
+    virtual DynamicBuffer getBuffer() = 0;
 
     virtual const sockaddr * getSockAddr() = 0;
 };

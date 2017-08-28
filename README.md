@@ -5,10 +5,17 @@ LOG
 
 
 TODO
-test buffer for string
+let datagram and batch event use dynamic buffer
+clean old events interfaces
 
 
+now event batch hold a ref to event history
 
+but game and its event history could get invalidated before we can access them
+
+solution: events could be stored as shared pointers rather than unique
+
+event batch could store a vector of pointers
 
 
 

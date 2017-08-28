@@ -4,16 +4,12 @@
 
 #include "EventBatch.h"
 
-std::unique_ptr<char[]> EventBatch::getBuffer()
+DynamicBuffer EventBatch::getBuffer()
 {
-    auto bufferBox = std::make_unique<char[]>(static_cast<size_t>(length));
-    char *bufferLocation = bufferBox.get();
-    *reinterpret_cast<uint32_t *>(bufferLocation) = htonl(gameId);
-    bufferLocation += sizeof(uint32_t);
+    DynamicBuffer buffer;
+    buffer << gameId;
 
-    for (uint32_t i = startEventNo; i < endEventNo; ++i) {
-        bufferLocation += eventHistory.at(i)->writeTo(bufferLocation);
+    for (auto &&item : eventHistory) {
+        
     }
-
-    return bufferBox;
 }

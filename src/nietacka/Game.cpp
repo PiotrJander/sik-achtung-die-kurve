@@ -47,7 +47,7 @@ void Game::start()
     }
 
     // make new game event
-    events.emplace_back(std::make_unique<NewGameEvent>(nextEventNo(), maxx, maxy, std::move(playerNames)));
+    events.emplace_back(std::make_shared<NewGameEvent>(nextEventNo(), maxx, maxy, std::move(playerNames)));
 
     for (auto &&player : players) {
         // generate coordinates and heading
@@ -57,14 +57,14 @@ void Game::start()
 
         if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
-            events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
+            events.emplace_back(std::make_shared<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
-                events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
+                events.emplace_back(std::make_shared<GameOverEvent>(nextEventNo()));
                 inProgress = false;
             }
         } else {
             setPixel(player.getCoordinates());
-            events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, coors.first, coors.second));
+            events.emplace_back(std::make_shared<PixelEvent>(nextEventNo(), player.number, coors.first, coors.second));
         }
     }
 }
@@ -87,14 +87,14 @@ void Game::tick()
             // do nothing
         } else if (shouldPlayerGetEliminated(player)) {
             player.eliminated = true;
-            events.emplace_back(std::make_unique<PlayerEliminatedEvent>(nextEventNo(), player.number));
+            events.emplace_back(std::make_shared<PlayerEliminatedEvent>(nextEventNo(), player.number));
             if (numberOfPlayers() == 1) {
-                events.emplace_back(std::make_unique<GameOverEvent>(nextEventNo()));
+                events.emplace_back(std::make_shared<GameOverEvent>(nextEventNo()));
                 inProgress = false;
             }
         } else {
             setPixel(newPosition);
-            events.emplace_back(std::make_unique<PixelEvent>(nextEventNo(), player.number, newPosition.first, newPosition.second));
+            events.emplace_back(std::make_shared<PixelEvent>(nextEventNo(), player.number, newPosition.first, newPosition.second));
         }
     }
 }
