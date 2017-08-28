@@ -9,8 +9,10 @@ ClientMessage::ClientMessage(uint64_t session_id, int8_t turn_direction, uint32_
         : sessionId(session_id),
           turnDirection(turn_direction),
           nextExpectedEventNo(next_expected_event_no),
-          playerName(player_name)
-{}
+          playerName()
+{
+    strncpy(playerName, player_name.c_str(), sizeof(playerName));
+}
 
 uint64_t ClientMessage::getSessionId() const
 {
