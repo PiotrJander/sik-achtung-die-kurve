@@ -11,19 +11,13 @@
 
 class EventBatch {
 public:
-    EventBatch(int length, const EventHistory &eventHistory, 
-               uint32_t startEventNo, uint32_t endEventNo, uint32_t gameId)
-            : length(length), eventHistory(eventHistory),
-              startEventNo(startEventNo), endEventNo(endEventNo), gameId(gameId)
-    {}
+    EventBatch(const Game &game, long begin, long end);
 
     DynamicBuffer getBuffer();
 
 private:
-    int length;
-    const EventHistory &eventHistory;
     uint32_t gameId;
-    uint32_t startEventNo, endEventNo;  // start is inclusive, end is non-inclusive
+    std::vector<std::shared_ptr<GameEvent>> events;
 };
 
 

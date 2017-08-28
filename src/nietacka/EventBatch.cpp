@@ -9,7 +9,14 @@ DynamicBuffer EventBatch::getBuffer()
     DynamicBuffer buffer;
     buffer << gameId;
 
-    for (auto &&item : eventHistory) {
-        
+    for (auto &&item : events) {
+        item->write(buffer);
     }
+
+    return buffer;
+}
+
+EventBatch::EventBatch(const Game &game, long begin, long end) : gameId(game.getId()), events()
+{
+    std::copy(game.getEventHistory().begin() + begin, game.getEventHistory().begin() + end, std::back_inserter(events));
 }

@@ -9,13 +9,6 @@ let datagram and batch event use dynamic buffer
 clean old events interfaces
 
 
-now event batch hold a ref to event history
-
-but game and its event history could get invalidated before we can access them
-
-solution: events could be stored as shared pointers rather than unique
-
-event batch could store a vector of pointers
 
 
 
@@ -26,6 +19,7 @@ event batch could store a vector of pointers
 
 
 BACKLOG
+virtual dtors for interfaces
 why does pixel test fail on linux?
 could still test udp worker; but would need to have abstract interface for socket: dependency inversion
 shared_ptr and weak_ptr

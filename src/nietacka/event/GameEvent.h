@@ -43,21 +43,11 @@ public:
     explicit GameEvent(HeaderPacked header) : eventNo(ntohl(header.eventNo)), type(header.type)
     {}
 
-//    GameEvent(const GameEvent &gameEvent) : eventNo(gameEvent.eventNo), type(gameEvent.type)
-//    {}
 
     GameEvent(uint32_t eventNo, Type type) : eventNo(eventNo), type(type)
     {}
 
-    static std::unique_ptr<GameEvent>
-    readFrom(const char *buffer, uint32_t length);
-
-    uint32_t
-    writeTo(char *);
-
     void write(DynamicBuffer &buffer);
-
-    virtual void writeSelf(DynamicBuffer &buffer) = 0;
 
     virtual bool operator==(const GameEvent &other) const;
 
@@ -71,7 +61,10 @@ public:
         return type;
     }
 
+protected:
     virtual uint32_t selfLength() = 0;
+
+    virtual void writeSelf(DynamicBuffer &buffer) = 0;
 
 private:
     uint32_t eventNo;
