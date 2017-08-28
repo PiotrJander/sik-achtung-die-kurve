@@ -10,7 +10,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <gtest/gtest_prod.h>
+//#include "../../test/lib/googletest/include/gtest/gtest_prod.h"
+#include "../../test/lib/googletest/include/gtest/gtest_prod.h"
 #include "PlayerConnection.h"
 #include "event/GameEvent.h"
 #include "Random.h"
