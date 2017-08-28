@@ -77,8 +77,6 @@ private:
     uint8_t playerNumber;
     uint32_t x, y;
 
-    void writeToBuffer(char *buffer) override;
-
     uint32_t selfLength() const override
     {
         return sizeof(SelfPacked);

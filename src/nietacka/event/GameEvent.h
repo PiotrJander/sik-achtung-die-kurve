@@ -49,7 +49,7 @@ public:
 
     void write(DynamicBuffer &buffer);
 
-    std::unique_ptr<GameEvent> readFrom(const char *buffer, uint32_t length)
+    std::unique_ptr<GameEvent> readFrom(const char *buffer, uint32_t length);
 
     virtual bool operator==(const GameEvent &other) const;
 

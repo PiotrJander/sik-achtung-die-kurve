@@ -26,6 +26,7 @@ public:
     FRIEND_TEST(GameTest, TickGeneratesPixel);
     FRIEND_TEST(GameTest, TickEliminatePlayerGameOver);
     FRIEND_TEST(GameManagerTest, EnqueueNewDatagramBatches);
+    FRIEND_TEST(EventBatchTest, GetBuffer);
 
     class Player {
     public:

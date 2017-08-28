@@ -28,8 +28,6 @@ private:
     {
         return sizeof(HeaderPacked);
     }
-
-    void writeToBuffer(char *buffer) override;
 };
 
 
