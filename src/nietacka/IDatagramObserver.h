@@ -12,6 +12,9 @@
 class IDatagramObserver {
 public:
     virtual void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socket) = 0;
+
+    virtual ~IDatagramObserver()
+    {}
 };
 
 

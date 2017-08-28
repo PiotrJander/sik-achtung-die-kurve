@@ -20,6 +20,11 @@ public:
 
     virtual void work(IDatagramObserver &observer) = 0;
 
+    virtual ~IUdpWorker()
+    {
+
+    }
+
 private:
     std::unique_ptr<IDatagramObserver> observer;
 };

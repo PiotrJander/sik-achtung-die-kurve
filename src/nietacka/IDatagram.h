@@ -15,6 +15,9 @@ public:
     virtual DynamicBuffer getBuffer() = 0;
 
     virtual const sockaddr * getSockAddr() = 0;
+
+    virtual ~IDatagram()
+    {}
 };
 
 
