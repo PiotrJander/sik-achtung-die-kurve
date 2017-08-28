@@ -167,7 +167,7 @@ void GameManager::broadcastNewDatagrams(const Game &game)
 }
 
 GameManager::GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int turningSpeed,
-                         int seed, std::unique_ptr<IUdpWorker> udpWorker)
+                         long long seed, std::unique_ptr<IUdpWorker> udpWorker)
         : connectedPlayers(),
           maxx(maxx), maxy(maxy),
           roundsPerSecond(roundsPerSecond),

@@ -14,10 +14,10 @@ include_directories(nietacka)
 include_directories(../test/lib/googletest/include)
 
 #add_executable(achtung ${SOURCE_FILES})
-add_executable(server server.cpp)
-add_executable(client client.cpp)
-target_link_libraries(server nietacka)
-target_link_libraries(client nietacka)
+add_executable(siktacka-server server.cpp)
+add_executable(siktacka-client client.cpp)
+target_link_libraries(siktacka-server nietacka)
+target_link_libraries(siktacka-client nietacka)
 
-install(TARGETS server client DESTINATION bin)
+install(TARGETS siktacka-server siktacka-client DESTINATION .)
 

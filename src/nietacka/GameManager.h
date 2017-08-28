@@ -21,7 +21,7 @@ public:
     FRIEND_TEST(GameManagerTest, EnqueueNewDatagramBatches);
 
     GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int turningSpeed,
-                int seed, std::unique_ptr<IUdpWorker> udpWorker);
+                long long seed, std::unique_ptr<IUdpWorker> udpWorker);
 
     void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr) override;
 

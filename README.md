@@ -5,8 +5,7 @@ LOG
 
 
 TODO
-fix test
-
+compute frame length
 
 
 
@@ -16,6 +15,10 @@ fix test
 
 
 BACKLOG
+
+
+ICEBOX
+make server resilient
 why does pixel test fail on linux?
 test IP v 4 6
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving
@@ -25,10 +28,8 @@ check field order in structs
 validate messages
 handle all kinds of exceptions!
 client: remember about hton!
-use vectors (contiguoes storage) rather than arrays
 let PlayerConnection impl two interfaces; one for Game and other for sockets
 what if datagram bigger than size of buffer?
-no better way to have polymorphic class members and containers than unique_ptr?
 
 Qs:
 64 bit random numbers but 32 bits game id

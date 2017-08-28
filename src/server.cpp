@@ -1,21 +1,53 @@
 #include <iostream>
 #include <GameManager.h>
 #include <UdpWorker.h>
+#include <getopt.h>
 #include "easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
 
+class Arguments {
+public:
+    Arguments(int argc, const char * argv[])
+    {
+        port = "12345";
+        seed = time(NULL);
 
-int main(int argc, const char *argv[]) {
+        char optstr[] = "W:H:p:s:t:r:";
+        int opt;
+        while ((opt = getopt(argc, argv, optstr)) != -1) {
+            switch (opt) {
+                case 'W':
+                    width = std::stoi(optarg);
+                case 'H':
+                    height = std::stoi(optarg);
+                case 'p':
+                    port = optarg;
+                case 's':
+                    ROUNDS_PER_SEC = std::stoi(optarg);
+                case 't':
+                    TURNING_SPEED = std::stoi(optarg);
+                case 'r':
+                    seed = std::stoll(optarg);
+            }
+        }
+    }
 
-//    START_EASYLOGGINGPP(argc, argv);
-//    el::Configurations c;
-//    c.setToDefault();
-//    c.parseFromText("*GLOBAL:\n ENABLED = false");
+    uint32_t width = 800, height = 600;
+    std::string port;
+    int ROUNDS_PER_SEC = 50;
+    int TURNING_SPEED = 6;
+    int64_t seed;
+};
 
-    std::unique_ptr<IUdpWorker> udpWorker = std::make_unique<UdpWorker>(argc == 2 ? argv[1] : "8070");
+int main(int argc, const char *argv[])
+{
     try {
-        GameManager gameManager(5, 5, 50, 6, 123, std::move(udpWorker));
+        Arguments args(argc, argv);
+
+        std::unique_ptr<IUdpWorker> udpWorker = std::make_unique<UdpWorker>(args.port);
+        GameManager gameManager(args.width, args.height, args.ROUNDS_PER_SEC, args.TURNING_SPEED, args.seed, std::move(udpWorker));
+
         LOG(INFO) << "Entering game loop";
         while (true) {
             gameManager.gameLoop();
