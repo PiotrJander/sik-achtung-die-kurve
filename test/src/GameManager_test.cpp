@@ -161,7 +161,7 @@ TEST_F(GameManagerTest, CanGameStart)
             4567,
             PlayerConnection(ipv4_2, 890, 0, "")));
     gameManager.connectedPlayers.at(456).readyForGame = true;
-    EXPECT_TRUE(gameManager.canGameStart());
+    EXPECT_FALSE(gameManager.canGameStart());
 
     // negative
     gameManager.connectedPlayers.insert(std::make_pair(

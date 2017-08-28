@@ -2,36 +2,13 @@
 
 LOG
 
-reading about C++
-start 11:40
-end 12:50
-total 1:10
 
-impl udp worker
-start 12:50
-end 14:10
-total 1:20
-
-socket wrappers
-start 15:00
-end 17:20
-total 2:20
-
-now test basic communication
-start 18:30
-now 19:40
-
-today
-11-13 some solid work
 
 TODO
 
+why do tests fail on linux?
 
-3 players, 6 event batches
-
-now we have eliminated, game over, and eliminated
-
-that's when this happens
+gcc vs clang
 
 
 
