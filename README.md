@@ -27,7 +27,7 @@ today
 TODO
 
 
-
+3 players, 6 event batches
 
 
 
@@ -43,6 +43,7 @@ TODO
 
 BACKLOG
 could still test udp worker; but would need to have abstract interface for socket: dependency inversion
+shared_ptr and weak_ptr
 maybe cache buffer
 test IP v 4 6
 when player inactive for 2 secs, disconnect; can check it periodically; need to log last access time but snake keep moving

@@ -114,7 +114,7 @@ private:
     bool shouldPlayerGetEliminated(const Player &p) const
     {
         const CoordinateLong c = p.getCoordinates();
-        return isSetPixel(c) || c.first < 0 || c.first >= maxx || c.second < 0 || c.second >= maxy;
+        return c.first < 0 || c.first >= maxx || c.second < 0 || c.second >= maxy || isSetPixel(c);
     };
 
     uint32_t nextEventNo() {

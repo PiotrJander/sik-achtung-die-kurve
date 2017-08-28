@@ -89,6 +89,7 @@ void UdpWorker::sendDatagram()
 {
     if (!queue.empty()) {
         auto datagram = std::move(queue.front());
+        queue.pop_front();
         const sockaddr *sockAddr = datagram->getSockAddr();
         int length = datagram->getLength();
         auto bufferBox = datagram->getBuffer();
@@ -96,11 +97,14 @@ void UdpWorker::sendDatagram()
 
         try {
             socket.sendTo(buffer, static_cast<size_t>(length), sockAddr);
+            LOG(INFO) << "Sending datagram";
         } catch (WouldBlockException &e) {
             // try again next time
             queue.emplace_front(std::move(datagram));
+            LOG(INFO) << "WouldBlockException";
         } catch (InterruptedException &e) {
             queue.emplace_front(std::move(datagram));
+            LOG(INFO) << "InterruptedException";
         }
     }
 }
