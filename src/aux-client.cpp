@@ -6,14 +6,16 @@
 #include <ClientMessage.h>
 #include <netdb.h>
 #include <thread>
-#include <chrono>
+#include <easylogging++.h>
+
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char *argv[])
 {
     Socket socket;
-    socket.bindSocket(NULL, "8071");
+    socket.bindSocket(NULL, "8017");
 
-    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "8070");
+    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "12345");
     const sockaddr *addr = servinfoOther->ai_addr;
 
 #pragma clang diagnostic push

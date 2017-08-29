@@ -11,7 +11,9 @@
 
 class Client {
 public:
-    void work();
+    Client(sockaddr *serverAddr);
+
+    void loop();
 
 private:
     Socket socket;

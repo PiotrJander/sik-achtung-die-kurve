@@ -5,20 +5,24 @@
 #include <Socket.h>
 #include <ClientMessage.h>
 #include <netdb.h>
-#include <thread>
-#include <chrono>
+#include <Client.h>
+#include <easylogging++.h>
 
+INITIALIZE_EASYLOGGINGPP
 
+int main(int argc, const char *argv[])
+{
+    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "12345");
 
-int main(int argc, const char *argv[]) {
-    Socket socket;
-    socket.bindSocket(NULL, "8071");
+    Client client(servinfoOther->ai_addr);
 
-    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "8070");
-    const sockaddr *addr = servinfoOther->ai_addr;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
 
-    ClientMessage cm(789, 1, 0, "Jed");
+    while (true) {
+        client.loop();
+    }
 
-
+#pragma clang diagnostic pop
 }
 

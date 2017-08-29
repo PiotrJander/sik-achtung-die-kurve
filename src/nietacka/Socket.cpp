@@ -174,5 +174,8 @@ socklen_t Socket::sizeofSockaddr(const sockaddr *addr)
         case AF_INET6: {
             return sizeof(sockaddr_in6);
         }
+        default: {
+            return static_cast<socklen_t>(-1);
+        }
     }
 }
