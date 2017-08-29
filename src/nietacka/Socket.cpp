@@ -15,23 +15,6 @@
 #include "Exceptions.h"
 #include "easylogging++.h"
 
-//Socket::Socket(uint16_t port)
-//{
-//    if ((socket_fd = socket(PF_INET, SOCK_DGRAM, 0)) == -1) {
-//        throw SocketException(errno);
-//    }
-//
-//    // TODO maybe use getaddrinfo
-//    sockaddr_in address;
-//    address.sin_family = AF_INET;
-//    address.sin_addr.s_addr = INADDR_ANY;
-//    address.sin_port = htons(port);
-//
-//    int res = bind(socket_fd, reinterpret_cast<sockaddr *>(&address), sizeof(sockaddr_in));
-//    if (res == -1) {
-//        throw SocketException(errno);
-//    }
-//}
 
 /**
  * Call freeaddrinfo(servinfo) after use!
@@ -46,7 +29,6 @@ struct addrinfo *Socket::getAddrInfo(const char *hostname, const char *port)
     hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_DGRAM; // TCP stream sockets
     hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
-    // TODO customise
 
     status = getaddrinfo(hostname, port, &hints, &servinfo);
     if (status == -1) {
@@ -110,7 +92,7 @@ ssize_t Socket::recvFrom(void *buffer, size_t length)
 
 ssize_t Socket::sendTo(const void *buffer, size_t length, const sockaddr *sockAddr)
 {
-    ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeof(sockaddr_in));  // TODO what about IPv6?
+    ssize_t len = sendto(socket_fd, buffer, length, 0, sockAddr, sizeofSockaddr(sockAddr));
     if (len == -1) {
         if (errno == EWOULDBLOCK) {
             throw WouldBlockException();
@@ -154,8 +136,6 @@ short Socket::socketPoll(long long int timeout, bool send)
 
 /**
  * I hope I don't mess with other flags.
- *
- * TODO ioctl vs fcntl
  */
 void Socket::setBlocking()
 {
@@ -183,4 +163,16 @@ sockaddr_storage Socket::copySockAddrToStorage(const sockaddr *sockAddr)
         }
     }
     return res;
+}
+
+socklen_t Socket::sizeofSockaddr(const sockaddr *addr)
+{
+    switch (addr->sa_family) {
+        case AF_INET: {
+            return sizeof(sockaddr_in);
+        }
+        case AF_INET6: {
+            return sizeof(sockaddr_in6);
+        }
+    }
 }

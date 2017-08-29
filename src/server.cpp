@@ -58,6 +58,9 @@ int main(int argc, char *argv[])
         Arguments args(argc, argv);
 
         std::unique_ptr<IUdpWorker> udpWorker = std::make_unique<UdpWorker>(args.port);
+
+        std::cout << "Listening on port " << args.port;
+
         GameManager gameManager(args.width, args.height, args.ROUNDS_PER_SEC, args.TURNING_SPEED,
                                 args.seed, std::move(udpWorker));
 

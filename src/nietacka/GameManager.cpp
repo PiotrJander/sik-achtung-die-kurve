@@ -28,7 +28,7 @@ void GameManager::gameLoop()
 
     while (game.isInProgress()) {
         milliseconds endOfFrame =
-                duration_cast<milliseconds>(system_clock::now().time_since_epoch()) + milliseconds(200);  // TODO don't hardcode
+                duration_cast<milliseconds>(system_clock::now().time_since_epoch()) + milliseconds(frameDurationMs);
         game.tick();
         LOG(INFO) << "Enqueuing tick datagrams";
         broadcastNewDatagrams(game);

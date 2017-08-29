@@ -43,6 +43,8 @@ public:
 private:
     int socket_fd;
     sockaddr_storage sockaddrStorage;
+
+    socklen_t sizeofSockaddr(const sockaddr *addr);
 };
 
 
