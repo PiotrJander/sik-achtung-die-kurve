@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(SOURCE_FILES main.cpp src/ClientMessage_test.cpp src/GameEvent_test.cpp src/Game_test.cpp src/setup.h
-        src/PlayerConnection_test.cpp src/EventBatch_test.cpp src/GameManager_test.cpp src/DynamicBuffer_test.cpp)
+        src/PlayerConnection_test.cpp src/EventBatch_test.cpp src/GameManager_test.cpp src/DynamicBuffer_test.cpp src/ReadBuffer_test.cpp)
 
 add_subdirectory(lib/googletest)
 

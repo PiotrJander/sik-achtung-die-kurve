@@ -8,18 +8,21 @@
 
 #include <vector>
 #include <string>
+#include "DynamicBuffer.h"
 
 class ReadBuffer {
 public:
     ReadBuffer();
 
+    ReadBuffer(const DynamicBuffer &dynamic);
+
     template<typename T>
-    ReadBuffer &operator<<(T *value)
+    ReadBuffer &operator>>(T *value)
     {
         if (readLocation + sizeof(T) > vector.size()) {
             throw std::runtime_error("Trying to read past the buffer");
         }
-        *value = reinterpret_cast<T *>(&vector[readLocation]);
+        *value = *reinterpret_cast<T *>(&vector[readLocation]);
         readLocation += sizeof(T);
         return *this;
     }
@@ -29,12 +32,7 @@ public:
         return &vector[readLocation];
     }
 
-    std::string readString()
-    {
-        std::string ret(vector.begin() + readLocation, vector.end());
-        readLocation += ret.size() + 1;  // TODO test
-        return ret;
-    }
+    std::string readString();
 
 private:
     std::vector<char> vector;

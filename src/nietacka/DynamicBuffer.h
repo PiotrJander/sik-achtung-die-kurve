@@ -22,7 +22,14 @@ public:
     {
         const char *start = reinterpret_cast<const char *>(&obj);
         const char *end = start + sizeof(T);
-        copy(start, end, std::back_inserter(buffer));
+        std::copy(start, end, std::back_inserter(buffer));
+        return *this;
+    }
+
+    DynamicBuffer& operator<<(const std::string& s)
+    {
+        std::copy(s.begin(), s.end(), std::back_inserter(buffer));
+        buffer.push_back('\0');
         return *this;
     }
 
@@ -42,6 +49,11 @@ public:
     }
 
     void writeCharString(const std::string &str);
+
+    const std::vector<char> &getBuffer() const
+    {
+        return buffer;
+    };
 
 private:
     std::vector<char> buffer;
