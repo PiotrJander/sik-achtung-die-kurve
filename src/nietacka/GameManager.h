@@ -23,7 +23,7 @@ public:
     GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int turningSpeed,
                 long long seed, std::unique_ptr<IUdpWorker> udpWorker);
 
-    void processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr) override;
+    void processDatagram(const ClientMessage::SelfPacked *buffer, ssize_t length, const sockaddr *socketAddr) override;
 
     void gameLoop();
 

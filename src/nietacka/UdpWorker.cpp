@@ -76,12 +76,12 @@ void UdpWorker::receiveDatagram(IDatagramObserver &observer)
         return;
     };
 
-    if (length < sizeof(ClientMessage::SelfPacked)) {
+    if (length < ClientMessage::minLength) {
         LOG(WARNING) << "Datagram too small to be valid";
         return;
     }
 
-    observer.processDatagram(&buffer, socket.getSockaddr());
+    observer.processDatagram(&buffer, length, socket.getSockaddr());
     LOG(INFO) << "Got a client message";
 }
 

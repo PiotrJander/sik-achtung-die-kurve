@@ -28,20 +28,30 @@ public:
      * packed structs ~~~~~~~~~~~~~~~~~~~~~
      */
 #pragma pack(push, 1)
-    struct SelfPacked {
-        SelfPacked(const ClientMessage &clientMessage)
+    struct SelfPackedNoName {
+        SelfPackedNoName(const ClientMessage &clientMessage)
                 : sessionId(htonll(clientMessage.getSessionId())),
                   turnDirection(clientMessage.getTurnDirection()),
                   nextExpectedEventNo(htonl(clientMessage.getNextExpectedEventNo()))
+        {}
+
+        SelfPackedNoName() = default;
+
+        uint64_t sessionId;
+        int8_t turnDirection;
+        uint32_t nextExpectedEventNo;
+    };
+
+    struct SelfPacked {
+        SelfPacked(const ClientMessage &clientMessage)
+            : packed(clientMessage)
         {
             strncpy(playerName, clientMessage.getPlayerName().c_str(), 64);
         }
 
         SelfPacked() = default;
 
-        uint64_t sessionId;
-        int8_t turnDirection;
-        uint32_t nextExpectedEventNo;
+        SelfPackedNoName packed;
         char playerName[64];
     };
 #pragma pack(pop)
@@ -49,15 +59,22 @@ public:
      * END packed structs ~~~~~~~~~~~~~~~~~~~~~~
      */
 
+    ClientMessage() = default;
+
     ClientMessage(uint64_t session_id, int8_t turn_direction, uint32_t next_expected_event_no,
                   const string &player_name);
 
+    ClientMessage(const SelfPackedNoName &packed)
+        : sessionId(ntohll(packed.sessionId)),
+          turnDirection(packed.turnDirection),
+          nextExpectedEventNo(ntohl(packed.nextExpectedEventNo)),
+          playerName("")
+    {}
+
     ClientMessage(const SelfPacked &packed)
-            : sessionId(ntohll(packed.sessionId)),
-              turnDirection(packed.turnDirection),
-              nextExpectedEventNo(ntohl(packed.nextExpectedEventNo)),
-              playerName(packed.playerName, 0, 64)
+            : ClientMessage(packed.packed)
     {
+        playerName = std::string(packed.playerName, 0, 64);
         if (!(turnDirection == -1 || turnDirection == 0 || turnDirection == 1)) {
             throw ProtocolException("Invalid turn direction");
         }
@@ -69,6 +86,11 @@ public:
         }
     }
 
+    void setPlayerName(const char *buffer, ssize_t length)
+    {
+        playerName = std::string(buffer, 0, static_cast<unsigned long>(length));
+    }
+
     uint64_t getSessionId() const;
 
     int8_t getTurnDirection() const;
@@ -78,6 +100,8 @@ public:
     const std::string &getPlayerName() const;
 
     void sendto(Socket &socket, const sockaddr *addr);
+
+    static const int minLength = sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint8_t);
 
 private:
     uint64_t sessionId;

@@ -37,19 +37,27 @@ void GameManager::gameLoop()
     resetPlayers();
 }
 
-void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr)
+void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, ssize_t length, const sockaddr *socketAddr)
 {
+    ClientMessage message;
     try {
-        ClientMessage message(*buffer);
-        updateConnectedPlayers(message, socketAddr);
-
-        auto datagramBatches = getEventBatches(game, message.getNextExpectedEventNo());
-        sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
-        for (auto &&batch : datagramBatches) {
-            udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
+        if (length == sizeof(ClientMessage::SelfPacked)) {
+            message = ClientMessage(*buffer);
+        } else {
+            message = ClientMessage(*reinterpret_cast<const ClientMessage::SelfPackedNoName *>(buffer));
+            message.setPlayerName(reinterpret_cast<const char *>(buffer) + sizeof(ClientMessage::SelfPackedNoName),
+                                  length - sizeof(ClientMessage::SelfPackedNoName));
         }
     } catch (ProtocolException &e) {
         LOG(WARNING) << "Invalid player name: " << e.what();
+    }
+
+    updateConnectedPlayers(message, socketAddr);
+
+    auto datagramBatches = getEventBatches(game, message.getNextExpectedEventNo());
+    sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
+    for (auto &&batch : datagramBatches) {
+        udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
     }
 }
 

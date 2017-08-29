@@ -35,3 +35,17 @@ TEST(ClientMessageTest, ThrowsErrorOnInvalidName)
          ClientMessage cm2(packed); 
     }, ProtocolException);
 }
+
+TEST(ClientMessageTest, ShortName)
+{
+    ClientMessage cm1(123, 1, 456, "Piotr Jander");  // name has 13
+    ClientMessage::SelfPacked packed(cm1);
+    
+    ClientMessage cm2(*reinterpret_cast<ClientMessage::SelfPackedNoName *>(&packed));
+    cm2.setPlayerName(reinterpret_cast<const char *>(&packed) + sizeof(ClientMessage::SelfPackedNoName), 13);
+
+    EXPECT_EQ(cm1.getSessionId(), cm2.getSessionId());
+    EXPECT_EQ(cm1.getTurnDirection(), cm2.getTurnDirection());
+    EXPECT_EQ(cm1.getNextExpectedEventNo(), cm2.getNextExpectedEventNo());
+    EXPECT_EQ(cm1.getPlayerName(), cm2.getPlayerName());
+}
