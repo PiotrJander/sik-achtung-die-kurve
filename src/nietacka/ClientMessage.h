@@ -89,6 +89,12 @@ public:
     void setPlayerName(const char *buffer, ssize_t length)
     {
         playerName = std::string(buffer, 0, static_cast<unsigned long>(length));
+
+        for (char &c : playerName) {
+            if (c < 33 || c > 126) {
+                throw ProtocolException("Invalid name");
+            }
+        }
     }
 
     uint64_t getSessionId() const;
