@@ -11,6 +11,7 @@
 #include <string.h>
 #include <netinet/in.h>
 #include "Socket.h"
+#include "Exceptions.h"
 
 #ifdef __linux__
 #include <endian.h>
@@ -55,8 +56,18 @@ public:
             : sessionId(ntohll(packed.sessionId)),
               turnDirection(packed.turnDirection),
               nextExpectedEventNo(ntohl(packed.nextExpectedEventNo)),
-              playerName(packed.playerName)
-    {}
+              playerName(packed.playerName, 0, 64)
+    {
+        if (!(turnDirection == -1 || turnDirection == 0 || turnDirection == 1)) {
+            throw ProtocolException("Invalid turn direction");
+        }
+
+        for (char &c : playerName) {
+            if (c < 33 || c > 126) {
+                throw ProtocolException("Invalid name");
+            }
+        }
+    }
 
     uint64_t getSessionId() const;
 

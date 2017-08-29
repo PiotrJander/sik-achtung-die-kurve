@@ -7,7 +7,7 @@
 #include <nietacka/ClientMessage.h>
 
 
-TEST(ClientMessage__Test, First)
+TEST(ClientMessageTest, First)
 {
     std::stringstream stream;
 
@@ -24,4 +24,14 @@ TEST(ClientMessage__Test, First)
     EXPECT_EQ(cm1.getTurnDirection(), cm2.getTurnDirection());
     EXPECT_EQ(cm1.getNextExpectedEventNo(), cm2.getNextExpectedEventNo());
     EXPECT_EQ(cm1.getPlayerName(), cm2.getPlayerName());
+}
+
+TEST(ClientMessageTest, ThrowsErrorOnInvalidName)
+{
+    ClientMessage cm1(123, 1, 456, "Piotr Jander");
+    ClientMessage::SelfPacked packed(cm1);
+    
+    ASSERT_THROW({
+         ClientMessage cm2(packed); 
+    }, ProtocolException);
 }

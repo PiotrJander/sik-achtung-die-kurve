@@ -39,13 +39,17 @@ void GameManager::gameLoop()
 
 void GameManager::processDatagram(const ClientMessage::SelfPacked *buffer, const sockaddr *socketAddr)
 {
-    ClientMessage message(*buffer);
-    updateConnectedPlayers(message, socketAddr);
+    try {
+        ClientMessage message(*buffer);
+        updateConnectedPlayers(message, socketAddr);
 
-    auto datagramBatches = getEventBatches(game, message.getNextExpectedEventNo());
-    sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
-    for (auto &&batch : datagramBatches) {
-        udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
+        auto datagramBatches = getEventBatches(game, message.getNextExpectedEventNo());
+        sockaddr_storage sockaddrStorage = Socket::copySockAddrToStorage(socketAddr);
+        for (auto &&batch : datagramBatches) {
+            udpWorker->enqueue(std::make_unique<Datagram>(batch, sockaddrStorage));
+        }
+    } catch (ProtocolException &e) {
+        LOG(WARNING) << "Invalid player name: " << e.what();
     }
 }
 
