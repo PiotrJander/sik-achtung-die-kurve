@@ -39,6 +39,8 @@ private:
     int turningSpeed;
     Random random;
 
+    time_t lastInactivePlayersCheck;
+
     bool canGameStart();
 
     void resetPlayers();
@@ -54,6 +56,8 @@ private:
     void broadcastDatagrams(std::vector<EventBatch> eventBatches);
 
     void broadcastNewDatagrams(const Game &game);
+
+    void activityCheck();
 };
 
 

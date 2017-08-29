@@ -63,7 +63,8 @@ void PlayerConnection::resetAfterGame()
 PlayerConnection::PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection,
                                    const std::string &name)
         : sessionId(sessionId), turnDirection(turnDirection), name(name), 
-          socketStorage(Socket::copySockAddrToStorage(socketArg))
+          socketStorage(Socket::copySockAddrToStorage(socketArg)),
+          lastActive(time(NULL))
 {}
 
 #pragma clang diagnostic pop

@@ -34,12 +34,6 @@ public:
 
     PlayerConnection(const sockaddr *socketArg, uint64_t sessionId, int8_t turnDirection, const std::string &name);
 
-    PlayerConnection(const PlayerConnection &pc)
-            : sessionId(pc.sessionId), socketStorage(pc.socketStorage),
-              turnDirection(pc.turnDirection), name(pc.name),
-              readyForGame(pc.readyForGame),
-              nextExpectedEvent(pc.nextExpectedEvent)
-    {}
 
     size_t hash() const;
 
@@ -75,6 +69,16 @@ public:
         return socketStorage;
     }
 
+    void updateLastActive()
+    {
+        lastActive = time(NULL);
+    }
+
+    time_t getLastActive() const
+    {
+        return lastActive;
+    }
+
 private:
     uint64_t sessionId;
     sockaddr_storage socketStorage;
@@ -82,6 +86,7 @@ private:
     std::string name;
     bool readyForGame = false;
     uint32_t nextExpectedEvent = 0;
+    time_t lastActive;
 };
 
 typedef std::map<std::size_t, PlayerConnection> PlayerConnectionMap;

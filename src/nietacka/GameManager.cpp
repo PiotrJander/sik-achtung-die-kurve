@@ -68,6 +68,7 @@ void GameManager::updateConnectedPlayers(const ClientMessage &message, const soc
             LOG(INFO) << "Player connection update; "
                        << " new turn direction " << static_cast<int>(message.getTurnDirection())
                        << " new next expected " << message.getNextExpectedEventNo();
+            conn.updateLastActive();
             conn.setTurnDirection(message.getTurnDirection());
             conn.setNextExpectedEvent(message.getNextExpectedEventNo());
         } else if (conn.getSessionId() < message.getSessionId()) {
@@ -77,6 +78,25 @@ void GameManager::updateConnectedPlayers(const ClientMessage &message, const soc
             addPlayerConnection(hash, socket, message);
         } else {
             LOG(INFO) << "Player connection ignore; smaller session id";
+        }
+    }
+
+    activityCheck();
+}
+
+void GameManager::activityCheck()
+{
+    if (lastInactivePlayersCheck + 2 < time(NULL)) {
+        time_t t = time(NULL) - 2;
+
+        // standard associative-container erase idiom
+        for (auto it = connectedPlayers.cbegin(); it != connectedPlayers.cend() /* not hoisted */; /* no increment */) {
+            if (it->second.getLastActive() < t) {
+                LOG(WARNING) << "Removing inactive player";
+                connectedPlayers.erase(it++);
+            } else {
+                ++it;
+            }
         }
     }
 }
@@ -178,5 +198,6 @@ GameManager::GameManager(uint32_t maxx, uint32_t maxy, int roundsPerSecond, int 
           turningSpeed(turningSpeed),
           random(seed),
           udpWorker(std::move(udpWorker)),
-          game(random, turningSpeed, maxx, maxy)
+          game(random, turningSpeed, maxx, maxy),
+          lastInactivePlayersCheck(time(NULL))
 {}

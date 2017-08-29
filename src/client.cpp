@@ -5,6 +5,8 @@
 #include <Socket.h>
 #include <ClientMessage.h>
 #include <netdb.h>
+#include <thread>
+#include <chrono>
 
 int main(int argc, const char *argv[]) {
     Socket socket1, socket2, socket3;
@@ -22,6 +24,8 @@ int main(int argc, const char *argv[]) {
     cm1.sendto(socket1, addr);
     cm2.sendto(socket2, addr);
     cm3.sendto(socket3, addr);
+
+//    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
     ClientMessage cm4(456, 1, 0, "Piotr");
     ClientMessage cm5(789, -1, 0, "Jed");
