@@ -8,6 +8,8 @@
 #include <thread>
 #include <chrono>
 
+
+
 int main(int argc, const char *argv[]) {
     Socket socket;
     socket.bindSocket(NULL, "8071");
@@ -17,14 +19,6 @@ int main(int argc, const char *argv[]) {
 
     ClientMessage cm(789, 1, 0, "Jed");
 
-    while (true) {
-
-        socket.socketPoll(20, true);
-    }
-
-    // now we could block on send every 20 ms
-    // then we use poll to listen only
-    // otherwise we can have a one elem queue
-    // optional?
 
 }
+
