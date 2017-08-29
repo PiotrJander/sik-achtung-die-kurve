@@ -50,7 +50,7 @@ public:
 
     void write(DynamicBuffer &buffer);
 
-    static std::unique_ptr<GameEvent> read(ReadBuffer &readBuffer, int length);
+    static std::unique_ptr<GameEvent> read(ReadBuffer &readBuffer);
 
     virtual bool operator==(const GameEvent &other) const;
 
@@ -69,14 +69,15 @@ public:
         return selfLength() + 2 * sizeof(uint32_t);
     }
 
-protected:
-    virtual uint32_t selfLength() const = 0;
-
-    virtual void writeSelf(DynamicBuffer &buffer) = 0;
-
 private:
     uint32_t eventNo;
     GameEvent::Type type;
+
+    static std::unique_ptr<GameEvent> readSelf(ReadBuffer &readBuffer, int length);
+
+    virtual uint32_t selfLength() const = 0;
+
+    virtual void writeSelf(DynamicBuffer &buffer) = 0;
 };
 
 #endif //PROJECT_GAMEEVENT_H

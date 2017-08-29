@@ -48,9 +48,7 @@ public:
               maxy(ntohl(selfPacked.data.maxy)),
               playerNames(playerNames)
     {}
-
-    static std::vector<std::string> parsePlayerNames(const char *buffer, const char *endOfBuffer);
-
+    
     bool operator==(const GameEvent &other) const override;
 
     uint32_t getMaxx() const

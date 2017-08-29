@@ -10,6 +10,12 @@
 #include <string>
 #include "DynamicBuffer.h"
 
+
+class ReadBufferException: public std::runtime_error {
+public:
+    ReadBufferException(const std::string &desc);
+};
+
 class ReadBuffer {
 public:
     ReadBuffer(int length);
@@ -20,7 +26,7 @@ public:
     ReadBuffer &operator>>(T &value)
     {
         if (readLocation + sizeof(T) > vector.size()) {
-            throw std::runtime_error("Trying to read past the buffer");
+            throw ReadBufferException("Trying to read past the buffer");
         }
         value = *reinterpret_cast<T *>(&vector[readLocation]);
         readLocation += sizeof(T);
@@ -30,6 +36,9 @@ public:
     template<typename T>
     const T *castAndAdvance()
     {
+        if (readLocation + sizeof(T) > vector.size()) {
+            throw ReadBufferException("Trying to read past the buffer");
+        }
         const T *ptr = reinterpret_cast<const T *>(&vector[readLocation]);
         readLocation += sizeof(T);
         return ptr;
