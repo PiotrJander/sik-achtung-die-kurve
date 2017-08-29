@@ -11,6 +11,18 @@
 int main(int argc, const char *argv[]) {
     Socket socket1, socket2, socket3;
     socket1.bindSocket(NULL, "8071");
+
+    addrinfo *servinfoOther = Socket::getAddrInfo("127.0.0.1", "8070");
+    const sockaddr *addr = servinfoOther->ai_addr;
+
+    for (uint32_t i = 0; ; ++i) {
+        ClientMessage cm(789, 1, i, "Jed");
+        cm.sendto(socket1, addr);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    ClientMessage cm3(789, 1, 0, "Jed");
+
     socket2.bindSocket(NULL, "8072");
     socket3.bindSocket(NULL, "8073");
 
