@@ -17,27 +17,36 @@ public:
     ReadBuffer(const DynamicBuffer &dynamic);
 
     template<typename T>
-    ReadBuffer &operator>>(T *value)
+    ReadBuffer &operator>>(T &value)
     {
         if (readLocation + sizeof(T) > vector.size()) {
             throw std::runtime_error("Trying to read past the buffer");
         }
-        *value = *reinterpret_cast<T *>(&vector[readLocation]);
+        value = *reinterpret_cast<T *>(&vector[readLocation]);
         readLocation += sizeof(T);
         return *this;
+    }
+    
+    template<typename T>
+    const T *castAndAdvance()
+    {
+        const T *ptr = reinterpret_cast<const T *>(&vector[readLocation]);
+        readLocation += sizeof(T);
+        return ptr;
     }
 
     const char *peek()
     {
         return &vector[readLocation];
     }
-    
-    char *getRaw()
+
+    char *getWriteable()
     {
-        return &vector[readLocation];
+        readLocation = 0;
+        return &vector[0];
     }
 
-    std::string readString();
+    std::string readString(int length);
 
     int length() const
     {

@@ -9,6 +9,7 @@
 #include <memory>
 #include <netinet/in.h>
 #include "../DynamicBuffer.h"
+#include "../ReadBuffer.h"
 
 
 class GameEvent {
@@ -49,7 +50,7 @@ public:
 
     void write(DynamicBuffer &buffer);
 
-    static std::unique_ptr<GameEvent> readFrom(const char *buffer, uint32_t length);
+    static std::unique_ptr<GameEvent> read(ReadBuffer &readBuffer, int length);
 
     virtual bool operator==(const GameEvent &other) const;
 

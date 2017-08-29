@@ -41,4 +41,10 @@ public:
     {}
 };
 
+class ParseException: public std::runtime_error {
+public:
+    ParseException(const std::string &desc) : runtime_error(desc)
+    {}
+};
+
 #endif //PROJECT_EXCEPTIONS_H

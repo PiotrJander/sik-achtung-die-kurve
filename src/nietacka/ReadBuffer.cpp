@@ -11,10 +11,9 @@ ReadBuffer::ReadBuffer(int length) : vector(length)
 ReadBuffer::ReadBuffer(const DynamicBuffer &dynamic) : vector(dynamic.getBuffer())
 {}
 
-std::string ReadBuffer::readString()
+std::string ReadBuffer::readString(int length)
 {
-//    std::string ret(vector.begin() + readLocation, vector.end());
-    std::string ret(&vector[readLocation], 0, vector.size() - readLocation);
-    readLocation += ret.size() + 1;  // TODO test
+    std::string ret(&vector[readLocation], 0, static_cast<unsigned long>(length));
+    readLocation += ret.size() + 1;
     return ret;
 }

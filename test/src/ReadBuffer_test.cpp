@@ -23,10 +23,10 @@ TEST(ReadBuffer, First)
     uint32_t length_;
     uint32_t checksum_;
 
-    readBuffer >> &gameId_ >> &length_;
-    std::string name1_(readBuffer.readString());
-    std::string name2_(readBuffer.readString());
-    readBuffer >> &checksum_;
+    readBuffer >> gameId_ >> length_;
+    std::string name1_(readBuffer.readString(10));
+    std::string name2_(readBuffer.readString(10));
+    readBuffer >> checksum_;
 
     EXPECT_EQ(gameId, gameId_);
     EXPECT_EQ(length, length_);
