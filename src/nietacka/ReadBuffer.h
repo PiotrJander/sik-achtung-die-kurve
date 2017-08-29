@@ -12,7 +12,7 @@
 
 class ReadBuffer {
 public:
-    ReadBuffer();
+    ReadBuffer(int length);
 
     ReadBuffer(const DynamicBuffer &dynamic);
 
@@ -31,8 +31,18 @@ public:
     {
         return &vector[readLocation];
     }
+    
+    char *getRaw()
+    {
+        return &vector[readLocation];
+    }
 
     std::string readString();
+
+    int length() const
+    {
+        return static_cast<int>(vector.size());
+    }
 
 private:
     std::vector<char> vector;

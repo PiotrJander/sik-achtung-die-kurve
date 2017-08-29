@@ -5,7 +5,7 @@
 #include "ReadBuffer.h"
 #include "DynamicBuffer.h"
 
-ReadBuffer::ReadBuffer() : vector()
+ReadBuffer::ReadBuffer(int length) : vector(length)
 {}
 
 ReadBuffer::ReadBuffer(const DynamicBuffer &dynamic) : vector(dynamic.getBuffer())
